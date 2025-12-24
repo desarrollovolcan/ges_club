@@ -233,6 +233,17 @@
 										</select>
 									</div>
 									<div class="mb-3">
+										<label class="form-label">Club</label>
+										<select class="form-control" name="club_id" required>
+											<option value="">Selecciona</option>
+											<?php foreach ($clubes as $club) { ?>
+												<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editColaborador['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
+													<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+												</option>
+											<?php } ?>
+										</select>
+									</div>
+									<div class="mb-3">
 										<label class="form-label">Tipo</label>
 										<select class="form-control" name="tipo" required>
 											<?php $tipoColaborador = $editColaborador['tipo'] ?? ''; ?>
