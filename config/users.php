@@ -120,6 +120,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$sexo = trim((string)($payload['sexo'] ?? ''));
 	$nacionalidad = trim((string)($payload['nacionalidad'] ?? 'Chilena'));
 	$telefonoMovil = trim((string)($payload['telefono_movil'] ?? ''));
+	$telefonoFijo = trim((string)($payload['telefono_fijo'] ?? ''));
 	$direccionCalle = trim((string)($payload['direccion_calle'] ?? ''));
 	$direccionNumero = trim((string)($payload['direccion_numero'] ?? ''));
 	$comuna = trim((string)($payload['comuna'] ?? ''));
@@ -128,6 +129,19 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$consentimientoFecha = str_replace('T', ' ', $consentimientoFecha);
 	$fechaIncorporacion = (string)($payload['fecha_incorporacion'] ?? '');
 	$consentimientoMedio = trim((string)($payload['consentimiento_medio'] ?? ''));
+	$numeroSocio = trim((string)($payload['numero_socio'] ?? ''));
+	$tipoSocio = trim((string)($payload['tipo_socio'] ?? ''));
+	$disciplinas = trim((string)($payload['disciplinas'] ?? ''));
+	$categoriaRama = trim((string)($payload['categoria_rama'] ?? ''));
+	$estadoCivil = trim((string)($payload['estado_civil'] ?? ''));
+	$previsionSalud = trim((string)($payload['prevision_salud'] ?? ''));
+	$contactoEmergenciaNombre = trim((string)($payload['contacto_emergencia_nombre'] ?? ''));
+	$contactoEmergenciaTelefono = trim((string)($payload['contacto_emergencia_telefono'] ?? ''));
+	$contactoEmergenciaParentesco = trim((string)($payload['contacto_emergencia_parentesco'] ?? ''));
+	$menorRun = trim((string)($payload['menor_run'] ?? ''));
+	$apoderadoRun = trim((string)($payload['apoderado_run'] ?? ''));
+	$relacionApoderado = trim((string)($payload['relacion_apoderado'] ?? ''));
+	$autorizacionApoderado = trim((string)($payload['autorizacion_apoderado'] ?? ''));
 
 	$errors = [];
 	$requiredFields = [
@@ -291,30 +305,30 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 			':sexo' => $sexo,
 			':nacionalidad' => $nacionalidad,
 			':telefono_movil' => $telefonoMovil,
-			':telefono_fijo' => $payload['telefono_fijo'] ?? null,
+			':telefono_fijo' => $telefonoFijo !== '' ? $telefonoFijo : null,
 			':direccion_calle' => $direccionCalle,
 			':direccion_numero' => $direccionNumero,
 			':comuna' => $comuna,
 			':region' => $region,
-			':numero_socio' => $payload['numero_socio'] ?? null,
-			':tipo_socio' => $payload['tipo_socio'] ?? null,
-			':disciplinas' => $payload['disciplinas'] ?? null,
-			':categoria_rama' => $payload['categoria_rama'] ?? null,
+			':numero_socio' => $numeroSocio !== '' ? $numeroSocio : null,
+			':tipo_socio' => $tipoSocio !== '' ? $tipoSocio : null,
+			':disciplinas' => $disciplinas !== '' ? $disciplinas : null,
+			':categoria_rama' => $categoriaRama !== '' ? $categoriaRama : null,
 			':fecha_incorporacion' => $fechaIncorporacion !== '' ? $fechaIncorporacion : null,
 			':consentimiento_fecha' => $consentimientoFecha,
 			':consentimiento_medio' => $consentimientoMedio,
 			':usuario_creador' => $payload['usuario_creador'] ?? $actor,
 			':created_at' => $payload['created_at'] ?? date('Y-m-d H:i:s'),
 			':created_ip' => $payload['created_ip'] ?? $ip,
-			':estado_civil' => $payload['estado_civil'] ?? null,
-			':prevision_salud' => $payload['prevision_salud'] ?? null,
-			':contacto_emergencia_nombre' => $payload['contacto_emergencia_nombre'] ?? null,
-			':contacto_emergencia_telefono' => $payload['contacto_emergencia_telefono'] ?? null,
-			':contacto_emergencia_parentesco' => $payload['contacto_emergencia_parentesco'] ?? null,
-			':menor_run' => $payload['menor_run'] ?? null,
-			':apoderado_run' => $payload['apoderado_run'] ?? null,
-			':relacion_apoderado' => $payload['relacion_apoderado'] ?? null,
-			':autorizacion_apoderado' => $payload['autorizacion_apoderado'] ?? null,
+			':estado_civil' => $estadoCivil !== '' ? $estadoCivil : null,
+			':prevision_salud' => $previsionSalud !== '' ? $previsionSalud : null,
+			':contacto_emergencia_nombre' => $contactoEmergenciaNombre !== '' ? $contactoEmergenciaNombre : null,
+			':contacto_emergencia_telefono' => $contactoEmergenciaTelefono !== '' ? $contactoEmergenciaTelefono : null,
+			':contacto_emergencia_parentesco' => $contactoEmergenciaParentesco !== '' ? $contactoEmergenciaParentesco : null,
+			':menor_run' => $menorRun !== '' ? $menorRun : null,
+			':apoderado_run' => $apoderadoRun !== '' ? $apoderadoRun : null,
+			':relacion_apoderado' => $relacionApoderado !== '' ? $relacionApoderado : null,
+			':autorizacion_apoderado' => $autorizacionApoderado !== '' ? $autorizacionApoderado : null,
 		]);
 
 		$db->prepare('DELETE FROM user_role_assignments WHERE user_id = :user_id')->execute([':user_id' => $userId]);
