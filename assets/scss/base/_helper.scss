@@ -1,0 +1,15 @@
+.c-pointer {
+    cursor: pointer;
+}
+.pe30{
+    padding-right: 30px;
+    @include respond ('phone'){
+        padding-right: 5px;
+    }
+}
+.ps30{
+    padding-left: 30px;
+    @include respond ('phone'){
+        padding-left: 5px;
+    }
+}

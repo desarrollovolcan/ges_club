@@ -1,0 +1,826 @@
+<?php 
+	 require_once __DIR__ . '/config/dz.php';
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title><?php echo !empty($DexignZoneSettings['pagelevel'][$CurrentPage]['title']) ? $DexignZoneSettings['pagelevel'][$CurrentPage]['title'].' | ' : '' ; echo $DexignZoneSettings['site_level']['site_title'] ?></title>
+	<?php include 'elements/meta.php';?>
+	<!-- FAVICONS ICON -->
+	<link rel="shortcut icon" type="image/png" href="<?php echo $DexignZoneSettings['site_level']['favicon']?>">
+	<?php include 'elements/page-css.php'; ?>
+
+</head>
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+   <?php include 'elements/preloader.php'; ?>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+		<?php include 'elements/nav-header.php'; ?>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+		
+		<!--**********************************
+            Chat box start
+        ***********************************-->
+		<?php include 'elements/chatbox.php'; ?>
+		<!--**********************************
+            Chat box End
+        ***********************************-->
+		
+		<!--**********************************
+            Header start
+        ***********************************-->
+       		<?php include 'elements/header.php'; ?>
+
+                    
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+		<?php include 'elements/sidebar.php'; ?>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+		
+		<!--**********************************
+            Content body start
+        ***********************************-->
+		<div class="content-body">
+			<!-- row -->
+			<div class="container-fluid">
+				<div class="page-titles">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="javascript:void(0)">Contacts</a></li>
+						<li class="breadcrumb-item active"><a href="javascript:void(0)">Contact Card</a></li>
+					</ol>
+				</div>
+				
+				<div class="project-page d-flex justify-content-between align-items-center flex-wrap">
+					<div class="card-tabs mb-4">
+						<ul class="nav nav-tabs" role="tablist">
+							<li class="nav-item" role="presentation">
+								<a href="#navpills-1" class="nav-link active" data-bs-toggle="tab" aria-expanded="false">All Contacs </a>
+							</li>
+							<li class="nav-item" role="presentation">
+								<a href="#navpills-2" class="nav-link" data-bs-toggle="tab" aria-expanded="false">Pending Invitation</a>
+							
+						</ul>
+					</div>
+					<div class="mb-4">
+						<a href="javascript:void(0);" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">+ New Contact</a>
+					</div>
+				</div>
+				
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="navpills-1" >
+						<div class="row dz-scroll  loadmore-content searchable-items list" id="allContactListContent">
+							<div class="items items-header-section">
+							</div>
+							
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic1.jpg" data-src="assets/images/users/pic1.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Alan Green">Alan Green</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">UI Designer</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+								
+								
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-success rounded-circle text-success">am</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Angela Moss">Angela Moss</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Redblue Studios">Redblue Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic2.jpg" data-src="assets/images/users/pic2.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Brian Samuel">Brian Samuel</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Team Management">Team Management</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-primary rounded-circle text-primary">Bc</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Benny Chagur">Benny Chagur</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Highspeed Inc.">Highspeed Inc.</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic3.jpg" data-src="assets/images/users/pic3.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Chyntia Lawra">Chyntia Lawra</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic4.jpg" data-src="assets/images/users/pic4.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Cloe Simatupang">Cloe Simatupang</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic5.jpg" data-src="assets/images/users/pic5.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Engeline O’conner">Engeline O’conner</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">Beep Beep Inc.</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-info rounded-circle text-info">jr</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Franklin Jr.">Franklin Jr.</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic6.jpg" data-src="assets/images/users/pic6.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Geovanny">Geovanny</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">UI Designer</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-info rounded-circle text-info">hc</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Henry Charlotte">Henry Charlotte</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">UI Designer</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic7.jpg" data-src="assets/images/users/pic7.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Ivankov Shee">Ivankov Shee</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">UI Designer</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic8.jpg" data-src="assets/images/users/pic8.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Nindy Leeacovic">Nindy Leeacovic</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">UI Designer</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+							
+					</div>
+					<div class="tab-pane fade" id="navpills-2">
+						<div class="row dz-scroll loadmore-content" id="pendingListContent">
+							<div class="items items-header-section">
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic2.jpg" data-src="assets/images/users/pic2.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Brian Samuel">Brian Samuel</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Team Management">Team Management</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-primary rounded-circle text-primary">Bc</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Benny Chagur">Benny Chagur</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Highspeed Inc.">Highspeed Inc.</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic3.jpg" data-src="assets/images/users/pic3.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Chyntia Lawra">Chyntia Lawra</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic4.jpg" data-src="assets/images/users/pic4.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Cloe Simatupang">Cloe Simatupang</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<img src="assets/images/users/pic5.jpg" data-src="assets/images/users/pic5.jpg" alt="" class="rounded-circle">
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Engeline O’conner">Engeline O’conner</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="UI Designer">Beep Beep Inc.</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-3 col-xxl-4 col-lg-4 col-md-6 col-sm-6 items">
+								<div class="card contact-bx-1 item-content">
+									<div class="card-header border-0">
+										<div class="action-dropdown">
+											<div class="dropdown">
+												<a href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+													<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+														<path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 6C12.5523 6 13 5.55228 13 5C13 4.44772 12.5523 4 12 4C11.4477 4 11 4.44772 11 5C11 5.55228 11.4477 6 12 6Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+														<path d="M12 20C12.5523 20 13 19.5523 13 19C13 18.4477 12.5523 18 12 18C11.4477 18 11 18.4477 11 19C11 19.5523 11.4477 20 12 20Z" stroke="#575757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+													</svg>
+												</a>
+												<div class="dropdown-menu dropdown-menu-end">
+													<a class="dropdown-item edit" href="javascript:void(0);">Edit</a>
+													<a class="dropdown-item delete" href="javascript:void(0);">Delete</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="card-body user-profile">
+										<div class="image-bx">
+											<span class="icon-placeholder bgl-info rounded-circle text-info">jr</span>
+											<span class="active"></span>
+										</div>
+										<div class="media-body user-meta-info">
+											<h6 class="fs-20 font-w500 my-1"><a href="app-profile.php" class="text-black user-name" data-name="Franklin Jr.">Franklin Jr.</a></h6>
+											<p class="fs-14 mb-3 user-work" data-occupation="Zero Two Studios">Zero Two Studios</p>
+											<ul>
+												<li><a href="javascript:void(0);"><i class="fa fa-phone" aria-hidden="true"></i></a></li>
+												<li><a href="chat-home.php"><i class="fa-solid fa-message"></i></a></li>
+												<li><a href="javascript:void(0);"><i class="fas fa-video" aria-hidden="true"></i></a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+            </div>
+		</div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">Contact title</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-xl-12">
+							
+								<div class="mb-3">
+									<label for="exampleFormControlInput1" class="form-label">Email address</label>
+									<input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+								  </div>
+							
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-danger light" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+			</div>
+		</div>
+		
+		
+        <!--**********************************
+            Footer start
+        ***********************************-->
+        <?php include 'elements/footer.php'; ?>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+
+		<!--**********************************
+           Support ticket button start
+        ***********************************-->
+
+        <!--**********************************
+           Support ticket button end
+        ***********************************-->
+			
+
+
+	</div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+    <!-- Required vendors -->
+<?php include 'elements/page-js.php'; ?>
+	
+    
+</body>
+</html>

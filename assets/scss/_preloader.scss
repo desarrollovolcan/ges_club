@@ -1,0 +1,82 @@
+/* Editable */
+
+#preloader{
+	background-color: #fff;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+    position: fixed;
+    z-index: 99999;
+    width: 100%;
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	
+	.lds-ripple {
+		margin: auto;
+		margin-right: 1px;
+		width: 50px;
+		height: 50px;
+		display: grid;
+		gap: 0px;
+		grid-template-columns: auto auto;
+		animation: rotate 2s linear 0s infinite;
+	  
+	}
+	.item1
+{
+	margin: auto;
+	width: 15px;
+	height: 15px;
+	border-radius: 0%;
+	background-color:var(--primary);
+}
+.item2
+{
+	margin: auto;
+	width: 15px;
+	height: 15px;
+	border-radius: 0%;
+	background-color:var(--primary);
+}
+.item3
+{
+	margin: auto;
+	width: 15px;
+	height: 15px;
+	border-radius: 0%;
+	background-color:var(--primary);
+}
+.item4
+{
+	margin: auto;
+	width: 15px;
+	height: 15px;
+	border-radius: 0%;
+	background-color:var(--primary);
+}
+	
+}
+
+
+[data-theme-version="dark"] {
+	#preloader{
+		background-color: $d-bg;
+	}
+}
+
+
+
+
+@keyframes rotate 
+{
+	0%{rotate: 0deg; transform: scale(0.6);}
+	50%{ rotate: 100deg; transform: scale(0.4);}    
+	100%{rotate: 360deg; transform: scale(0.6);}
+}
+.dz-loader-h
+{
+	margin: auto;
+	margin-left: 5px;
+	color:var(--primary);
+}

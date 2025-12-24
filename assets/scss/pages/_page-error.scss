@@ -1,0 +1,75 @@
+.inner-content{
+	position: relative;
+	z-index: 2;
+
+	.error-head{
+		margin: 0 auto 20px;
+		font-weight: 400;
+		font-size: 140px;
+		line-height: 1;
+		font-style: normal;
+		text-align: center;
+		
+		color: #FFFFFF;
+		position: relative;
+		&:before, &:after {
+			display: block;
+			content: attr(data-glitch);
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			opacity: .8;
+			
+		  } &:after {
+			color: #f0f;
+			z-index: -2;
+			animation: glitch .3s infinite cubic-bezier(.25, .46, .45, .94) both 5;
+			
+		  } &:before {
+			color: #0ff;
+			animation: glitch .3s infinite cubic-bezier(.25, .46, .45, .94) reverse both 5;
+			z-index: -1;
+		  }
+		 
+	}
+	.error-para{
+		font-family: 'Poppins';
+		font-style: normal;
+		font-weight: 600;
+		font-size: 35px;
+		line-height: 1.5;
+		color: #EFEFEF;
+		margin-bottom: 5px;
+
+	}
+	p{
+		font-size: 18px;
+		color:$white;
+	}
+}
+
+
+
+  
+  @keyframes glitch {
+	0% {
+	  transform: translate(0)
+	}
+	20% {
+	  transform: translate(-5px, 5px)
+	}
+	40% {
+	  transform: translate(-5px, -5px)
+	}
+	60% {
+	  transform: translate(5px, 5px)
+	}
+	80% {
+	  transform: translate(5px, -5px)
+	}
+	to {
+	  transform: translate(0)
+	}
+  }

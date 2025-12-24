@@ -1,0 +1,258 @@
+.description{
+	font-size:0.875rem;
+	color:$black;
+	font-weight:400;
+}
+.payment{
+	i{
+		color:#4F7086;	
+	}
+}
+.transaction-details{
+	border-top:1px solid var(--border);
+	.user-bx-2{
+		display:flex;
+		align-items:center;
+		img{
+			height:50px;
+			width:50px;
+			margin-right:8px;
+			border-radius:$radius;
+		}
+		&>div{
+			span{
+				font-size:1rem;
+				color:#464646;
+			}
+		}
+		
+	}
+	.amount-bx{
+		width:250px;
+		display:flex;
+		padding:15px;
+		align-items:center;
+		border-radius:$radius;
+		i{
+			height:45px;
+			width:45px;
+			font-size:18px;
+			margin-right:10px;
+			border-radius:$radius;
+			line-height:45px;
+			text-align:center;
+			background: rgba(255, 170, 43, 1);
+			color:$white;
+		}
+		
+	}
+	
+}
+.owl-bank-wallet{
+	.owl-stage-outer{
+	    padding: 7% 0;
+	}
+	.active.center{
+		.card-bx{
+			transform: scale(1.5);
+			z-index:1;
+			width: 265px;
+			margin-top: 18px;
+			margin-left: -60px;
+			@include custommq($max: 1800px){
+				width: 212px;
+				margin-top: 18px;
+				margin-left: -54px;
+			}
+			@include custommq($max: 1600px){
+				width: 268px;
+				margin-top: 5px;
+				margin-left: -40px;
+			}
+			@include respond('laptop'){
+				width: 244px;
+				margin-top: 16px;
+				margin-left: -58px;
+			}
+			
+			@include respond('tab-port'){
+				width: 266px;
+				margin-top: 0;
+				margin-left: 0px;
+			}
+			@include respond('phone'){
+				width:300px;
+			}
+		}
+	}
+	.card-bx{
+		position:relative;
+		@include transitionMedium;
+		padding: 30px 30px;
+		z-index:-1;
+		.cr-logo{
+			width: 40px;
+		}
+		.card-info{
+			padding-top:0;
+			.top-img{
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				width: 96px;
+				z-index: -1;	
+			}
+			.bottom-img{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 108px;	
+				z-index: -1;	
+			}
+			.top-img11{
+				position: absolute;
+				top: 0;
+				right: -18px;
+				width: 96px;
+				z-index: -1;	
+			}
+			.bottom-img11{
+				position: absolute;
+				bottom: -2px;
+				left: -5px;
+				width: 96px;
+				transform: rotate(186deg);
+				z-index: -1;	
+			}
+			.bottom-img22{
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 76px;
+				z-index: -1;	
+			}
+		}
+		.dots-img{
+			width: 52px;
+		}
+	}
+	&.owl-nav-text{
+		.card-bx{
+			.card-info{
+				opacity:0;
+			}
+		}
+		.active.center{
+			.card-bx{
+				.card-info{
+					opacity:1;
+				}
+			}
+		}
+		.owl-nav{
+			.owl-prev,
+			.owl-next{
+				cursor:pointer;
+				writing-mode: tb;
+				position:absolute;
+				top:50%;
+				color:$white;
+				font-size: 18px;
+				transform: rotate(180deg) translateY(50%);
+				i{
+					margin-top: 10px;
+				}
+			}
+			.owl-prev{
+				left:30px;
+			}
+			.owl-next{
+				right:30px;
+			}
+		}
+	}
+	@include respond ('phone'){
+		.active.center{
+			.card-bx{
+				transform: scale(1);
+			}
+		}
+	}
+}
+.chartTimeline3
+{
+	line{
+		display:none;	
+	}
+}
+
+.circle-img1{
+	width: 40px!important;
+    position: absolute;
+	top: 16px;
+	left: 37px;
+}
+.bg-1{
+	background:#007CA4;	
+}
+.specifics-list{
+	display: flex;
+	justify-content: space-between;
+	li{
+		display:flex;
+		&>span{
+			height:30px;
+			width:10px;
+			border-radius:10px;
+			display:inline-block;
+			margin-right:15px;
+		}
+		
+	}
+}
+.revenueMap1,
+.chartTimeline33{
+	tspan{
+		display:none;
+	}
+	line{
+		display:none;
+	}
+}
+.active-map-main {
+    position: relative;
+}
+.active-country {
+	margin-top: -65px;
+    position: relative;
+    height: 368px;
+    padding-right: 1.95rem;
+	@include respond ('tab-land'){
+		margin-top:0;
+		height:218px;
+	}
+}
+.active-country .country-list {
+    padding: 9px 0;
+    display: flex;
+    border-bottom: 1px solid var(--border);
+}
+.active-country .country-list img {
+	margin-right: 12px;
+    border-radius: 50%;
+    object-fit: cover;
+    width: 30px;
+    height: 30px;
+
+}
+.active-map-main .active-map {
+    height: 19rem !important;
+}
+.active-country .country-list .progress-box {
+    flex: 1;
+}
+.progress-box{
+	.progress{
+		height:6px;
+	}
+}

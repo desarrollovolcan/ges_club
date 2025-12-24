@@ -1,0 +1,49 @@
+.dz-draggble{
+    .card-body{
+        
+        .ui-widget-content {
+            border: 1px solid var(--border);
+            background: var(--rgba-primary-1);
+            width: 200px;
+            height: 200px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: $radius;
+            color: var(--primary);
+            padding: 20px;
+        
+        }
+        .ui-state-default{
+            border: 1px solid var(--border);
+            background: var(--rgba-primary-1);
+            font-weight: normal;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: $radius;
+            color: var(--primary);
+        
+        }
+    }
+}
+#sortable-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Change the number according to your needs */
+    grid-gap: 10px;
+  }
+  
+  .grid-item {
+    background: var(--rgba-primary-1);
+    color: var(--primary);
+    border-radius: $radius;
+    padding: 20px;
+    text-align: center;
+    cursor: grab;
+  }
+
+  @include respond ('phone'){
+    .dz-toolbar{
+        margin-top: 5px;
+    }
+  }

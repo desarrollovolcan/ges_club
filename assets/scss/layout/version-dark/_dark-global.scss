@@ -1,0 +1,68 @@
+[data-theme-version="dark"]{
+    .deznav .metismenu ul:before{
+        background:$d-border;
+    }
+    .deznav .metismenu ul a:before{
+        background-color: $d-border!important;
+    }
+    #revenueMap,
+    #chartBarRunning,
+    #chartBar,
+    #reservationChart,
+    #lineChart,
+    #chart-2{
+        line{
+            stroke:$d-border;
+        }
+    }
+    #chartBarRunning{
+        #SvgjsLine1342{
+            stroke: transparent;
+        }
+      
+    }
+    #chartBar{
+        #SvgjsLine1619{
+            stroke: transparent;
+        }
+    }
+   
+    .companies-media{
+        img{
+            filter: brightness(2.5);
+        }
+    }
+    .light-login{
+        display:inline-block;
+    }
+    .dark-login{
+        display:none;
+    }
+    .btn-link g [fill] {
+        fill: #fff;
+     }
+     .chart{
+        line{
+            stroke: $d-border;
+        }
+        
+     }
+     .chat-tabs .chat-bx:after{
+        background-color: $dark-card;
+     }
+     .jstree-default .jstree-open>.jstree-ocl,
+     .jstree-default .jstree-leaf>.jstree-ocl,
+     .jstree-default .jstree-closed>.jstree-ocl{
+        filter: brightness(5.5);
+     }
+     .ct-grid{
+           stroke: rgba(255, 255, 255, 0.1);
+    }
+    .morris_chart_height text tspan{
+         fill:$white;
+    }
+    .svg-details{
+         fill:$white;
+    }
+	
+}
