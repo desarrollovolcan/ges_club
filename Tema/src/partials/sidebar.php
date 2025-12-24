@@ -26,424 +26,301 @@
 
             <ul id="side-menu">
 
-                <li class="menu-title">Menu</li>
+                <li class="menu-title">Módulos</li>
 
                 <li>
-                    <a href="#sidebarDashboards" data-bs-toggle="collapse">
-                        <i data-feather="home"></i>
-                        <span> Dashboard </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarDashboards">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="/" class="tp-link">CRM</a>
-                            </li>
-                            <li>
-                                <a href="analytics.php" class="tp-link">Analytics</a>
-                            </li>
-                            <li>
-                                <a href="ecommerce.php" class="tp-link">eCommerce</a>
-                            </li>
-                            <li>
-                                <a href="projects.php" class="tp-link">Projects</a>
-                            </li>
-                            <li>
-                                <a href="hrm.php" class="tp-link">HRM</a>
-                            </li>
-                            <li>
-                                <a href="jobs.php" class="tp-link">Jobs</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="menu-title">Pages</li>
-
-                <li>
-                    <a href="#sidebarAuth" data-bs-toggle="collapse">
+                    <a href="#sidebarSocios" data-bs-toggle="collapse">
                         <i data-feather="users"></i>
-                        <span> Authentication </span>
+                        <span>Gestión de Socios y Deportistas</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarAuth">
+                    <div class="collapse" id="sidebarSocios">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="auth-login.php" class="tp-link">Log In</a>
+                                <a href="pages-starter.php" class="tp-link">Registro de socios, jugadores y apoderados</a>
                             </li>
                             <li>
-                                <a href="auth-register.php" class="tp-link">Register</a>
+                                <a href="pages-starter.php" class="tp-link">RUT, datos de contacto y ficha médica</a>
                             </li>
                             <li>
-                                <a href="auth-recoverpw.php" class="tp-link">Recover Password</a>
+                                <a href="pages-starter.php" class="tp-link">Estados: activo, suspendido, moroso, retirado</a>
                             </li>
                             <li>
-                                <a href="auth-lock-screen.php" class="tp-link">Lock Screen</a>
+                                <a href="pages-starter.php" class="tp-link">Categorías (infantil, juvenil, adulto, honorario)</a>
                             </li>
                             <li>
-                                <a href="auth-confirm-mail.php" class="tp-link">Confirm Mail</a>
-                            </li>
-                            <li>
-                                <a href="email-verification.php" class="tp-link">Email Verification</a>
-                            </li>
-                            <li>
-                                <a href="auth-logout.php" class="tp-link">Logout</a>
+                                <a href="pages-starter.php" class="tp-link">Historial de pagos y participación deportiva</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarError" data-bs-toggle="collapse">
-                        <i data-feather="alert-octagon"></i>
-                        <span> Error Pages </span>
+                    <a href="#sidebarDeportiva" data-bs-toggle="collapse">
+                        <i data-feather="activity"></i>
+                        <span>Gestión Deportiva</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarError">
+                    <div class="collapse" id="sidebarDeportiva">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="error-404.php" class="tp-link">Error 404</a>
+                                <a href="pages-starter.php" class="tp-link">Equipos, categorías y ramas deportivas</a>
                             </li>
                             <li>
-                                <a href="error-500.php" class="tp-link">Error 500</a>
+                                <a href="pages-starter.php" class="tp-link">Entrenadores y cuerpo técnico</a>
                             </li>
                             <li>
-                                <a href="error-503.php" class="tp-link">Error 503</a>
+                                <a href="pages-starter.php" class="tp-link">Planificación de entrenamientos</a>
                             </li>
                             <li>
-                                <a href="error-429.php" class="tp-link">Error 429</a>
+                                <a href="pages-starter.php" class="tp-link">Asistencia a entrenamientos y partidos</a>
                             </li>
                             <li>
-                                <a href="offline-page.php" class="tp-link">Offline Page</a>
+                                <a href="pages-starter.php" class="tp-link">Estadísticas deportivas básicas</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarExpages" data-bs-toggle="collapse">
-                        <i data-feather="file-text"></i>
-                        <span> Utility </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarExpages">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href="pages-starter.php" class="tp-link">Starter</a>
-                            </li>
-                            <li>
-                                <a href="pages-profile.php" class="tp-link">Profile</a>
-                            </li>
-                            <li>
-                                <a href="pages-pricing.php" class="tp-link">Pricing</a>
-                            </li>
-                            <li>
-                                <a href="pages-timeline.php" class="tp-link">Timeline</a>
-                            </li>
-                            <li>
-                                <a href="pages-invoice.php" class="tp-link">Invoice</a>
-                            </li>
-                            <li>
-                                <a href="pages-faqs.php" class="tp-link">FAQs</a>
-                            </li>
-                            <li>
-                                <a href="pages-gallery.php" class="tp-link">Gallery</a>
-                            </li>
-                            <li>
-                                <a href="pages-maintenance.php" class="tp-link">Maintenance</a>
-                            </li>
-                            <li>
-                                <a href="pages-coming-soon.php" class="tp-link">Coming Soon</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li class="menu-title mt-2">Apps</li>
-                
-                <li>
-                    <a href="apps-todolist.php" class="tp-link">
-                        <i data-feather="columns"></i>
-                        <span> Todo List </span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="apps-contacts.php" class="tp-link">
-                        <i data-feather="map-pin"></i>
-                        <span> Contacts </span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="apps-calendar.php" class="tp-link">
+                    <a href="#sidebarCompeticiones" data-bs-toggle="collapse">
                         <i data-feather="calendar"></i>
-                        <span> Calendar </span>
-                    </a>
-                </li>
-
-                <li class="menu-title mt-2">General</li>
-                
-                <li>
-                    <a href="#sidebarBaseui" data-bs-toggle="collapse">
-                        <i data-feather="package"></i>
-                        <span> Components </span>
+                        <span>Competiciones y Calendario</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarBaseui">
+                    <div class="collapse" id="sidebarCompeticiones">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="ui-accordions.php" class="tp-link">Accordions</a>
+                                <a href="pages-starter.php" class="tp-link">Torneos internos y externos</a>
                             </li>
                             <li>
-                                <a href="ui-alerts.php" class="tp-link">Alerts</a>
+                                <a href="pages-starter.php" class="tp-link">Programación de partidos</a>
                             </li>
                             <li>
-                                <a href="ui-badges.php" class="tp-link">Badges</a>
+                                <a href="pages-starter.php" class="tp-link">Canchas y horarios</a>
                             </li>
                             <li>
-                                <a href="ui-breadcrumb.php" class="tp-link">Breadcrumb</a>
+                                <a href="pages-starter.php" class="tp-link">Resultados y tablas de posiciones</a>
                             </li>
                             <li>
-                                <a href="ui-buttons.php" class="tp-link">Buttons</a>
-                            </li>
-                            <li>
-                                <a href="ui-cards.php" class="tp-link">Cards</a>
-                            </li>
-                            <li>
-                                <a href="ui-collapse.php" class="tp-link">Collapse</a>
-                            </li>
-                            <li>
-                                <a href="ui-dropdowns.php" class="tp-link">Dropdowns</a>
-                            </li>
-                            <li>
-                                <a href="ui-video.php" class="tp-link">Embed Video</a>
-                            </li>
-                            <li>
-                                <a href="ui-grid.php" class="tp-link">Grid</a>
-                            </li>
-                            <li>
-                                <a href="ui-images.php" class="tp-link">Images</a>
-                            </li>
-                            <li>
-                                <a href="ui-list.php" class="tp-link">List Group</a>
-                            </li>
-                            <li>
-                                <a href="ui-modals.php" class="tp-link">Modals</a>
-                            </li>
-                            <li>
-                                <a href="ui-placeholders.php" class="tp-link">Placeholders</a>
-                            </li>
-                            <li>
-                                <a href="ui-pagination.php" class="tp-link">Pagination</a>
-                            </li>
-                            <li>
-                                <a href="ui-popovers.php" class="tp-link">Popovers</a>
-                            </li>
-                            <li>
-                                <a href="ui-progress.php" class="tp-link">Progress</a>
-                            </li>
-                            <li>
-                                <a href="ui-scrollspy.php" class="tp-link">Scrollspy</a>
-                            </li>
-                            <li>
-                                <a href="ui-spinners.php" class="tp-link">Spinners</a>
-                            </li>
-                            <li>
-                                <a href="ui-tabs.php" class="tp-link">Tabs</a>
-                            </li>
-                            <li>
-                                <a href="ui-tooltips.php" class="tp-link">Tooltips</a>
-                            </li>
-                            <li>
-                                <a href="ui-typography.php" class="tp-link">Typography</a>
+                                <a href="pages-starter.php" class="tp-link">Convocatorias automáticas</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="widgets.php" class="tp-link">
-                        <i data-feather="aperture"></i>
-                        <span> Widgets </span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="#sidebarAdvancedUI" data-bs-toggle="collapse">
-                        <i data-feather="cpu"></i>
-                        <span> Extended UI </span>
+                    <a href="#sidebarFinanzas" data-bs-toggle="collapse">
+                        <i data-feather="credit-card"></i>
+                        <span>Finanzas y Tesorería</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarAdvancedUI">
+                    <div class="collapse" id="sidebarFinanzas">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="extended-carousel.php" class="tp-link">Carousel</a>
+                                <a href="pages-starter.php" class="tp-link">Cuotas sociales y mensualidades</a>
                             </li>
                             <li>
-                                <a href="extended-notifications.php" class="tp-link">Notifications</a>
+                                <a href="pages-starter.php" class="tp-link">Pagos en línea (WebPay, transferencia, efectivo)</a>
                             </li>
                             <li>
-                                <a href="extended-offcanvas.php" class="tp-link">Offcanvas</a>
+                                <a href="pages-starter.php" class="tp-link">Control de morosidad</a>
                             </li>
                             <li>
-                                <a href="extended-range-slider.php" class="tp-link">Range Slider</a>
+                                <a href="pages-starter.php" class="tp-link">Ingresos y egresos</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Presupuestos por rama o categoría</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Reportes financieros</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarIcons" data-bs-toggle="collapse">
-                        <i data-feather="award"></i>
-                        <span> Icons </span>
+                    <a href="#sidebarSii" data-bs-toggle="collapse">
+                        <i data-feather="file-text"></i>
+                        <span>Facturación y Cumplimiento SII</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarIcons">
+                    <div class="collapse" id="sidebarSii">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="icons-feather.php" class="tp-link">Feather Icons</a>
+                                <a href="pages-starter.php" class="tp-link">Emisión de boletas y facturas electrónicas</a>
                             </li>
                             <li>
-                                <a href="icons-mdi.php" class="tp-link">Material Design Icons</a>
+                                <a href="pages-starter.php" class="tp-link">Integración con el SII</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Libros de ventas y compras</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Control tributario del club</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarForms" data-bs-toggle="collapse">
+                    <a href="#sidebarContratos" data-bs-toggle="collapse">
                         <i data-feather="briefcase"></i>
-                        <span> Forms </span>
+                        <span>Contratos y Recursos Humanos</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarForms">
+                    <div class="collapse" id="sidebarContratos">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="forms-elements.php" class="tp-link">General Elements</a>
+                                <a href="pages-starter.php" class="tp-link">Contratos de entrenadores y personal</a>
                             </li>
                             <li>
-                                <a href="forms-validation.php" class="tp-link">Validation</a>
+                                <a href="pages-starter.php" class="tp-link">Honorarios vs contratos laborales</a>
                             </li>
                             <li>
-                                <a href="forms-quilljs.php" class="tp-link">Quilljs Editor</a>
+                                <a href="pages-starter.php" class="tp-link">Pagos y liquidaciones</a>
                             </li>
                             <li>
-                                <a href="forms-pickers.php" class="tp-link">Picker</a>
+                                <a href="pages-starter.php" class="tp-link">Control de vigencia contractual</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Cumplimiento de normativa laboral chilena</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarTables" data-bs-toggle="collapse">
-                        <i data-feather="table"></i>
-                        <span> Tables </span>
+                    <a href="#sidebarComunicaciones" data-bs-toggle="collapse">
+                        <i data-feather="message-square"></i>
+                        <span>Comunicaciones y Notificaciones</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarTables">
+                    <div class="collapse" id="sidebarComunicaciones">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="tables-basic.php" class="tp-link">Basic Tables</a>
+                                <a href="pages-starter.php" class="tp-link">Envío de correos y mensajes (WhatsApp/SMS)</a>
                             </li>
                             <li>
-                                <a href="tables-datatables.php" class="tp-link">Data Tables</a>
+                                <a href="pages-starter.php" class="tp-link">Notificaciones de pagos vencidos</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Avisos de entrenamientos y partidos</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Comunicaciones a apoderados</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
                 <li>
-                    <a href="#sidebarCharts" data-bs-toggle="collapse">
-                        <i data-feather="pie-chart"></i>
-                        <span> Apex Charts </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse" id="sidebarCharts">
-                        <ul class="nav-second-level">
-                            <li>
-                                <a href='charts-area.php' class="tp-link">Area</a>
-                            </li>
-                            <li>
-                                <a href='charts-bar.php' class="tp-link">Bar</a>
-                            </li>
-                            <li>
-                                <a href='charts-boxplot.php' class="tp-link">Boxplot</a>
-                            </li>
-                            <li>
-                                <a href='charts-bubble.php' class="tp-link">Bubble</a>
-                            </li>
-                            <li>
-                                <a href='charts-candlestick.php' class="tp-link">Candlestick</a>
-                            </li>
-                            <li>
-                                <a href='charts-column.php' class="tp-link">Column</a>
-                            </li>
-                            <li>
-                                <a href='charts-funnel.php' class="tp-link">Funnel</a>
-                            </li>
-                            <li>
-                                <a href='charts-heatmap.php' class="tp-link">Heatmap</a>
-                            </li>
-                            <li>
-                                <a href='charts-line.php' class="tp-link">Line</a>
-                            </li>
-                            <li>
-                                <a href='charts-mixed.php' class="tp-link">Mixed</a>
-                            </li>
-                            <li>
-                                <a href='charts-pie.php' class="tp-link">Pie</a>
-                            </li>
-                            <li>
-                                <a href='charts-polararea.php' class="tp-link">Polar</a>
-                            </li>
-                            <li>
-                                <a href='charts-radar.php' class="tp-link">Radar</a>
-                            </li>
-                            <li>
-                                <a href='charts-radialbar.php' class="tp-link">Radialbar</a>
-                            </li>
-                            <li>
-                                <a href='charts-rangearea.php' class="tp-link">Range Area</a>
-                            </li>
-                            <li>
-                                <a href='charts-scatter.php' class="tp-link">Scatter</a>
-                            </li>
-                            <li>
-                                <a href='charts-timeline.php' class="tp-link">Timeline</a>
-                            </li>
-                            <li>
-                                <a href='charts-treemap.php' class="tp-link">Treemap</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-
-                <li>
-                    <a href="#sidebarMaps" data-bs-toggle="collapse">
+                    <a href="#sidebarInfraestructura" data-bs-toggle="collapse">
                         <i data-feather="map"></i>
-                        <span> Maps </span>
+                        <span>Gestión de Infraestructura</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse" id="sidebarMaps">
+                    <div class="collapse" id="sidebarInfraestructura">
                         <ul class="nav-second-level">
                             <li>
-                                <a href="maps-google.php" class="tp-link">Google Maps</a>
+                                <a href="pages-starter.php" class="tp-link">Canchas y recintos</a>
                             </li>
                             <li>
-                                <a href="maps-vector.php" class="tp-link">Vector Maps</a>
+                                <a href="pages-starter.php" class="tp-link">Horarios y reservas</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Mantenimiento</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Control de uso por categoría</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li>
+                    <a href="#sidebarDocumentos" data-bs-toggle="collapse">
+                        <i data-feather="folder"></i>
+                        <span>Documentos y Cumplimiento Legal</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarDocumentos">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Estatutos del club</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Certificados médicos</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Autorizaciones de apoderados</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Documentación exigida por asociaciones o federaciones</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Cumplimiento Ley 19.628 (protección de datos personales)</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li>
+                    <a href="#sidebarReportes" data-bs-toggle="collapse">
+                        <i data-feather="bar-chart-2"></i>
+                        <span>Reportes y Estadísticas</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarReportes">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Reportes financieros</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Asistencia y participación</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Morosidad</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Rendimiento deportivo</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Indicadores de gestión del club</a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li>
+                    <a href="#sidebarSeguridad" data-bs-toggle="collapse">
+                        <i data-feather="shield"></i>
+                        <span>Seguridad y Control de Accesos</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse" id="sidebarSeguridad">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Roles (administrador, tesorero, entrenador, socio)</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Permisos por módulo</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Registro de actividad</a>
+                            </li>
+                            <li>
+                                <a href="pages-starter.php" class="tp-link">Respaldo de información</a>
                             </li>
                         </ul>
                     </div>
                 </li>
 
             </ul>
-            
         </div>
         <!-- End Sidebar -->
 
         <div class="clearfix"></div>
-
     </div>
 </div>
 <!-- Left Sidebar End -->
