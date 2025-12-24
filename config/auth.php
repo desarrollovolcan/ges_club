@@ -1,9 +1,6 @@
 <?php
 
-function gesclub_users_path(): string
-{
-	return __DIR__ . '/../data/users.json';
-}
+require_once __DIR__ . '/db.php';
 
 function gesclub_default_users(): array
 {
@@ -13,45 +10,70 @@ function gesclub_default_users(): array
 			'password_hash' => password_hash('Gesclub2026', PASSWORD_DEFAULT),
 			'status' => 'approved',
 			'role' => 'super_root',
-			'created_at' => date('c'),
+			'created_at' => date('Y-m-d H:i:s'),
 		],
 	];
 }
 
 function gesclub_load_users(): array
 {
-	$path = gesclub_users_path();
-	if (!file_exists($path)) {
-		$default = gesclub_default_users();
-		file_put_contents($path, json_encode($default, JSON_PRETTY_PRINT));
-		return $default;
+	$db = gesclub_db();
+	$stmt = $db->query('SELECT username, password_hash, status, role, created_at FROM users ORDER BY id');
+	$users = $stmt->fetchAll();
+
+	if ($users === [] || $users === false) {
+		$defaults = gesclub_default_users();
+		$insert = $db->prepare('INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)');
+		foreach ($defaults as $user) {
+			$insert->execute([
+				':username' => $user['username'],
+				':password_hash' => $user['password_hash'],
+				':status' => $user['status'],
+				':role' => $user['role'],
+				':created_at' => $user['created_at'],
+			]);
+		}
+		return $defaults;
 	}
 
-	$contents = file_get_contents($path);
-	$data = json_decode($contents, true);
-	if (!is_array($data)) {
-		$data = gesclub_default_users();
-		file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT));
-	}
-
-	return $data;
+	return $users;
 }
 
 function gesclub_save_users(array $users): void
 {
-	file_put_contents(gesclub_users_path(), json_encode($users, JSON_PRETTY_PRINT));
+	$db = gesclub_db();
+	$upsert = $db->prepare(
+		'INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)
+		ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), status = VALUES(status), role = VALUES(role), created_at = VALUES(created_at)'
+	);
+
+	foreach ($users as $user) {
+		$username = trim((string)($user['username'] ?? ''));
+		if ($username === '') {
+			continue;
+		}
+		$params = [
+			':username' => $username,
+			':password_hash' => (string)($user['password_hash'] ?? ''),
+			':status' => (string)($user['status'] ?? 'pending'),
+			':role' => (string)($user['role'] ?? 'user'),
+			':created_at' => (string)($user['created_at'] ?? date('Y-m-d H:i:s')),
+		];
+		$upsert->execute($params);
+	}
 }
 
 function gesclub_find_user(string $username): ?array
 {
-	$needle = mb_strtolower(trim($username));
-	foreach (gesclub_load_users() as $user) {
-		if (!empty($user['username']) && mb_strtolower($user['username']) === $needle) {
-			return $user;
-		}
+	$db = gesclub_db();
+	$stmt = $db->prepare('SELECT username, password_hash, status, role, created_at FROM users WHERE LOWER(username) = LOWER(:username) LIMIT 1');
+	$stmt->execute([':username' => trim($username)]);
+	$user = $stmt->fetch();
+	if (!$user) {
+		return null;
 	}
 
-	return null;
+	return $user;
 }
 
 function gesclub_register_user(string $username, string $password): array
@@ -61,21 +83,19 @@ function gesclub_register_user(string $username, string $password): array
 		return ['ok' => false, 'message' => 'Completa usuario y contraseña.'];
 	}
 
-	$users = gesclub_load_users();
-	foreach ($users as $user) {
-		if (!empty($user['username']) && mb_strtolower($user['username']) === mb_strtolower($username)) {
-			return ['ok' => false, 'message' => 'El usuario ya existe.'];
-		}
+	if (gesclub_find_user($username)) {
+		return ['ok' => false, 'message' => 'El usuario ya existe.'];
 	}
 
-	$users[] = [
-		'username' => $username,
-		'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-		'status' => 'pending',
-		'role' => 'user',
-		'created_at' => date('c'),
-	];
-	gesclub_save_users($users);
+	$db = gesclub_db();
+	$stmt = $db->prepare('INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)');
+	$stmt->execute([
+		':username' => $username,
+		':password_hash' => password_hash($password, PASSWORD_DEFAULT),
+		':status' => 'pending',
+		':role' => 'user',
+		':created_at' => date('Y-m-d H:i:s'),
+	]);
 
 	return ['ok' => true, 'message' => 'Registro recibido. Tu cuenta queda pendiente de aprobación.'];
 }
