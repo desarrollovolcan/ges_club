@@ -4,7 +4,7 @@
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="fa fa-user-cog"></i>
-							<span class="nav-text">Gestión de Usuarios y Roles</span>
+							<span class="nav-text">Usuarios y roles</span>
 						</a>
 						<ul aria-expanded="false" class="left">
 							<li><a class="dz-active" href="admin-users.php"><i class="ti-id-badge me-2"></i>Administración Usuarios</a></li>
