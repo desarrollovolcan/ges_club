@@ -33,9 +33,22 @@ function gesclub_load_locations(): array
 	return $data;
 }
 
-function gesclub_save_locations(array $locations): void
+function gesclub_save_locations(array $locations): bool
 {
-	file_put_contents(gesclub_locations_path(), json_encode($locations, JSON_PRETTY_PRINT));
+	$path = gesclub_locations_path();
+	$dir = dirname($path);
+	if (!is_dir($dir)) {
+		if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
+			return false;
+		}
+	}
+
+	$payload = json_encode($locations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	if ($payload === false) {
+		return false;
+	}
+
+	return file_put_contents($path, $payload) !== false;
 }
 
 function gesclub_next_location_id(array $items): int

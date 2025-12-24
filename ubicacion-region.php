@@ -8,6 +8,7 @@
 	 $historial = $locations['historial'] ?? [];
 	 $usuarioActual = gesclub_current_username();
 	 $message = $_GET['msg'] ?? '';
+	 $messageType = $_GET['msg_type'] ?? 'success';
 	 $paisesById = [];
 	 foreach ($paises as $pais) {
 	 	if (isset($pais['id'])) {
@@ -73,8 +74,12 @@
 	 	}
 
 	 	$locations['regiones'] = $regiones;
-	 	gesclub_save_locations($locations);
-	 	header('Location: ubicacion-region.php?msg=' . urlencode($message));
+	 	$saved = gesclub_save_locations($locations);
+	 	if (!$saved) {
+	 		$message = 'No se pudo guardar la informacion.';
+	 		$messageType = 'error';
+	 	}
+	 	header('Location: ubicacion-region.php?msg=' . urlencode($message) . '&msg_type=' . urlencode($messageType));
 	 	exit;
 	 }
 
@@ -119,7 +124,7 @@
 					</div>
 				</div>
 				<?php if (!empty($message)) { ?>
-					<div class="alert alert-success" role="alert">
+					<div class="alert alert-<?php echo $messageType === 'error' ? 'danger' : 'success'; ?>" role="alert">
 						<?php echo $message; ?>
 					</div>
 				<?php } ?>
