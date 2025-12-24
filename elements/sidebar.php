@@ -23,7 +23,6 @@
 							<li><a class="dz-active" href="ubicacion-pais.php">Pais</a></li>
 							<li><a class="dz-active" href="ubicacion-region.php">Region</a></li>
 							<li><a class="dz-active" href="ubicacion-comuna.php">Comuna</a></li>
-							<li><a class="dz-active" href="ubicacion-ciudad.php">Ciudad</a></li>
 						</ul>
 					</li>
 				</ul>
