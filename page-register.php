@@ -1,5 +1,24 @@
-<?php 
+<?php
 	 require_once __DIR__ . '/config/dz.php';
+
+	 $registerMessage = '';
+	 $registerError = '';
+	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	 	$username = trim($_POST['username'] ?? '');
+	 	$password = trim($_POST['password'] ?? '');
+	 	$result = gesclub_register_user($username, $password);
+
+	 	if (!empty($result['ok'])) {
+	 		$registerMessage = $result['message'];
+	 	} else {
+	 		$registerError = $result['message'] ?? 'No se pudo registrar.';
+	 	}
+	 }
+
+	 if (gesclub_is_authenticated()) {
+	 	header('Location: index.php');
+	 	exit;
+	 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,20 +55,26 @@
 									<a href="index.php"><img src="assets/images/logo-full.png" class="dark-login"  alt=""></a>
 									<a href="index.php"><img src="assets/images/logo-full-white.png" class="light-login" alt=""></a>
 								</div>
-								<h4 class="text-center mb-4">Sign up your account</h4>
-                                    <form action="index.php">
+								<h4 class="text-center mb-4">Crear cuenta</h4>
+								<?php if (!empty($registerMessage)) { ?>
+									<div class="alert alert-success" role="alert">
+										<?php echo $registerMessage; ?>
+									</div>
+								<?php } ?>
+								<?php if (!empty($registerError)) { ?>
+									<div class="alert alert-danger" role="alert">
+										<?php echo $registerError; ?>
+									</div>
+								<?php } ?>
+                                    <form action="page-register.php" method="post">
                                         <div class="mb-3">
-                                            <label class="mb-1 form-label">Username</label>
-                                            <input type="text" class="form-control" placeholder="username">
+                                            <label class="mb-1 form-label">Usuario</label>
+                                            <input type="text" name="username" class="form-control" placeholder="Usuario" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="mb-1 form-label">Email</label>
-                                            <input type="email" class="form-control" placeholder="hello@example.com">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label class="mb-1 form-label">Password</label>
+                                            <label class="mb-1 form-label">Contraseña</label>
                                             <div class="position-relative">
-                                                <input type="password" id="dz-password" class="form-control" value="Password">
+                                                <input type="password" id="dz-password" name="password" class="form-control" required>
                                                 <span class="show-pass eye">
                                                     <i class="fa fa-eye-slash"></i>
                                                     <i class="fa fa-eye"></i>
@@ -57,7 +82,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center mt-4">
-                                            <button type="submit" class="btn btn-primary btn-block">Sign me up</button>
+                                            <button type="submit" class="btn btn-primary btn-block">Registrarme</button>
                                         </div>
                                     </form>
                                     <div class="new-account mt-3">
