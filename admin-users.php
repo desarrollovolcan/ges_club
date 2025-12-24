@@ -1,5 +1,6 @@
 <?php
 	 require_once __DIR__ . '/config/dz.php';
+	 require_once __DIR__ . '/config/auth.php';
 	 require_once __DIR__ . '/config/users.php';
 
 	 if (!gesclub_is_admin()) {
@@ -16,8 +17,21 @@
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	 	$action = trim($_POST['action'] ?? '');
 	 	$userId = (int)($_POST['id'] ?? 0);
+		$existingUser = $userId > 0 ? gesclub_load_user_profile($userId) : null;
 
-	 	if ($action === 'save') {
+		if ($action === 'save') {
+			if (!empty($_FILES['foto']['name'])) {
+				$uploadDir = __DIR__ . '/uploads/usuarios';
+				if (!is_dir($uploadDir)) {
+					mkdir($uploadDir, 0775, true);
+				}
+				$basename = basename($_FILES['foto']['name']);
+				$destino = $uploadDir . '/' . time() . '-' . $basename;
+				if (move_uploaded_file($_FILES['foto']['tmp_name'], $destino)) {
+					$_POST['foto'] = 'uploads/usuarios/' . basename($destino);
+				}
+			}
+
 	 		$payload = [
 	 			'id' => $userId,
 	 			'username' => $_POST['username'] ?? '',
@@ -46,6 +60,7 @@
 	 			'consentimiento_fecha' => $_POST['consentimiento_fecha'] ?? '',
 	 			'consentimiento_medio' => $_POST['consentimiento_medio'] ?? '',
 	 			'usuario_creador' => $_POST['usuario_creador'] ?? $usuarioActual,
+				'foto' => $_POST['foto'] ?? ($existingUser['foto'] ?? null),
 	 			'estado_civil' => $_POST['estado_civil'] ?? null,
 	 			'prevision_salud' => $_POST['prevision_salud'] ?? null,
 	 			'contacto_emergencia_nombre' => $_POST['contacto_emergencia_nombre'] ?? null,
@@ -179,7 +194,7 @@
 				<div class="card mb-4">
 					<div class="card-body">
 						<h5 class="mb-3">Formulario de usuarios</h5>
-						<form method="post">
+						<form method="post" enctype="multipart/form-data">
 							<input type="hidden" name="action" value="save">
 							<input type="hidden" name="id" value="<?php echo (int)($editUser['id'] ?? 0); ?>">
 							<div class="row">
@@ -194,6 +209,10 @@
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Contraseña <?php echo !empty($editUser) ? '(dejar en blanco para mantener)' : ''; ?></label>
 									<input type="password" name="password" class="form-control" <?php echo empty($editUser) ? 'required' : ''; ?>>
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Foto de perfil</label>
+									<input type="file" name="foto" class="form-control">
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Estado</label>
