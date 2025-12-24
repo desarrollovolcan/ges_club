@@ -4,6 +4,13 @@
 
 	 $locations = gesclub_load_locations();
 	 $regiones = $locations['regiones'] ?? [];
+	 $paises = $locations['paises'] ?? [];
+	 $paisesById = [];
+	 foreach ($paises as $pais) {
+	 	if (isset($pais['id'])) {
+	 		$paisesById[$pais['id']] = $pais;
+	 	}
+	 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,12 +46,27 @@
 								<h5 class="mb-3">Nueva Region</h5>
 								<form>
 									<div class="mb-3">
+										<label class="form-label">Pais</label>
+										<select class="form-control">
+											<?php foreach ($paises as $pais) { ?>
+												<option><?php echo htmlspecialchars($pais['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></option>
+											<?php } ?>
+										</select>
+									</div>
+									<div class="mb-3">
 										<label class="form-label">Codigo</label>
 										<input type="text" class="form-control" placeholder="RM">
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Nombre</label>
 										<input type="text" class="form-control" placeholder="Región Metropolitana de Santiago">
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Estado</label>
+										<select class="form-control">
+											<option>activo</option>
+											<option>deshabilitado</option>
+										</select>
 									</div>
 									<button type="button" class="btn btn-primary">Guardar</button>
 								</form>
@@ -59,15 +81,28 @@
 									<table class="table">
 										<thead>
 											<tr>
+												<th>Pais</th>
 												<th>Codigo</th>
 												<th>Nombre</th>
+												<th>Estado</th>
+												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tbody>
 											<?php foreach ($regiones as $region) { ?>
+												<?php $pais = $paisesById[$region['pais_id'] ?? null] ?? null; ?>
 												<tr>
+													<td><?php echo htmlspecialchars($pais['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($region['codigo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($region['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($region['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td>
+														<div class="d-flex gap-2">
+															<button type="button" class="btn btn-warning btn-sm">Editar</button>
+															<button type="button" class="btn btn-secondary btn-sm">Deshabilitar</button>
+															<button type="button" class="btn btn-danger btn-sm">Borrar</button>
+														</div>
+													</td>
 												</tr>
 											<?php } ?>
 										</tbody>

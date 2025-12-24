@@ -4,6 +4,13 @@
 
 	 $locations = gesclub_load_locations();
 	 $comunas = $locations['comunas'] ?? [];
+	 $regiones = $locations['regiones'] ?? [];
+	 $regionesById = [];
+	 foreach ($regiones as $region) {
+	 	if (isset($region['id'])) {
+	 		$regionesById[$region['id']] = $region;
+	 	}
+	 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +51,18 @@
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Region</label>
-										<input type="text" class="form-control" placeholder="Región Metropolitana de Santiago">
+										<select class="form-control">
+											<?php foreach ($regiones as $region) { ?>
+												<option><?php echo htmlspecialchars($region['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></option>
+											<?php } ?>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Estado</label>
+										<select class="form-control">
+											<option>activo</option>
+											<option>deshabilitado</option>
+										</select>
 									</div>
 									<button type="button" class="btn btn-primary">Guardar</button>
 								</form>
@@ -61,13 +79,24 @@
 											<tr>
 												<th>Comuna</th>
 												<th>Region</th>
+												<th>Estado</th>
+												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tbody>
 											<?php foreach ($comunas as $comuna) { ?>
+												<?php $region = $regionesById[$comuna['region_id'] ?? null] ?? null; ?>
 												<tr>
 													<td><?php echo htmlspecialchars($comuna['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($comuna['region'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($region['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($comuna['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td>
+														<div class="d-flex gap-2">
+															<button type="button" class="btn btn-warning btn-sm">Editar</button>
+															<button type="button" class="btn btn-secondary btn-sm">Deshabilitar</button>
+															<button type="button" class="btn btn-danger btn-sm">Borrar</button>
+														</div>
+													</td>
 												</tr>
 											<?php } ?>
 										</tbody>

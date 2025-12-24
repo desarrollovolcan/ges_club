@@ -4,6 +4,13 @@
 
 	 $locations = gesclub_load_locations();
 	 $ciudades = $locations['ciudades'] ?? [];
+	 $comunas = $locations['comunas'] ?? [];
+	 $comunasById = [];
+	 foreach ($comunas as $comuna) {
+	 	if (isset($comuna['id'])) {
+	 		$comunasById[$comuna['id']] = $comuna;
+	 	}
+	 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -43,8 +50,19 @@
 										<input type="text" class="form-control" placeholder="Santiago">
 									</div>
 									<div class="mb-3">
-										<label class="form-label">Region</label>
-										<input type="text" class="form-control" placeholder="Región Metropolitana de Santiago">
+										<label class="form-label">Comuna</label>
+										<select class="form-control">
+											<?php foreach ($comunas as $comuna) { ?>
+												<option><?php echo htmlspecialchars($comuna['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></option>
+											<?php } ?>
+										</select>
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Estado</label>
+										<select class="form-control">
+											<option>activo</option>
+											<option>deshabilitado</option>
+										</select>
 									</div>
 									<button type="button" class="btn btn-primary">Guardar</button>
 								</form>
@@ -60,14 +78,25 @@
 										<thead>
 											<tr>
 												<th>Ciudad</th>
-												<th>Region</th>
+												<th>Comuna</th>
+												<th>Estado</th>
+												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tbody>
 											<?php foreach ($ciudades as $ciudad) { ?>
+												<?php $comuna = $comunasById[$ciudad['comuna_id'] ?? null] ?? null; ?>
 												<tr>
 													<td><?php echo htmlspecialchars($ciudad['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($ciudad['region'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($comuna['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($ciudad['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td>
+														<div class="d-flex gap-2">
+															<button type="button" class="btn btn-warning btn-sm">Editar</button>
+															<button type="button" class="btn btn-secondary btn-sm">Deshabilitar</button>
+															<button type="button" class="btn btn-danger btn-sm">Borrar</button>
+														</div>
+													</td>
 												</tr>
 											<?php } ?>
 										</tbody>

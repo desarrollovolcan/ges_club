@@ -46,6 +46,13 @@
 										<label class="form-label">Nombre</label>
 										<input type="text" class="form-control" placeholder="Chile">
 									</div>
+									<div class="mb-3">
+										<label class="form-label">Estado</label>
+										<select class="form-control">
+											<option>activo</option>
+											<option>deshabilitado</option>
+										</select>
+									</div>
 									<button type="button" class="btn btn-primary">Guardar</button>
 								</form>
 							</div>
@@ -61,6 +68,8 @@
 											<tr>
 												<th>Codigo</th>
 												<th>Nombre</th>
+												<th>Estado</th>
+												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -68,6 +77,14 @@
 												<tr>
 													<td><?php echo htmlspecialchars($pais['codigo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($pais['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($pais['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td>
+														<div class="d-flex gap-2">
+															<button type="button" class="btn btn-warning btn-sm">Editar</button>
+															<button type="button" class="btn btn-secondary btn-sm">Deshabilitar</button>
+															<button type="button" class="btn btn-danger btn-sm">Borrar</button>
+														</div>
+													</td>
 												</tr>
 											<?php } ?>
 										</tbody>
