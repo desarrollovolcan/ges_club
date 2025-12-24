@@ -116,7 +116,8 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$apellidoPaterno = trim((string)($payload['apellido_paterno'] ?? ''));
 	$apellidoMaterno = trim((string)($payload['apellido_materno'] ?? ''));
 	$foto = trim((string)($payload['foto'] ?? ''));
-	$fechaNacimiento = (string)($payload['fecha_nacimiento'] ?? '');
+	$fechaNacimientoRaw = trim((string)($payload['fecha_nacimiento'] ?? ''));
+	$fechaNacimiento = gesclub_normalize_date($fechaNacimientoRaw);
 	$sexo = trim((string)($payload['sexo'] ?? ''));
 	$nacionalidad = trim((string)($payload['nacionalidad'] ?? 'Chilena'));
 	$telefonoMovil = trim((string)($payload['telefono_movil'] ?? ''));
@@ -125,9 +126,10 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$direccionNumero = trim((string)($payload['direccion_numero'] ?? ''));
 	$comuna = trim((string)($payload['comuna'] ?? ''));
 	$region = trim((string)($payload['region'] ?? ''));
-	$consentimientoFecha = (string)($payload['consentimiento_fecha'] ?? '');
-	$consentimientoFecha = str_replace('T', ' ', $consentimientoFecha);
-	$fechaIncorporacion = (string)($payload['fecha_incorporacion'] ?? '');
+	$consentimientoFechaRaw = trim((string)($payload['consentimiento_fecha'] ?? ''));
+	$consentimientoFecha = gesclub_normalize_datetime($consentimientoFechaRaw);
+	$fechaIncorporacionRaw = trim((string)($payload['fecha_incorporacion'] ?? ''));
+	$fechaIncorporacion = gesclub_normalize_date($fechaIncorporacionRaw);
 	$consentimientoMedio = trim((string)($payload['consentimiento_medio'] ?? ''));
 	$numeroSocio = trim((string)($payload['numero_socio'] ?? ''));
 	$tipoSocio = trim((string)($payload['tipo_socio'] ?? ''));
@@ -144,6 +146,10 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$autorizacionApoderado = trim((string)($payload['autorizacion_apoderado'] ?? ''));
 
 	$errors = [];
+	$allowedStatuses = ['activo', 'inactivo', 'bloqueado'];
+	if (!in_array($accountStatus, $allowedStatuses, true)) {
+		$accountStatus = 'activo';
+	}
 	$requiredFields = [
 		'username' => $username,
 		'email' => $email,
@@ -152,20 +158,29 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 		'nombres' => $nombres,
 		'apellido_paterno' => $apellidoPaterno,
 		'apellido_materno' => $apellidoMaterno,
-		'fecha_nacimiento' => $fechaNacimiento,
+		'fecha_nacimiento' => $fechaNacimiento ?? '',
 		'sexo' => $sexo,
 		'telefono_movil' => $telefonoMovil,
 		'direccion_calle' => $direccionCalle,
 		'direccion_numero' => $direccionNumero,
 		'comuna' => $comuna,
 		'region' => $region,
-		'consentimiento_fecha' => $consentimientoFecha,
+		'consentimiento_fecha' => $consentimientoFecha ?? '',
 		'consentimiento_medio' => $consentimientoMedio,
 	];
 	foreach ($requiredFields as $field => $value) {
 		if ($value === '') {
 			$errors[$field] = 'Este campo es obligatorio.';
 		}
+	}
+	if ($fechaNacimientoRaw !== '' && $fechaNacimiento === null) {
+		$errors['fecha_nacimiento'] = 'La fecha de nacimiento no es válida.';
+	}
+	if ($consentimientoFechaRaw !== '' && $consentimientoFecha === null) {
+		$errors['consentimiento_fecha'] = 'La fecha de consentimiento no es válida.';
+	}
+	if ($fechaIncorporacionRaw !== '' && $fechaIncorporacion === null) {
+		$errors['fecha_incorporacion'] = 'La fecha de incorporación no es válida.';
 	}
 	if ($runNumero !== '' && $runDv !== '' && !gesclub_validate_rut($runNumero, $runDv)) {
 		$errors['run_numero'] = 'El RUT no es válido.';
@@ -358,8 +373,37 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 		if ($db->inTransaction()) {
 			$db->rollBack();
 		}
+		error_log('gesclub_save_user_profile: ' . $e->getMessage());
 		return ['ok' => false, 'message' => 'No se pudo guardar la información.', 'errors' => []];
 	}
+}
+
+function gesclub_normalize_date(string $value): ?string
+{
+	if ($value === '') {
+		return null;
+	}
+	$dt = DateTime::createFromFormat('Y-m-d', $value);
+	if ($dt === false || $dt->format('Y-m-d') !== $value) {
+		return null;
+	}
+	return $dt->format('Y-m-d');
+}
+
+function gesclub_normalize_datetime(string $value): ?string
+{
+	if ($value === '') {
+		return null;
+	}
+	$clean = str_replace('T', ' ', $value);
+	$formats = ['Y-m-d H:i:s', 'Y-m-d H:i'];
+	foreach ($formats as $format) {
+		$dt = DateTime::createFromFormat($format, $clean);
+		if ($dt !== false && $dt->format($format) === $clean) {
+			return $dt->format('Y-m-d H:i:s');
+		}
+	}
+	return null;
 }
 
 function gesclub_delete_user(int $userId, string $actor): bool
