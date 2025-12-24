@@ -29,6 +29,16 @@ class Router
 
     private function normalize(string $path): string
     {
+        $path = trim($path);
+
+        if ($path === '' || $path === '/') {
+            return '/';
+        }
+
+        if (strpos($path, '/index.php') === 0) {
+            $path = substr($path, strlen('/index.php'));
+        }
+
         $trimmed = trim($path, '/');
 
         return $trimmed === '' ? '/' : '/' . $trimmed;
