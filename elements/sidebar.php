@@ -105,6 +105,14 @@
 
 						</ul>
 					</li>
+					<?php if (function_exists('gesclub_is_admin') && gesclub_is_admin()) { ?>
+						<li>
+							<a href="admin-users.php" class="ai-icon" aria-expanded="false">
+								<i class="flaticon-user-1"></i>
+								<span class="nav-text">Administración Usuarios</span>
+							</a>
+						</li>
+					<?php } ?>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-bag"></i>
