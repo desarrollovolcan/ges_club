@@ -10,7 +10,8 @@
 	$message = $_GET['msg'] ?? '';
 	$messageType = $_GET['msg_type'] ?? 'success';
 
-	$colaboradores = $db->query('SELECT * FROM colaboradores ORDER BY id DESC')->fetchAll() ?: [];
+	$colaboradores = $db->query('SELECT co.*, c.nombre_oficial AS club_nombre FROM colaboradores co LEFT JOIN clubes c ON c.id = co.club_id ORDER BY co.id DESC')->fetchAll() ?: [];
+	$clubes = $db->query('SELECT id, nombre_oficial FROM clubes ORDER BY nombre_oficial')->fetchAll() ?: [];
 
 	$editId = (int)($_GET['edit'] ?? 0);
 	$editColaborador = null;
@@ -25,6 +26,7 @@
 		if ($action === 'save') {
 			$id = (int)($_POST['id'] ?? 0);
 			$isUpdate = $id > 0;
+			$clubId = (int)($_POST['club_id'] ?? 0);
 			$tipo = trim($_POST['tipo'] ?? '');
 			$runNumero = trim($_POST['run_numero'] ?? '');
 			$runDv = trim($_POST['run_dv'] ?? '');
@@ -50,6 +52,11 @@
 				}
 			}
 
+			if ($messageType !== 'error' && $clubId <= 0) {
+				$message = 'Selecciona el club del colaborador.';
+				$messageType = 'error';
+			}
+
 			if ($messageType !== 'error' && !gesclub_validate_rut($runNumero, $runDv)) {
 				$message = 'El RUN del colaborador no es válido.';
 				$messageType = 'error';
@@ -63,13 +70,14 @@
 			if ($messageType !== 'error') {
 				if ($isUpdate) {
 					$stmt = $db->prepare(
-						'UPDATE colaboradores SET tipo = :tipo, run_numero = :run_numero, run_dv = :run_dv, nombres = :nombres,
+						'UPDATE colaboradores SET club_id = :club_id, tipo = :tipo, run_numero = :run_numero, run_dv = :run_dv, nombres = :nombres,
 						apellidos = :apellidos, email = :email, telefono = :telefono, direccion_region = :region, direccion_comuna = :comuna,
 						funcion = :funcion, area = :area, fecha_inicio = :fecha_inicio, jornada = :jornada, estado = :estado, permisos = :permisos
 						WHERE id = :id'
 					);
 					$stmt->execute([
 						':id' => $id,
+						':club_id' => $clubId,
 						':tipo' => $tipo,
 						':run_numero' => $runNumero,
 						':run_dv' => $runDv,
@@ -90,12 +98,13 @@
 					$message = 'Colaborador actualizado.';
 				} else {
 					$stmt = $db->prepare(
-						'INSERT INTO colaboradores (tipo, run_numero, run_dv, nombres, apellidos, email, telefono, direccion_region, direccion_comuna,
+						'INSERT INTO colaboradores (club_id, tipo, run_numero, run_dv, nombres, apellidos, email, telefono, direccion_region, direccion_comuna,
 						funcion, area, fecha_inicio, jornada, estado, permisos, created_at)
-						VALUES (:tipo, :run_numero, :run_dv, :nombres, :apellidos, :email, :telefono, :region, :comuna, :funcion, :area,
+						VALUES (:club_id, :tipo, :run_numero, :run_dv, :nombres, :apellidos, :email, :telefono, :region, :comuna, :funcion, :area,
 						:fecha_inicio, :jornada, :estado, :permisos, :created_at)'
 					);
 					$stmt->execute([
+						':club_id' => $clubId,
 						':tipo' => $tipo,
 						':run_numero' => $runNumero,
 						':run_dv' => $runDv,
@@ -215,6 +224,17 @@
 									<input type="hidden" name="action" value="save">
 									<input type="hidden" name="id" value="<?php echo htmlspecialchars($editColaborador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
 									<div class="mb-3">
+										<label class="form-label">Club</label>
+										<select class="form-control" name="club_id" required>
+											<option value="">Selecciona</option>
+											<?php foreach ($clubes as $club) { ?>
+												<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editColaborador['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
+													<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+												</option>
+											<?php } ?>
+										</select>
+									</div>
+									<div class="mb-3">
 										<label class="form-label">Tipo</label>
 										<select class="form-control" name="tipo" required>
 											<?php $tipoColaborador = $editColaborador['tipo'] ?? ''; ?>
@@ -231,9 +251,9 @@
 									<h6>Identificación y contacto</h6>
 									<div class="row">
 										<div class="col-lg-8 mb-3">
-											<label class="form-label">RUN</label>
-											<input type="text" class="form-control" name="run_numero" value="<?php echo htmlspecialchars($editColaborador['run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
+										<label class="form-label">RUN</label>
+										<input type="text" class="form-control" name="run_numero" inputmode="numeric" value="<?php echo htmlspecialchars($editColaborador['run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+									</div>
 										<div class="col-lg-4 mb-3">
 											<label class="form-label">DV</label>
 											<input type="text" class="form-control" name="run_dv" value="<?php echo htmlspecialchars($editColaborador['run_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -251,9 +271,9 @@
 											<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editColaborador['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 										</div>
 										<div class="col-lg-6 mb-3">
-											<label class="form-label">Teléfono</label>
-											<input type="text" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editColaborador['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
+										<label class="form-label">Teléfono</label>
+										<input type="tel" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editColaborador['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+									</div>
 										<div class="col-lg-6 mb-3">
 											<label class="form-label">Región</label>
 											<input type="text" class="form-control" name="direccion_region" value="<?php echo htmlspecialchars($editColaborador['direccion_region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -311,6 +331,7 @@
 											<tr>
 												<th>Nombre</th>
 												<th>Tipo</th>
+												<th>Club</th>
 												<th>Función</th>
 												<th>Estado</th>
 												<th>Acciones</th>
@@ -321,6 +342,7 @@
 												<tr>
 													<td><?php echo htmlspecialchars($colaborador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($colaborador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($colaborador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<td><?php echo htmlspecialchars($colaborador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($colaborador['funcion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td><?php echo htmlspecialchars($colaborador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
 													<td>
