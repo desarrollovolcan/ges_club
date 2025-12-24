@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   nombres VARCHAR(150) NOT NULL,
   apellido_paterno VARCHAR(100) NOT NULL,
   apellido_materno VARCHAR(100) NOT NULL,
-  foto VARCHAR(255) NULL,
   fecha_nacimiento DATE NOT NULL,
   sexo VARCHAR(30) NOT NULL,
   nacionalidad VARCHAR(80) NOT NULL DEFAULT 'Chilena',

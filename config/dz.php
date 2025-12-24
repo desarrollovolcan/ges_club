@@ -7,15 +7,10 @@ if (session_status() === PHP_SESSION_NONE) {
 $CurrentPage = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
 
 require_once __DIR__ . '/auth.php';
-require_once __DIR__ . '/permissions.php';
 
 $publicPages = ['page-login', 'page-register', 'logout'];
 if (!in_array($CurrentPage, $publicPages, true)) {
 	gesclub_require_login();
-	$permission = gesclub_permission_for_page($CurrentPage);
-	if ($permission) {
-		gesclub_require_permission($permission, 'view');
-	}
 }
 
 $DexignZoneSettings = [

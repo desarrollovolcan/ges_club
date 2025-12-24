@@ -185,7 +185,7 @@
 
 									</div>
 									<div class="ms-auto">
-										<a href="app-profile.php"><i
+										<a href="edit-profile.php"><i
 												class="flaticon-editing text-primary fs-18"></i></a>
 									</div>
 								</div>
@@ -194,7 +194,7 @@
 										<i class="flaticon-bar-chart fs-18"></i>
 										<span class="ms-2">Panel general</span>
 									</a>
-									<a href="app-profile.php" class="dropdown-item ai-icon ">
+									<a href="edit-profile.php" class="dropdown-item ai-icon ">
 										<i class="flaticon-user fs-18"></i>
 										<span class="ms-2">Mi perfil</span>
 									</a>

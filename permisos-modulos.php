@@ -2,7 +2,6 @@
 	$crudConfig = [
 		'title' => 'Permisos por módulo',
 		'description' => 'Define permisos disponibles para cada módulo del sistema.',
-		'permission' => 'permisos-modulos',
 		'table' => 'permisos_modulo',
 		'fields' => [
 			['name' => 'nombre', 'label' => 'Nombre', 'type' => 'text', 'required' => true],

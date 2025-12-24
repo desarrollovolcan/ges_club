@@ -15,7 +15,6 @@
 	$listFields = $crudConfig['list'] ?? [];
 	$listQuery = $crudConfig['listQuery'] ?? null;
 	$clubAware = $crudConfig['clubAware'] ?? false;
-	$permission = $crudConfig['permission'] ?? null;
 
 	$message = $_GET['msg'] ?? '';
 	$messageType = $_GET['msg_type'] ?? 'success';
@@ -44,10 +43,6 @@
 		}
 	}
 
-	if ($permission) {
-		gesclub_require_permission($permission, 'view');
-	}
-
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'] ?? '';
 		$returnClubId = (int)($_POST['return_club_id'] ?? 0);
@@ -55,9 +50,6 @@
 		if ($action === 'save' && $table !== '') {
 			$id = (int)($_POST[$primaryKey] ?? 0);
 			$isUpdate = $id > 0;
-			if ($permission) {
-				gesclub_require_permission($permission, $isUpdate ? 'edit' : 'create');
-			}
 			$data = [];
 			$placeholders = [];
 			$updates = [];
@@ -110,9 +102,6 @@
 				}
 			}
 		} elseif ($action === 'delete' && $table !== '') {
-			if ($permission) {
-				gesclub_require_permission($permission, 'delete');
-			}
 			$id = (int)($_POST[$primaryKey] ?? 0);
 			if ($id > 0) {
 				$stmt = $db->prepare("DELETE FROM {$table} WHERE {$primaryKey} = :id");
@@ -210,93 +199,98 @@
 					</div>
 				<?php } ?>
 
-				<div class="card mb-4">
-					<div class="card-body">
-						<h5 class="mb-3">Formulario</h5>
-						<form method="post">
-							<input type="hidden" name="action" value="save">
-							<input type="hidden" name="<?php echo $primaryKey; ?>" value="<?php echo (int)($editRow[$primaryKey] ?? 0); ?>">
-							<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+				<div class="row">
+					<div class="col-xl-4">
+						<div class="card mb-4">
+							<div class="card-body">
+								<h5 class="mb-3">Formulario</h5>
+								<form method="post">
+									<input type="hidden" name="action" value="save">
+									<input type="hidden" name="<?php echo $primaryKey; ?>" value="<?php echo (int)($editRow[$primaryKey] ?? 0); ?>">
+									<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
 
-							<?php foreach ($fields as $field) { ?>
-								<?php
-									if (($field['auto'] ?? null) === 'insert') {
-										continue;
-									}
-									$type = $field['type'] ?? 'text';
-									$name = $field['name'];
-									$label = $field['label'] ?? $name;
-									$isRequired = $field['required'] ?? false;
-									$value = gesclub_field_value($field, $editRow, $selectedClubId);
-									$options = $field['options'] ?? [];
-									if (isset($field['optionsQuery']) && is_callable($field['optionsQuery'])) {
-										$options = $field['optionsQuery']($db, $selectedClubId);
-									}
-								?>
-								<div class="mb-3">
-									<label class="form-label"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></label>
-									<?php if ($type === 'textarea') { ?>
-										<textarea class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>><?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?></textarea>
-									<?php } elseif ($type === 'select') { ?>
-										<select class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
-											<option value="">Selecciona</option>
-											<?php foreach ($options as $option) { ?>
-												<option value="<?php echo htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8'); ?>" <?php echo (string)$value === (string)$option['value'] ? 'selected' : ''; ?>>
-													<?php echo htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8'); ?>
-												</option>
+									<?php foreach ($fields as $field) { ?>
+										<?php
+											if (($field['auto'] ?? null) === 'insert') {
+												continue;
+											}
+											$type = $field['type'] ?? 'text';
+											$name = $field['name'];
+											$label = $field['label'] ?? $name;
+											$isRequired = $field['required'] ?? false;
+											$value = gesclub_field_value($field, $editRow, $selectedClubId);
+											$options = $field['options'] ?? [];
+											if (isset($field['optionsQuery']) && is_callable($field['optionsQuery'])) {
+												$options = $field['optionsQuery']($db, $selectedClubId);
+											}
+										?>
+										<div class="mb-3">
+											<label class="form-label"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></label>
+											<?php if ($type === 'textarea') { ?>
+												<textarea class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>><?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+											<?php } elseif ($type === 'select') { ?>
+												<select class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
+													<option value="">Selecciona</option>
+													<?php foreach ($options as $option) { ?>
+														<option value="<?php echo htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8'); ?>" <?php echo (string)$value === (string)$option['value'] ? 'selected' : ''; ?>>
+															<?php echo htmlspecialchars($option['label'], ENT_QUOTES, 'UTF-8'); ?>
+														</option>
+													<?php } ?>
+												</select>
+											<?php } else { ?>
+												<input type="<?php echo htmlspecialchars($type, ENT_QUOTES, 'UTF-8'); ?>" class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
 											<?php } ?>
-										</select>
-									<?php } else { ?>
-										<input type="<?php echo htmlspecialchars($type, ENT_QUOTES, 'UTF-8'); ?>" class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
+										</div>
 									<?php } ?>
-								</div>
-							<?php } ?>
 
-							<button type="submit" class="btn btn-primary btn-sm">Guardar</button>
-						</form>
-					</div>
-				</div>
-
-				<div class="card mb-4">
-					<div class="card-body">
-						<h5 class="mb-3">Registros</h5>
-						<?php if ($hasClubField && $selectedClubId === 0) { ?>
-							<div class="text-muted">Selecciona un club para visualizar los registros.</div>
-						<?php } else { ?>
-							<div class="table-responsive">
-								<table class="table table-sm">
-									<thead>
-										<tr>
-											<?php foreach ($listFields as $listField) { ?>
-												<th><?php echo htmlspecialchars($listField['label'], ENT_QUOTES, 'UTF-8'); ?></th>
-											<?php } ?>
-											<th>Acciones</th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php foreach ($listRows as $row) { ?>
-											<tr>
-												<?php foreach ($listFields as $listField) { ?>
-													<?php $name = $listField['name']; ?>
-													<td><?php echo htmlspecialchars((string)($row[$name] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-												<?php } ?>
-												<td>
-													<div class="d-flex gap-2">
-														<a class="btn btn-warning btn-sm" href="<?php echo $_SERVER['PHP_SELF']; ?>?edit=<?php echo (int)$row[$primaryKey]; ?><?php echo $selectedClubId > 0 ? '&club_id=' . $selectedClubId : ''; ?>">Editar</a>
-														<form method="post">
-															<input type="hidden" name="action" value="delete">
-															<input type="hidden" name="<?php echo $primaryKey; ?>" value="<?php echo (int)$row[$primaryKey]; ?>">
-															<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
-															<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-														</form>
-													</div>
-												</td>
-											</tr>
-										<?php } ?>
-									</tbody>
-								</table>
+									<button type="submit" class="btn btn-primary btn-sm">Guardar</button>
+								</form>
 							</div>
-						<?php } ?>
+						</div>
+					</div>
+					<div class="col-xl-8">
+						<div class="card mb-4">
+							<div class="card-body">
+								<h5 class="mb-3">Registros</h5>
+								<?php if ($hasClubField && $selectedClubId === 0) { ?>
+									<div class="text-muted">Selecciona un club para visualizar los registros.</div>
+								<?php } else { ?>
+									<div class="table-responsive">
+										<table class="table table-sm">
+											<thead>
+												<tr>
+													<?php foreach ($listFields as $listField) { ?>
+														<th><?php echo htmlspecialchars($listField['label'], ENT_QUOTES, 'UTF-8'); ?></th>
+													<?php } ?>
+													<th>Acciones</th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php foreach ($listRows as $row) { ?>
+													<tr>
+														<?php foreach ($listFields as $listField) { ?>
+															<?php $name = $listField['name']; ?>
+															<td><?php echo htmlspecialchars((string)($row[$name] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+														<?php } ?>
+														<td>
+															<div class="d-flex gap-2">
+																<a class="btn btn-warning btn-sm" href="<?php echo $_SERVER['PHP_SELF']; ?>?edit=<?php echo (int)$row[$primaryKey]; ?><?php echo $selectedClubId > 0 ? '&club_id=' . $selectedClubId : ''; ?>">Editar</a>
+																<form method="post">
+																	<input type="hidden" name="action" value="delete">
+																	<input type="hidden" name="<?php echo $primaryKey; ?>" value="<?php echo (int)$row[$primaryKey]; ?>">
+																	<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+																	<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+																</form>
+															</div>
+														</td>
+													</tr>
+												<?php } ?>
+											</tbody>
+										</table>
+									</div>
+								<?php } ?>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

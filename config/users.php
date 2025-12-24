@@ -22,70 +22,53 @@ function gesclub_validate_rut(string $numero, string $dv): bool
 
 function gesclub_load_user_roles(): array
 {
-	try {
-		$db = gesclub_db();
-		$roles = $db->query('SELECT id, nombre, estado FROM user_roles ORDER BY id')->fetchAll();
-		return $roles ?: [];
-	} catch (Throwable $e) {
-		return [];
-	}
+	$db = gesclub_db();
+	$roles = $db->query('SELECT id, nombre, estado FROM user_roles ORDER BY id')->fetchAll();
+	return $roles ?: [];
 }
 
 function gesclub_load_user_profiles(): array
 {
-	try {
-		$db = gesclub_db();
-		$stmt = $db->query(
-			'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
-				p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto,
-				p.telefono_movil, p.comuna, p.region
-			FROM users u
-			LEFT JOIN user_profiles p ON p.user_id = u.id
-			ORDER BY u.id'
-		);
-		return $stmt->fetchAll() ?: [];
-	} catch (Throwable $e) {
-		return [];
-	}
+	$db = gesclub_db();
+	$stmt = $db->query(
+		'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
+			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno,
+			p.telefono_movil, p.comuna, p.region
+		FROM users u
+		LEFT JOIN user_profiles p ON p.user_id = u.id
+		ORDER BY u.id'
+	);
+	return $stmt->fetchAll() ?: [];
 }
 
 function gesclub_load_user_profile(int $userId): ?array
 {
-	try {
-		$db = gesclub_db();
-		$stmt = $db->prepare(
-			'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
-				p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto,
-				p.fecha_nacimiento, p.sexo, p.nacionalidad, p.telefono_movil, p.telefono_fijo,
-				p.direccion_calle, p.direccion_numero, p.comuna, p.region, p.numero_socio,
-				p.tipo_socio, p.disciplinas, p.categoria_rama, p.fecha_incorporacion,
-				p.consentimiento_fecha, p.consentimiento_medio, p.usuario_creador, p.created_at,
-				p.created_ip, p.estado_civil, p.prevision_salud, p.contacto_emergencia_nombre,
-				p.contacto_emergencia_telefono, p.contacto_emergencia_parentesco,
-				p.menor_run, p.apoderado_run, p.relacion_apoderado, p.autorizacion_apoderado
-			FROM users u
-			LEFT JOIN user_profiles p ON p.user_id = u.id
-			WHERE u.id = :id
-			LIMIT 1'
-		);
-		$stmt->execute([':id' => $userId]);
-		$profile = $stmt->fetch();
-		if (!$profile) {
-			return null;
-		}
-
-		try {
-			$roleStmt = $db->prepare('SELECT role_id FROM user_role_assignments WHERE user_id = :id');
-			$roleStmt->execute([':id' => $userId]);
-			$profile['roles'] = array_map('intval', $roleStmt->fetchAll(PDO::FETCH_COLUMN) ?: []);
-		} catch (Throwable $e) {
-			$profile['roles'] = [];
-		}
-
-		return $profile;
-	} catch (Throwable $e) {
+	$db = gesclub_db();
+	$stmt = $db->prepare(
+		'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
+			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno,
+			p.fecha_nacimiento, p.sexo, p.nacionalidad, p.telefono_movil, p.telefono_fijo,
+			p.direccion_calle, p.direccion_numero, p.comuna, p.region, p.numero_socio,
+			p.tipo_socio, p.disciplinas, p.categoria_rama, p.fecha_incorporacion,
+			p.consentimiento_fecha, p.consentimiento_medio, p.usuario_creador, p.created_at,
+			p.created_ip, p.estado_civil, p.prevision_salud, p.contacto_emergencia_nombre,
+			p.contacto_emergencia_telefono, p.contacto_emergencia_parentesco,
+			p.menor_run, p.apoderado_run, p.relacion_apoderado, p.autorizacion_apoderado
+		FROM users u
+		LEFT JOIN user_profiles p ON p.user_id = u.id
+		WHERE u.id = :id
+		LIMIT 1'
+	);
+	$stmt->execute([':id' => $userId]);
+	$profile = $stmt->fetch();
+	if (!$profile) {
 		return null;
 	}
+
+	$roleStmt = $db->prepare('SELECT role_id FROM user_role_assignments WHERE user_id = :id');
+	$roleStmt->execute([':id' => $userId]);
+	$profile['roles'] = array_map('intval', $roleStmt->fetchAll(PDO::FETCH_COLUMN) ?: []);
+	return $profile;
 }
 
 function gesclub_user_has_role(int $userId, string $roleName): bool
@@ -115,107 +98,33 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$nombres = trim((string)($payload['nombres'] ?? ''));
 	$apellidoPaterno = trim((string)($payload['apellido_paterno'] ?? ''));
 	$apellidoMaterno = trim((string)($payload['apellido_materno'] ?? ''));
-	$foto = trim((string)($payload['foto'] ?? ''));
-	$fechaNacimientoRaw = trim((string)($payload['fecha_nacimiento'] ?? ''));
-	$fechaNacimiento = gesclub_normalize_date($fechaNacimientoRaw);
+	$fechaNacimiento = (string)($payload['fecha_nacimiento'] ?? '');
 	$sexo = trim((string)($payload['sexo'] ?? ''));
 	$nacionalidad = trim((string)($payload['nacionalidad'] ?? 'Chilena'));
 	$telefonoMovil = trim((string)($payload['telefono_movil'] ?? ''));
-	$telefonoFijo = trim((string)($payload['telefono_fijo'] ?? ''));
 	$direccionCalle = trim((string)($payload['direccion_calle'] ?? ''));
 	$direccionNumero = trim((string)($payload['direccion_numero'] ?? ''));
 	$comuna = trim((string)($payload['comuna'] ?? ''));
 	$region = trim((string)($payload['region'] ?? ''));
-	$consentimientoFechaRaw = trim((string)($payload['consentimiento_fecha'] ?? ''));
-	$consentimientoFecha = gesclub_normalize_datetime($consentimientoFechaRaw);
-	$fechaIncorporacionRaw = trim((string)($payload['fecha_incorporacion'] ?? ''));
-	$fechaIncorporacion = gesclub_normalize_date($fechaIncorporacionRaw);
+	$consentimientoFecha = (string)($payload['consentimiento_fecha'] ?? '');
+	$consentimientoFecha = str_replace('T', ' ', $consentimientoFecha);
+	$fechaIncorporacion = (string)($payload['fecha_incorporacion'] ?? '');
 	$consentimientoMedio = trim((string)($payload['consentimiento_medio'] ?? ''));
-	$numeroSocio = trim((string)($payload['numero_socio'] ?? ''));
-	$tipoSocio = trim((string)($payload['tipo_socio'] ?? ''));
-	$disciplinas = trim((string)($payload['disciplinas'] ?? ''));
-	$categoriaRama = trim((string)($payload['categoria_rama'] ?? ''));
-	$estadoCivil = trim((string)($payload['estado_civil'] ?? ''));
-	$previsionSalud = trim((string)($payload['prevision_salud'] ?? ''));
-	$contactoEmergenciaNombre = trim((string)($payload['contacto_emergencia_nombre'] ?? ''));
-	$contactoEmergenciaTelefono = trim((string)($payload['contacto_emergencia_telefono'] ?? ''));
-	$contactoEmergenciaParentesco = trim((string)($payload['contacto_emergencia_parentesco'] ?? ''));
-	$menorRun = trim((string)($payload['menor_run'] ?? ''));
-	$apoderadoRun = trim((string)($payload['apoderado_run'] ?? ''));
-	$relacionApoderado = trim((string)($payload['relacion_apoderado'] ?? ''));
-	$autorizacionApoderado = trim((string)($payload['autorizacion_apoderado'] ?? ''));
 
-	$errors = [];
-	$allowedStatuses = ['activo', 'inactivo', 'bloqueado'];
-	if (!in_array($accountStatus, $allowedStatuses, true)) {
-		$accountStatus = 'activo';
-	}
-	$requiredFields = [
-		'username' => $username,
-		'email' => $email,
-		'run_numero' => $runNumero,
-		'run_dv' => $runDv,
-		'nombres' => $nombres,
-		'apellido_paterno' => $apellidoPaterno,
-		'apellido_materno' => $apellidoMaterno,
-		'fecha_nacimiento' => $fechaNacimiento ?? '',
-		'sexo' => $sexo,
-		'telefono_movil' => $telefonoMovil,
-		'direccion_calle' => $direccionCalle,
-		'direccion_numero' => $direccionNumero,
-		'comuna' => $comuna,
-		'region' => $region,
-		'consentimiento_fecha' => $consentimientoFecha ?? '',
-		'consentimiento_medio' => $consentimientoMedio,
-	];
-	foreach ($requiredFields as $field => $value) {
+	$required = [$username, $email, $runNumero, $runDv, $nombres, $apellidoPaterno, $apellidoMaterno, $fechaNacimiento, $sexo, $telefonoMovil, $direccionCalle, $direccionNumero, $comuna, $region, $consentimientoFecha, $consentimientoMedio];
+	foreach ($required as $value) {
 		if ($value === '') {
-			$errors[$field] = 'Este campo es obligatorio.';
+			return ['ok' => false, 'message' => 'Completa los campos obligatorios.'];
 		}
 	}
-	if ($fechaNacimientoRaw !== '' && $fechaNacimiento === null) {
-		$errors['fecha_nacimiento'] = 'La fecha de nacimiento no es válida.';
-	}
-	if ($consentimientoFechaRaw !== '' && $consentimientoFecha === null) {
-		$errors['consentimiento_fecha'] = 'La fecha de consentimiento no es válida.';
-	}
-	if ($fechaIncorporacionRaw !== '' && $fechaIncorporacion === null) {
-		$errors['fecha_incorporacion'] = 'La fecha de incorporación no es válida.';
-	}
-	if ($runNumero !== '' && $runDv !== '' && !gesclub_validate_rut($runNumero, $runDv)) {
-		$errors['run_numero'] = 'El RUT no es válido.';
-		$errors['run_dv'] = 'El RUT no es válido.';
+	if (!gesclub_validate_rut($runNumero, $runDv)) {
+		return ['ok' => false, 'message' => 'El RUT no es válido.'];
 	}
 	if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		$errors['email'] = 'El correo no es válido.';
+		return ['ok' => false, 'message' => 'El correo no es válido.'];
 	}
 	if ($userId === 0 && $password === '') {
-		$errors['password'] = 'La contraseña es obligatoria para crear un usuario.';
-	}
-	if ($errors !== []) {
-		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
-	}
-
-	$duplicateStmt = $db->prepare('SELECT id FROM users WHERE username = :username AND id <> :id LIMIT 1');
-	$duplicateStmt->execute([
-		':username' => $username,
-		':id' => $userId,
-	]);
-	if ($duplicateStmt->fetchColumn()) {
-		$errors['username'] = 'El usuario ya existe.';
-	}
-	if ($email !== '') {
-		$duplicateEmailStmt = $db->prepare('SELECT id FROM users WHERE email = :email AND id <> :id LIMIT 1');
-		$duplicateEmailStmt->execute([
-			':email' => $email,
-			':id' => $userId,
-		]);
-		if ($duplicateEmailStmt->fetchColumn()) {
-			$errors['email'] = 'El correo ya está registrado.';
-		}
-	}
-	if ($errors !== []) {
-		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
+		return ['ok' => false, 'message' => 'La contraseña es obligatoria para crear un usuario.'];
 	}
 
 	try {
@@ -257,7 +166,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 
 		$profileUpsert = $db->prepare(
 			'INSERT INTO user_profiles (
-				user_id, run_numero, run_dv, nombres, apellido_paterno, apellido_materno, foto,
+				user_id, run_numero, run_dv, nombres, apellido_paterno, apellido_materno,
 				fecha_nacimiento, sexo, nacionalidad, telefono_movil, telefono_fijo,
 				direccion_calle, direccion_numero, comuna, region, numero_socio, tipo_socio,
 				disciplinas, categoria_rama, fecha_incorporacion, consentimiento_fecha,
@@ -266,7 +175,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 				contacto_emergencia_parentesco, menor_run, apoderado_run, relacion_apoderado,
 				autorizacion_apoderado
 			) VALUES (
-				:user_id, :run_numero, :run_dv, :nombres, :apellido_paterno, :apellido_materno, :foto,
+				:user_id, :run_numero, :run_dv, :nombres, :apellido_paterno, :apellido_materno,
 				:fecha_nacimiento, :sexo, :nacionalidad, :telefono_movil, :telefono_fijo,
 				:direccion_calle, :direccion_numero, :comuna, :region, :numero_socio, :tipo_socio,
 				:disciplinas, :categoria_rama, :fecha_incorporacion, :consentimiento_fecha,
@@ -280,7 +189,6 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 				nombres = VALUES(nombres),
 				apellido_paterno = VALUES(apellido_paterno),
 				apellido_materno = VALUES(apellido_materno),
-				foto = VALUES(foto),
 				fecha_nacimiento = VALUES(fecha_nacimiento),
 				sexo = VALUES(sexo),
 				nacionalidad = VALUES(nacionalidad),
@@ -315,35 +223,34 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 			':nombres' => $nombres,
 			':apellido_paterno' => $apellidoPaterno,
 			':apellido_materno' => $apellidoMaterno,
-			':foto' => $foto !== '' ? $foto : null,
 			':fecha_nacimiento' => $fechaNacimiento,
 			':sexo' => $sexo,
 			':nacionalidad' => $nacionalidad,
 			':telefono_movil' => $telefonoMovil,
-			':telefono_fijo' => $telefonoFijo !== '' ? $telefonoFijo : null,
+			':telefono_fijo' => $payload['telefono_fijo'] ?? null,
 			':direccion_calle' => $direccionCalle,
 			':direccion_numero' => $direccionNumero,
 			':comuna' => $comuna,
 			':region' => $region,
-			':numero_socio' => $numeroSocio !== '' ? $numeroSocio : null,
-			':tipo_socio' => $tipoSocio !== '' ? $tipoSocio : null,
-			':disciplinas' => $disciplinas !== '' ? $disciplinas : null,
-			':categoria_rama' => $categoriaRama !== '' ? $categoriaRama : null,
+			':numero_socio' => $payload['numero_socio'] ?? null,
+			':tipo_socio' => $payload['tipo_socio'] ?? null,
+			':disciplinas' => $payload['disciplinas'] ?? null,
+			':categoria_rama' => $payload['categoria_rama'] ?? null,
 			':fecha_incorporacion' => $fechaIncorporacion !== '' ? $fechaIncorporacion : null,
 			':consentimiento_fecha' => $consentimientoFecha,
 			':consentimiento_medio' => $consentimientoMedio,
 			':usuario_creador' => $payload['usuario_creador'] ?? $actor,
 			':created_at' => $payload['created_at'] ?? date('Y-m-d H:i:s'),
 			':created_ip' => $payload['created_ip'] ?? $ip,
-			':estado_civil' => $estadoCivil !== '' ? $estadoCivil : null,
-			':prevision_salud' => $previsionSalud !== '' ? $previsionSalud : null,
-			':contacto_emergencia_nombre' => $contactoEmergenciaNombre !== '' ? $contactoEmergenciaNombre : null,
-			':contacto_emergencia_telefono' => $contactoEmergenciaTelefono !== '' ? $contactoEmergenciaTelefono : null,
-			':contacto_emergencia_parentesco' => $contactoEmergenciaParentesco !== '' ? $contactoEmergenciaParentesco : null,
-			':menor_run' => $menorRun !== '' ? $menorRun : null,
-			':apoderado_run' => $apoderadoRun !== '' ? $apoderadoRun : null,
-			':relacion_apoderado' => $relacionApoderado !== '' ? $relacionApoderado : null,
-			':autorizacion_apoderado' => $autorizacionApoderado !== '' ? $autorizacionApoderado : null,
+			':estado_civil' => $payload['estado_civil'] ?? null,
+			':prevision_salud' => $payload['prevision_salud'] ?? null,
+			':contacto_emergencia_nombre' => $payload['contacto_emergencia_nombre'] ?? null,
+			':contacto_emergencia_telefono' => $payload['contacto_emergencia_telefono'] ?? null,
+			':contacto_emergencia_parentesco' => $payload['contacto_emergencia_parentesco'] ?? null,
+			':menor_run' => $payload['menor_run'] ?? null,
+			':apoderado_run' => $payload['apoderado_run'] ?? null,
+			':relacion_apoderado' => $payload['relacion_apoderado'] ?? null,
+			':autorizacion_apoderado' => $payload['autorizacion_apoderado'] ?? null,
 		]);
 
 		$db->prepare('DELETE FROM user_role_assignments WHERE user_id = :user_id')->execute([':user_id' => $userId]);
@@ -354,18 +261,14 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 			}
 		}
 
-		try {
-			$history = $db->prepare('INSERT INTO user_profile_history (user_id, accion, detalle, usuario, fecha) VALUES (:user_id, :accion, :detalle, :usuario, :fecha)');
-			$history->execute([
-				':user_id' => $userId,
-				':accion' => $payload['history_action'] ?? 'actualizar',
-				':detalle' => $payload['history_detail'] ?? 'Actualización de perfil',
-				':usuario' => $actor,
-				':fecha' => date('Y-m-d H:i:s'),
-			]);
-		} catch (Throwable $historyError) {
-			// Se omite el historial si la tabla no existe o ocurre un error puntual.
-		}
+		$history = $db->prepare('INSERT INTO user_profile_history (user_id, accion, detalle, usuario, fecha) VALUES (:user_id, :accion, :detalle, :usuario, :fecha)');
+		$history->execute([
+			':user_id' => $userId,
+			':accion' => $payload['history_action'] ?? 'actualizar',
+			':detalle' => $payload['history_detail'] ?? 'Actualización de perfil',
+			':usuario' => $actor,
+			':fecha' => date('Y-m-d H:i:s'),
+		]);
 
 		$db->commit();
 		return ['ok' => true, 'id' => $userId];
@@ -373,37 +276,8 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 		if ($db->inTransaction()) {
 			$db->rollBack();
 		}
-		error_log('gesclub_save_user_profile: ' . $e->getMessage());
-		return ['ok' => false, 'message' => 'No se pudo guardar la información.', 'errors' => []];
+		return ['ok' => false, 'message' => 'No se pudo guardar la información.'];
 	}
-}
-
-function gesclub_normalize_date(string $value): ?string
-{
-	if ($value === '') {
-		return null;
-	}
-	$dt = DateTime::createFromFormat('Y-m-d', $value);
-	if ($dt === false || $dt->format('Y-m-d') !== $value) {
-		return null;
-	}
-	return $dt->format('Y-m-d');
-}
-
-function gesclub_normalize_datetime(string $value): ?string
-{
-	if ($value === '') {
-		return null;
-	}
-	$clean = str_replace('T', ' ', $value);
-	$formats = ['Y-m-d H:i:s', 'Y-m-d H:i'];
-	foreach ($formats as $format) {
-		$dt = DateTime::createFromFormat($format, $clean);
-		if ($dt !== false && $dt->format($format) === $clean) {
-			return $dt->format('Y-m-d H:i:s');
-		}
-	}
-	return null;
 }
 
 function gesclub_delete_user(int $userId, string $actor): bool
