@@ -1,6 +1,6 @@
 <?php
 	require_once __DIR__ . '/config/dz.php';
-	require_once __DIR__ . '/config/auth.php';
+	require_once __DIR__ . '/config/permissions.php';
 	require_once __DIR__ . '/config/users.php';
 
 	gesclub_require_roles(['Admin General']);
