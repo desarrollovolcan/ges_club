@@ -129,20 +129,64 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$fechaIncorporacion = (string)($payload['fecha_incorporacion'] ?? '');
 	$consentimientoMedio = trim((string)($payload['consentimiento_medio'] ?? ''));
 
-	$required = [$username, $email, $runNumero, $runDv, $nombres, $apellidoPaterno, $apellidoMaterno, $fechaNacimiento, $sexo, $telefonoMovil, $direccionCalle, $direccionNumero, $comuna, $region, $consentimientoFecha, $consentimientoMedio];
-	foreach ($required as $value) {
+	$errors = [];
+	$requiredFields = [
+		'username' => $username,
+		'email' => $email,
+		'run_numero' => $runNumero,
+		'run_dv' => $runDv,
+		'nombres' => $nombres,
+		'apellido_paterno' => $apellidoPaterno,
+		'apellido_materno' => $apellidoMaterno,
+		'fecha_nacimiento' => $fechaNacimiento,
+		'sexo' => $sexo,
+		'telefono_movil' => $telefonoMovil,
+		'direccion_calle' => $direccionCalle,
+		'direccion_numero' => $direccionNumero,
+		'comuna' => $comuna,
+		'region' => $region,
+		'consentimiento_fecha' => $consentimientoFecha,
+		'consentimiento_medio' => $consentimientoMedio,
+	];
+	foreach ($requiredFields as $field => $value) {
 		if ($value === '') {
-			return ['ok' => false, 'message' => 'Completa los campos obligatorios.'];
+			$errors[$field] = 'Este campo es obligatorio.';
 		}
 	}
-	if (!gesclub_validate_rut($runNumero, $runDv)) {
-		return ['ok' => false, 'message' => 'El RUT no es válido.'];
+	if ($runNumero !== '' && $runDv !== '' && !gesclub_validate_rut($runNumero, $runDv)) {
+		$errors['run_numero'] = 'El RUT no es válido.';
+		$errors['run_dv'] = 'El RUT no es válido.';
 	}
 	if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-		return ['ok' => false, 'message' => 'El correo no es válido.'];
+		$errors['email'] = 'El correo no es válido.';
 	}
 	if ($userId === 0 && $password === '') {
-		return ['ok' => false, 'message' => 'La contraseña es obligatoria para crear un usuario.'];
+		$errors['password'] = 'La contraseña es obligatoria para crear un usuario.';
+	}
+	if ($errors !== []) {
+		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
+	}
+
+	$duplicateStmt = $db->prepare('SELECT id FROM users WHERE username = :username AND id <> :id LIMIT 1');
+	$duplicateStmt->execute([
+		':username' => $username,
+		':id' => $userId,
+	]);
+	if ($duplicateStmt->fetchColumn()) {
+		$errors['username'] = 'El usuario ya existe.';
+	}
+	if ($email !== '') {
+		$duplicateEmailStmt = $db->prepare('SELECT id FROM users WHERE email = :email AND id <> :id LIMIT 1');
+		$duplicateEmailStmt->execute([
+			':email' => $email,
+			':id' => $userId,
+		]);
+		if ($duplicateEmailStmt->fetchColumn()) {
+			$errors['email'] = 'El correo ya está registrado.';
+		}
+	}
+	if ($errors !== []) {
+		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
 	}
 
 	try {
@@ -296,7 +340,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 		if ($db->inTransaction()) {
 			$db->rollBack();
 		}
-		return ['ok' => false, 'message' => 'No se pudo guardar la información.'];
+		return ['ok' => false, 'message' => 'No se pudo guardar la información.', 'errors' => []];
 	}
 }
 
