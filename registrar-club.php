@@ -11,9 +11,7 @@
 	$messageType = $_GET['msg_type'] ?? 'success';
 
 	$clubes = $db->query('SELECT * FROM clubes ORDER BY id DESC')->fetchAll() ?: [];
-	$sedes = $db->query('SELECT s.*, c.nombre_oficial FROM club_sedes s JOIN clubes c ON c.id = s.club_id ORDER BY s.id DESC')->fetchAll() ?: [];
-	$documentos = $db->query('SELECT d.*, c.nombre_oficial FROM club_documentos d JOIN clubes c ON c.id = d.club_id ORDER BY d.id DESC')->fetchAll() ?: [];
-	$historial = $db->query('SELECT h.*, c.nombre_oficial FROM historial_clubes h JOIN clubes c ON c.id = h.club_id ORDER BY h.id DESC')->fetchAll() ?: [];
+	$selectedClubId = (int)($_GET['club_id'] ?? 0);
 
 	$editId = (int)($_GET['edit'] ?? 0);
 	$editClub = null;
@@ -21,6 +19,9 @@
 		$stmt = $db->prepare('SELECT * FROM clubes WHERE id = :id');
 		$stmt->execute([':id' => $editId]);
 		$editClub = $stmt->fetch();
+		if ($editClub && $selectedClubId === 0) {
+			$selectedClubId = (int)$editClub['id'];
+		}
 	}
 
 	$editSedeId = (int)($_GET['edit_sede'] ?? 0);
@@ -29,6 +30,9 @@
 		$stmt = $db->prepare('SELECT * FROM club_sedes WHERE id = :id');
 		$stmt->execute([':id' => $editSedeId]);
 		$editSede = $stmt->fetch();
+		if ($editSede && $selectedClubId === 0) {
+			$selectedClubId = (int)$editSede['club_id'];
+		}
 	}
 
 	$editDocId = (int)($_GET['edit_doc'] ?? 0);
@@ -37,10 +41,31 @@
 		$stmt = $db->prepare('SELECT * FROM club_documentos WHERE id = :id');
 		$stmt->execute([':id' => $editDocId]);
 		$editDoc = $stmt->fetch();
+		if ($editDoc && $selectedClubId === 0) {
+			$selectedClubId = (int)$editDoc['club_id'];
+		}
+	}
+
+	$sedes = [];
+	$documentos = [];
+	$historial = [];
+	if ($selectedClubId > 0) {
+		$stmtSedes = $db->prepare('SELECT s.*, c.nombre_oficial FROM club_sedes s JOIN clubes c ON c.id = s.club_id WHERE s.club_id = :club_id ORDER BY s.id DESC');
+		$stmtSedes->execute([':club_id' => $selectedClubId]);
+		$sedes = $stmtSedes->fetchAll() ?: [];
+
+		$stmtDocs = $db->prepare('SELECT d.*, c.nombre_oficial FROM club_documentos d JOIN clubes c ON c.id = d.club_id WHERE d.club_id = :club_id ORDER BY d.id DESC');
+		$stmtDocs->execute([':club_id' => $selectedClubId]);
+		$documentos = $stmtDocs->fetchAll() ?: [];
+
+		$stmtHist = $db->prepare('SELECT h.*, c.nombre_oficial FROM historial_clubes h JOIN clubes c ON c.id = h.club_id WHERE h.club_id = :club_id ORDER BY h.id DESC');
+		$stmtHist->execute([':club_id' => $selectedClubId]);
+		$historial = $stmtHist->fetchAll() ?: [];
 	}
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'] ?? '';
+		$returnClubId = (int)($_POST['return_club_id'] ?? 0);
 
 		if ($action === 'save') {
 			$id = (int)($_POST['id'] ?? 0);
@@ -129,6 +154,7 @@
 					]);
 					$detalle = "Actualización club {$nombreOficial}";
 					$message = 'Club actualizado con éxito.';
+					$returnClubId = $returnClubId > 0 ? $returnClubId : $id;
 				} else {
 					$stmt = $db->prepare(
 						'INSERT INTO clubes (nombre_oficial, nombre_fantasia, rut_numero, rut_dv, tipo_organizacion, direccion_region, direccion_comuna,
@@ -162,6 +188,7 @@
 					$id = (int)$db->lastInsertId();
 					$detalle = "Nuevo club {$nombreOficial}";
 					$message = 'Club registrado con éxito.';
+					$returnClubId = $id;
 				}
 
 				$hist = $db->prepare('INSERT INTO historial_clubes (club_id, accion, detalle, usuario, fecha) VALUES (:club_id, :accion, :detalle, :usuario, :fecha)');
@@ -217,6 +244,9 @@
 		} elseif ($action === 'save_sede') {
 			$id = (int)($_POST['sede_id'] ?? 0);
 			$clubId = (int)($_POST['club_id'] ?? 0);
+			if ($returnClubId === 0 && $clubId > 0) {
+				$returnClubId = $clubId;
+			}
 			$nombre = trim($_POST['sede_nombre'] ?? '');
 			$region = trim($_POST['sede_region'] ?? '');
 			$comuna = trim($_POST['sede_comuna'] ?? '');
@@ -284,6 +314,9 @@
 		} elseif ($action === 'delete_sede') {
 			$id = (int)($_POST['sede_id'] ?? 0);
 			$clubId = (int)($_POST['club_id'] ?? 0);
+			if ($returnClubId === 0 && $clubId > 0) {
+				$returnClubId = $clubId;
+			}
 			if ($id > 0) {
 				$stmt = $db->prepare('SELECT nombre FROM club_sedes WHERE id = :id');
 				$stmt->execute([':id' => $id]);
@@ -305,6 +338,9 @@
 		} elseif ($action === 'save_doc') {
 			$id = (int)($_POST['doc_id'] ?? 0);
 			$clubId = (int)($_POST['doc_club_id'] ?? 0);
+			if ($returnClubId === 0 && $clubId > 0) {
+				$returnClubId = $clubId;
+			}
 			$tipo = trim($_POST['doc_tipo'] ?? '');
 			$nombreArchivo = trim($_POST['doc_nombre'] ?? '');
 			$ruta = trim($_POST['doc_ruta'] ?? '');
@@ -361,6 +397,9 @@
 		} elseif ($action === 'delete_doc') {
 			$id = (int)($_POST['doc_id'] ?? 0);
 			$clubId = (int)($_POST['doc_club_id'] ?? 0);
+			if ($returnClubId === 0 && $clubId > 0) {
+				$returnClubId = $clubId;
+			}
 			if ($id > 0) {
 				$stmt = $db->prepare('SELECT tipo FROM club_documentos WHERE id = :id');
 				$stmt->execute([':id' => $id]);
@@ -381,8 +420,22 @@
 			}
 		}
 
-		header('Location: registrar-club.php?msg=' . urlencode($message) . '&msg_type=' . urlencode($messageType));
+		$redirectUrl = 'registrar-club.php?msg=' . urlencode($message) . '&msg_type=' . urlencode($messageType);
+		if ($returnClubId > 0) {
+			$redirectUrl .= '&club_id=' . $returnClubId;
+		}
+		header('Location: ' . $redirectUrl);
 		exit;
+	}
+
+	$selectedClub = null;
+	if ($selectedClubId > 0) {
+		foreach ($clubes as $club) {
+			if ((int)$club['id'] === $selectedClubId) {
+				$selectedClub = $club;
+				break;
+			}
+		}
 	}
 ?>
 <!DOCTYPE html>
@@ -417,396 +470,472 @@
 					</div>
 				<?php } ?>
 
-				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Datos legales y administrativos</h5>
-								<form method="post">
-									<input type="hidden" name="action" value="save">
-									<input type="hidden" name="id" value="<?php echo htmlspecialchars($editClub['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
-									<div class="mb-3">
-										<label class="form-label">Nombre oficial</label>
-										<input type="text" class="form-control" name="nombre_oficial" value="<?php echo htmlspecialchars($editClub['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-									</div>
-									<div class="mb-3">
-										<label class="form-label">Nombre de fantasía</label>
-										<input type="text" class="form-control" name="nombre_fantasia" value="<?php echo htmlspecialchars($editClub['nombre_fantasia'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-									</div>
-									<div class="row">
-										<div class="col-lg-8 mb-3">
-											<label class="form-label">RUT club</label>
-											<input type="text" class="form-control" name="rut_numero" value="<?php echo htmlspecialchars($editClub['rut_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-										</div>
-										<div class="col-lg-4 mb-3">
-											<label class="form-label">DV</label>
-											<input type="text" class="form-control" name="rut_dv" value="<?php echo htmlspecialchars($editClub['rut_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-										</div>
-									</div>
-									<div class="mb-3">
-										<label class="form-label">Tipo de organización</label>
-										<input type="text" class="form-control" name="tipo_organizacion" value="<?php echo htmlspecialchars($editClub['tipo_organizacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-									</div>
-
-									<h6 class="mt-3">Dirección</h6>
-									<div class="row">
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Región</label>
-											<input type="text" class="form-control" name="direccion_region" value="<?php echo htmlspecialchars($editClub['direccion_region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Comuna</label>
-											<input type="text" class="form-control" name="direccion_comuna" value="<?php echo htmlspecialchars($editClub['direccion_comuna'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-8 mb-3">
-											<label class="form-label">Calle</label>
-											<input type="text" class="form-control" name="direccion_calle" value="<?php echo htmlspecialchars($editClub['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-4 mb-3">
-											<label class="form-label">Número</label>
-											<input type="text" class="form-control" name="direccion_numero" value="<?php echo htmlspecialchars($editClub['direccion_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Email</label>
-											<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editClub['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Teléfono</label>
-											<input type="text" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editClub['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Fecha de fundación</label>
-											<input type="date" class="form-control" name="fecha_fundacion" value="<?php echo htmlspecialchars($editClub['fecha_fundacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Estado</label>
-											<select class="form-control" name="estado">
-												<?php $estadoClub = $editClub['estado'] ?? 'activo'; ?>
-												<option value="activo" <?php echo $estadoClub === 'activo' ? 'selected' : ''; ?>>Activo</option>
-												<option value="inactivo" <?php echo $estadoClub === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
-											</select>
-										</div>
-									</div>
-
-									<h6 class="mt-3">Representante legal</h6>
-									<div class="row">
-										<div class="col-lg-8 mb-3">
-											<label class="form-label">RUN</label>
-											<input type="text" class="form-control" name="representante_run_numero" value="<?php echo htmlspecialchars($editClub['representante_run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-4 mb-3">
-											<label class="form-label">DV</label>
-											<input type="text" class="form-control" name="representante_run_dv" value="<?php echo htmlspecialchars($editClub['representante_run_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-12 mb-3">
-											<label class="form-label">Nombre</label>
-											<input type="text" class="form-control" name="representante_nombre" value="<?php echo htmlspecialchars($editClub['representante_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Email</label>
-											<input type="email" class="form-control" name="representante_email" value="<?php echo htmlspecialchars($editClub['representante_email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Teléfono</label>
-											<input type="text" class="form-control" name="representante_telefono" value="<?php echo htmlspecialchars($editClub['representante_telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-									</div>
-
-									<button type="submit" class="btn btn-primary">Guardar club</button>
-								</form>
-							</div>
-						</div>
-					</div>
-					<div class="col-xl-7">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Clubes registrados</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Club</th>
-												<th>RUT</th>
-												<th>Tipo</th>
-												<th>Estado</th>
-												<th>Contacto</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($clubes as $club) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars(($club['rut_numero'] ?? '') . '-' . ($club['rut_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($club['tipo_organizacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($club['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<div><?php echo htmlspecialchars($club['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
-														<div><?php echo htmlspecialchars($club['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
-													</td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-club.php?edit=<?php echo (int)$club['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="toggle">
-																<input type="hidden" name="id" value="<?php echo (int)$club['id']; ?>">
-																<button type="submit" class="btn btn-sm <?php echo ($club['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
-																	<?php echo ($club['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
-																</button>
-															</form>
-															<form method="post">
-																<input type="hidden" name="action" value="delete">
-																<input type="hidden" name="id" value="<?php echo (int)$club['id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
+				<div class="card mb-4">
+					<div class="card-body">
+						<form method="get">
+							<div class="row align-items-end">
+								<div class="col-lg-6 mb-3 mb-lg-0">
+									<label class="form-label">Selecciona un club para gestionar</label>
+									<select class="form-control" name="club_id" onchange="this.form.submit()">
+										<option value="">Selecciona</option>
+										<?php foreach ($clubes as $club) { ?>
+											<option value="<?php echo (int)$club['id']; ?>" <?php echo $selectedClubId === (int)$club['id'] ? 'selected' : ''; ?>>
+												<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+											</option>
+										<?php } ?>
+									</select>
+								</div>
+								<div class="col-lg-6 text-lg-end">
+									<?php if ($selectedClub) { ?>
+										<div class="badge badge-primary">Club seleccionado: <?php echo htmlspecialchars($selectedClub['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+									<?php } else { ?>
+										<div class="text-muted">Selecciona un club para habilitar sedes, documentos e historial.</div>
+									<?php } ?>
 								</div>
 							</div>
-						</div>
+						</form>
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Sedes / instalaciones</h5>
-								<form method="post">
-									<input type="hidden" name="action" value="save_sede">
-									<input type="hidden" name="sede_id" value="<?php echo htmlspecialchars($editSede['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
-									<div class="mb-3">
-										<label class="form-label">Club</label>
-										<select class="form-control" name="club_id" required>
-											<option value="">Selecciona</option>
-											<?php foreach ($clubes as $club) { ?>
-												<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editSede['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
-													<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-												</option>
-											<?php } ?>
-										</select>
-									</div>
-									<div class="mb-3">
-										<label class="form-label">Nombre sede</label>
-										<input type="text" class="form-control" name="sede_nombre" value="<?php echo htmlspecialchars($editSede['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-									</div>
-									<div class="row">
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Región</label>
-											<input type="text" class="form-control" name="sede_region" value="<?php echo htmlspecialchars($editSede['direccion_region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Comuna</label>
-											<input type="text" class="form-control" name="sede_comuna" value="<?php echo htmlspecialchars($editSede['direccion_comuna'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-8 mb-3">
-											<label class="form-label">Calle</label>
-											<input type="text" class="form-control" name="sede_calle" value="<?php echo htmlspecialchars($editSede['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-4 mb-3">
-											<label class="form-label">Número</label>
-											<input type="text" class="form-control" name="sede_numero" value="<?php echo htmlspecialchars($editSede['direccion_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Tipo</label>
-											<input type="text" class="form-control" name="sede_tipo" value="<?php echo htmlspecialchars($editSede['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Horarios</label>
-											<input type="text" class="form-control" name="sede_horarios" value="<?php echo htmlspecialchars($editSede['horarios'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Capacidad</label>
-											<input type="number" class="form-control" name="sede_capacidad" value="<?php echo htmlspecialchars($editSede['capacidad'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-										</div>
-										<div class="col-lg-6 mb-3">
-											<label class="form-label">Estado</label>
-											<select class="form-control" name="sede_estado">
-												<?php $estadoSede = $editSede['estado'] ?? 'activo'; ?>
-												<option value="activo" <?php echo $estadoSede === 'activo' ? 'selected' : ''; ?>>Activo</option>
-												<option value="inactivo" <?php echo $estadoSede === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
-											</select>
-										</div>
-									</div>
-									<button type="submit" class="btn btn-primary">Guardar sede</button>
-								</form>
-							</div>
-						</div>
+				<ul class="nav nav-tabs mb-4" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link active" data-bs-toggle="tab" href="#clubes" role="tab">Club</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="tab" href="#sedes" role="tab">Sedes</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="tab" href="#documentos" role="tab">Documentos</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" data-bs-toggle="tab" href="#historial" role="tab">Historial</a>
+					</li>
+				</ul>
 
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Documentos del club</h5>
-								<form method="post" enctype="multipart/form-data">
-									<input type="hidden" name="action" value="save_doc">
-									<input type="hidden" name="doc_id" value="<?php echo htmlspecialchars($editDoc['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
-									<div class="mb-3">
-										<label class="form-label">Club</label>
-										<select class="form-control" name="doc_club_id" required>
-											<option value="">Selecciona</option>
-											<?php foreach ($clubes as $club) { ?>
-												<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editDoc['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
-													<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-												</option>
-											<?php } ?>
-										</select>
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="clubes" role="tabpanel">
+						<div class="row">
+							<div class="col-xl-5">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Datos legales y administrativos</h5>
+										<form method="post">
+											<input type="hidden" name="action" value="save">
+											<input type="hidden" name="id" value="<?php echo htmlspecialchars($editClub['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+											<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+											<div class="mb-3">
+												<label class="form-label">Nombre oficial</label>
+												<input type="text" class="form-control" name="nombre_oficial" value="<?php echo htmlspecialchars($editClub['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Nombre de fantasía</label>
+												<input type="text" class="form-control" name="nombre_fantasia" value="<?php echo htmlspecialchars($editClub['nombre_fantasia'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+											</div>
+											<div class="row">
+												<div class="col-lg-8 mb-3">
+													<label class="form-label">RUT club</label>
+													<input type="text" class="form-control" name="rut_numero" value="<?php echo htmlspecialchars($editClub['rut_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+												</div>
+												<div class="col-lg-4 mb-3">
+													<label class="form-label">DV</label>
+													<input type="text" class="form-control" name="rut_dv" value="<?php echo htmlspecialchars($editClub['rut_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+												</div>
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Tipo de organización</label>
+												<input type="text" class="form-control" name="tipo_organizacion" value="<?php echo htmlspecialchars($editClub['tipo_organizacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+											</div>
+
+											<h6 class="mt-3">Dirección</h6>
+											<div class="row">
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Región</label>
+													<input type="text" class="form-control" name="direccion_region" value="<?php echo htmlspecialchars($editClub['direccion_region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Comuna</label>
+													<input type="text" class="form-control" name="direccion_comuna" value="<?php echo htmlspecialchars($editClub['direccion_comuna'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-8 mb-3">
+													<label class="form-label">Calle</label>
+													<input type="text" class="form-control" name="direccion_calle" value="<?php echo htmlspecialchars($editClub['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-4 mb-3">
+													<label class="form-label">Número</label>
+													<input type="text" class="form-control" name="direccion_numero" value="<?php echo htmlspecialchars($editClub['direccion_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Email</label>
+													<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editClub['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Teléfono</label>
+													<input type="text" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editClub['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+											</div>
+
+											<div class="row">
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Fecha de fundación</label>
+													<input type="date" class="form-control" name="fecha_fundacion" value="<?php echo htmlspecialchars($editClub['fecha_fundacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Estado</label>
+													<select class="form-control" name="estado">
+														<?php $estadoClub = $editClub['estado'] ?? 'activo'; ?>
+														<option value="activo" <?php echo $estadoClub === 'activo' ? 'selected' : ''; ?>>Activo</option>
+														<option value="inactivo" <?php echo $estadoClub === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
+													</select>
+												</div>
+											</div>
+
+											<h6 class="mt-3">Representante legal</h6>
+											<div class="row">
+												<div class="col-lg-8 mb-3">
+													<label class="form-label">RUN</label>
+													<input type="text" class="form-control" name="representante_run_numero" value="<?php echo htmlspecialchars($editClub['representante_run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-4 mb-3">
+													<label class="form-label">DV</label>
+													<input type="text" class="form-control" name="representante_run_dv" value="<?php echo htmlspecialchars($editClub['representante_run_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-12 mb-3">
+													<label class="form-label">Nombre</label>
+													<input type="text" class="form-control" name="representante_nombre" value="<?php echo htmlspecialchars($editClub['representante_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Email</label>
+													<input type="email" class="form-control" name="representante_email" value="<?php echo htmlspecialchars($editClub['representante_email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Teléfono</label>
+													<input type="text" class="form-control" name="representante_telefono" value="<?php echo htmlspecialchars($editClub['representante_telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+											</div>
+
+											<button type="submit" class="btn btn-primary">Guardar club</button>
+										</form>
 									</div>
-									<div class="mb-3">
-										<label class="form-label">Tipo documento</label>
-										<select class="form-control" name="doc_tipo" required>
-											<?php $docTipo = $editDoc['tipo'] ?? ''; ?>
-											<option value="">Selecciona</option>
-											<option value="estatutos" <?php echo $docTipo === 'estatutos' ? 'selected' : ''; ?>>Estatutos</option>
-											<option value="personalidad_juridica" <?php echo $docTipo === 'personalidad_juridica' ? 'selected' : ''; ?>>Personalidad jurídica</option>
-											<option value="certificados" <?php echo $docTipo === 'certificados' ? 'selected' : ''; ?>>Certificados</option>
-											<option value="actas" <?php echo $docTipo === 'actas' ? 'selected' : ''; ?>>Actas</option>
-											<option value="logo" <?php echo $docTipo === 'logo' ? 'selected' : ''; ?>>Logo</option>
-										</select>
+								</div>
+							</div>
+							<div class="col-xl-7">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Clubes registrados</h5>
+										<div class="table-responsive">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>Club</th>
+														<th>RUT</th>
+														<th>Tipo</th>
+														<th>Estado</th>
+														<th>Contacto</th>
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php foreach ($clubes as $club) { ?>
+														<tr>
+															<td><?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+															<td><?php echo htmlspecialchars(($club['rut_numero'] ?? '') . '-' . ($club['rut_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+															<td><?php echo htmlspecialchars($club['tipo_organizacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+															<td><?php echo htmlspecialchars($club['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+															<td>
+																<div><?php echo htmlspecialchars($club['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+																<div><?php echo htmlspecialchars($club['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
+															</td>
+															<td>
+																<div class="d-flex gap-2">
+																	<a class="btn btn-warning btn-sm" href="registrar-club.php?edit=<?php echo (int)$club['id']; ?>&club_id=<?php echo $selectedClubId; ?>">Editar</a>
+																	<form method="post">
+																		<input type="hidden" name="action" value="toggle">
+																		<input type="hidden" name="id" value="<?php echo (int)$club['id']; ?>">
+																		<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+																		<button type="submit" class="btn btn-sm <?php echo ($club['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
+																			<?php echo ($club['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
+																		</button>
+																	</form>
+																	<form method="post">
+																		<input type="hidden" name="action" value="delete">
+																		<input type="hidden" name="id" value="<?php echo (int)$club['id']; ?>">
+																		<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+																		<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+																	</form>
+																</div>
+															</td>
+														</tr>
+													<?php } ?>
+												</tbody>
+											</table>
+										</div>
 									</div>
-									<div class="mb-3">
-										<label class="form-label">Archivo (PDF/imagen)</label>
-										<input type="file" class="form-control" name="doc_file">
-									</div>
-									<div class="mb-3">
-										<label class="form-label">Nombre archivo</label>
-										<input type="text" class="form-control" name="doc_nombre" value="<?php echo htmlspecialchars($editDoc['nombre_archivo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-									</div>
-									<div class="mb-3">
-										<label class="form-label">Ruta / enlace</label>
-										<input type="text" class="form-control" name="doc_ruta" value="<?php echo htmlspecialchars($editDoc['ruta'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-									</div>
-									<button type="submit" class="btn btn-primary">Guardar documento</button>
-								</form>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-xl-7">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Sedes registradas</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Club</th>
-												<th>Nombre</th>
-												<th>Dirección</th>
-												<th>Tipo</th>
-												<th>Horario</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($sedes as $sede) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($sede['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($sede['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<?php echo htmlspecialchars($sede['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-														<?php echo htmlspecialchars(' ' . ($sede['direccion_numero'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
-													</td>
-													<td><?php echo htmlspecialchars($sede['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($sede['horarios'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($sede['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-club.php?edit_sede=<?php echo (int)$sede['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="delete_sede">
-																<input type="hidden" name="sede_id" value="<?php echo (int)$sede['id']; ?>">
-																<input type="hidden" name="club_id" value="<?php echo (int)$sede['club_id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
+
+					<div class="tab-pane fade" id="sedes" role="tabpanel">
+						<div class="row">
+							<div class="col-xl-5">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Sedes / instalaciones</h5>
+										<form method="post">
+											<input type="hidden" name="action" value="save_sede">
+											<input type="hidden" name="sede_id" value="<?php echo htmlspecialchars($editSede['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+											<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+											<div class="mb-3">
+												<label class="form-label">Club</label>
+												<select class="form-control" name="club_id" required>
+													<option value="">Selecciona</option>
+													<?php foreach ($clubes as $club) { ?>
+														<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editSede['club_id'] ?? $selectedClubId) === (int)$club['id']) ? 'selected' : ''; ?>>
+															<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+														</option>
+													<?php } ?>
+												</select>
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Nombre sede</label>
+												<input type="text" class="form-control" name="sede_nombre" value="<?php echo htmlspecialchars($editSede['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+											</div>
+											<div class="row">
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Región</label>
+													<input type="text" class="form-control" name="sede_region" value="<?php echo htmlspecialchars($editSede['direccion_region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Comuna</label>
+													<input type="text" class="form-control" name="sede_comuna" value="<?php echo htmlspecialchars($editSede['direccion_comuna'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-8 mb-3">
+													<label class="form-label">Calle</label>
+													<input type="text" class="form-control" name="sede_calle" value="<?php echo htmlspecialchars($editSede['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-4 mb-3">
+													<label class="form-label">Número</label>
+													<input type="text" class="form-control" name="sede_numero" value="<?php echo htmlspecialchars($editSede['direccion_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Tipo</label>
+													<input type="text" class="form-control" name="sede_tipo" value="<?php echo htmlspecialchars($editSede['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Horarios</label>
+													<input type="text" class="form-control" name="sede_horarios" value="<?php echo htmlspecialchars($editSede['horarios'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Capacidad</label>
+													<input type="number" class="form-control" name="sede_capacidad" value="<?php echo htmlspecialchars($editSede['capacidad'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+												</div>
+												<div class="col-lg-6 mb-3">
+													<label class="form-label">Estado</label>
+													<select class="form-control" name="sede_estado">
+														<?php $estadoSede = $editSede['estado'] ?? 'activo'; ?>
+														<option value="activo" <?php echo $estadoSede === 'activo' ? 'selected' : ''; ?>>Activo</option>
+														<option value="inactivo" <?php echo $estadoSede === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
+													</select>
+												</div>
+											</div>
+											<button type="submit" class="btn btn-primary">Guardar sede</button>
+										</form>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-7">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Sedes registradas</h5>
+										<?php if (!$selectedClubId) { ?>
+											<div class="text-muted">Selecciona un club para ver sus sedes.</div>
+										<?php } else { ?>
+											<div class="table-responsive">
+												<table class="table">
+													<thead>
+														<tr>
+															<th>Club</th>
+															<th>Nombre</th>
+															<th>Dirección</th>
+															<th>Tipo</th>
+															<th>Horario</th>
+															<th>Estado</th>
+															<th>Acciones</th>
+														</tr>
+													</thead>
+													<tbody>
+														<?php foreach ($sedes as $sede) { ?>
+															<tr>
+																<td><?php echo htmlspecialchars($sede['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td><?php echo htmlspecialchars($sede['nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td>
+																	<?php echo htmlspecialchars($sede['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+																	<?php echo htmlspecialchars(' ' . ($sede['direccion_numero'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+																</td>
+																<td><?php echo htmlspecialchars($sede['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td><?php echo htmlspecialchars($sede['horarios'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td><?php echo htmlspecialchars($sede['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td>
+																	<div class="d-flex gap-2">
+																		<a class="btn btn-warning btn-sm" href="registrar-club.php?edit_sede=<?php echo (int)$sede['id']; ?>&club_id=<?php echo $selectedClubId; ?>">Editar</a>
+																		<form method="post">
+																			<input type="hidden" name="action" value="delete_sede">
+																			<input type="hidden" name="sede_id" value="<?php echo (int)$sede['id']; ?>">
+																			<input type="hidden" name="club_id" value="<?php echo (int)$sede['club_id']; ?>">
+																			<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+																			<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+																		</form>
+																	</div>
+																</td>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+											</div>
+										<?php } ?>
+									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Documentos cargados</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Club</th>
-												<th>Tipo</th>
-												<th>Archivo</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($documentos as $doc) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($doc['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($doc['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<a href="<?php echo htmlspecialchars($doc['ruta'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
-															<?php echo htmlspecialchars($doc['nombre_archivo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-														</a>
-													</td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-club.php?edit_doc=<?php echo (int)$doc['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="delete_doc">
-																<input type="hidden" name="doc_id" value="<?php echo (int)$doc['id']; ?>">
-																<input type="hidden" name="doc_club_id" value="<?php echo (int)$doc['club_id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
+					<div class="tab-pane fade" id="documentos" role="tabpanel">
+						<div class="row">
+							<div class="col-xl-5">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Documentos del club</h5>
+										<form method="post" enctype="multipart/form-data">
+											<input type="hidden" name="action" value="save_doc">
+											<input type="hidden" name="doc_id" value="<?php echo htmlspecialchars($editDoc['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+											<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+											<div class="mb-3">
+												<label class="form-label">Club</label>
+												<select class="form-control" name="doc_club_id" required>
+													<option value="">Selecciona</option>
+													<?php foreach ($clubes as $club) { ?>
+														<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editDoc['club_id'] ?? $selectedClubId) === (int)$club['id']) ? 'selected' : ''; ?>>
+															<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+														</option>
+													<?php } ?>
+												</select>
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Tipo documento</label>
+												<select class="form-control" name="doc_tipo" required>
+													<?php $docTipo = $editDoc['tipo'] ?? ''; ?>
+													<option value="">Selecciona</option>
+													<option value="estatutos" <?php echo $docTipo === 'estatutos' ? 'selected' : ''; ?>>Estatutos</option>
+													<option value="personalidad_juridica" <?php echo $docTipo === 'personalidad_juridica' ? 'selected' : ''; ?>>Personalidad jurídica</option>
+													<option value="certificados" <?php echo $docTipo === 'certificados' ? 'selected' : ''; ?>>Certificados</option>
+													<option value="actas" <?php echo $docTipo === 'actas' ? 'selected' : ''; ?>>Actas</option>
+													<option value="logo" <?php echo $docTipo === 'logo' ? 'selected' : ''; ?>>Logo</option>
+												</select>
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Archivo (PDF/imagen)</label>
+												<input type="file" class="form-control" name="doc_file">
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Nombre archivo</label>
+												<input type="text" class="form-control" name="doc_nombre" value="<?php echo htmlspecialchars($editDoc['nombre_archivo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+											</div>
+											<div class="mb-3">
+												<label class="form-label">Ruta / enlace</label>
+												<input type="text" class="form-control" name="doc_ruta" value="<?php echo htmlspecialchars($editDoc['ruta'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+											</div>
+											<button type="submit" class="btn btn-primary">Guardar documento</button>
+										</form>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-7">
+								<div class="card">
+									<div class="card-body">
+										<h5 class="mb-3">Documentos cargados</h5>
+										<?php if (!$selectedClubId) { ?>
+											<div class="text-muted">Selecciona un club para ver sus documentos.</div>
+										<?php } else { ?>
+											<div class="table-responsive">
+												<table class="table">
+													<thead>
+														<tr>
+															<th>Club</th>
+															<th>Tipo</th>
+															<th>Archivo</th>
+															<th>Acciones</th>
+														</tr>
+													</thead>
+													<tbody>
+														<?php foreach ($documentos as $doc) { ?>
+															<tr>
+																<td><?php echo htmlspecialchars($doc['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td><?php echo htmlspecialchars($doc['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+																<td>
+																	<a href="<?php echo htmlspecialchars($doc['ruta'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" target="_blank">
+																		<?php echo htmlspecialchars($doc['nombre_archivo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+																	</a>
+																</td>
+																<td>
+																	<div class="d-flex gap-2">
+																		<a class="btn btn-warning btn-sm" href="registrar-club.php?edit_doc=<?php echo (int)$doc['id']; ?>&club_id=<?php echo $selectedClubId; ?>">Editar</a>
+																		<form method="post">
+																			<input type="hidden" name="action" value="delete_doc">
+																			<input type="hidden" name="doc_id" value="<?php echo (int)$doc['id']; ?>">
+																			<input type="hidden" name="doc_club_id" value="<?php echo (int)$doc['club_id']; ?>">
+																			<input type="hidden" name="return_club_id" value="<?php echo $selectedClubId; ?>">
+																			<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+																		</form>
+																	</div>
+																</td>
+															</tr>
+														<?php } ?>
+													</tbody>
+												</table>
+											</div>
+										<?php } ?>
+									</div>
 								</div>
 							</div>
 						</div>
+					</div>
 
+					<div class="tab-pane fade" id="historial" role="tabpanel">
 						<div class="card">
 							<div class="card-body">
 								<h5 class="mb-3">Historial de cambios</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Club</th>
-												<th>Acción</th>
-												<th>Detalle</th>
-												<th>Usuario</th>
-												<th>Fecha</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($historial as $item) { ?>
+								<?php if (!$selectedClubId) { ?>
+									<div class="text-muted">Selecciona un club para ver su historial.</div>
+								<?php } else { ?>
+									<div class="table-responsive">
+										<table class="table">
+											<thead>
 												<tr>
-													<td><?php echo htmlspecialchars($item['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													<th>Club</th>
+													<th>Acción</th>
+													<th>Detalle</th>
+													<th>Usuario</th>
+													<th>Fecha</th>
 												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												<?php foreach ($historial as $item) { ?>
+													<tr>
+														<td><?php echo htmlspecialchars($item['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+														<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+														<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+														<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+														<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+													</tr>
+												<?php } ?>
+											</tbody>
+										</table>
+									</div>
+								<?php } ?>
 							</div>
 						</div>
 					</div>
