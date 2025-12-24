@@ -1,0 +1,15 @@
+.rating-container .star{
+	font-size: 18px;
+}
+.rating-container .caption .label{
+	background-color: var(--primary);
+	color:$white;
+}
+.rating-md {
+    font-size: 28px;
+    line-height: 18px;
+	display:flex;
+	align-items:center;
+}
+
+//tree scss

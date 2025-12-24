@@ -1,0 +1,65 @@
+.people-bx{
+	text-align: center;
+    border: 1px dashed var(--border);
+    padding: 25px;
+    border-radius: $radius;
+	cursor: pointer;
+	transition: all 0.5s
+	;
+	&:hover{
+		border-color:var(--primary);
+		h4{
+			color:var(--primary);
+		}
+	}
+}
+.ttl-project {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    padding: 15px 0;
+    overflow: hidden;
+	.pr-data {
+		position: relative;
+		&::after{
+			content: "";
+			position: absolute;
+			top: -20px;
+			right: -50px;
+			width: 1px;
+			height: 85px;
+			background: rgba(0, 0, 0, 0.1);
+			@include custommq($max:1440px){
+				right: -20px;
+			}
+			@include respond ('tab-land'){
+				right:-50px;
+				height:78px;
+			}
+			@include respond('phone-land'){
+				right:-24px;
+			}
+		
+		}
+		&:last-child{
+			&:after{
+				content:none;
+			}
+		}
+	}
+	@include respond('phone'){
+		display: none;
+	}
+}
+.transaction-table{
+	table{
+		thead{
+			th{
+				&:first-child{
+					padding-left: 0;
+				}
+			}
+		}
+	}
+}

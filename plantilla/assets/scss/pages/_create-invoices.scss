@@ -1,0 +1,138 @@
+.select-client{
+	 box-shadow: 0 14px 28px rgba(0,0,0,0.10);
+	 padding:1.875rem 1rem;
+	 border-radius:$radius;
+	 margin-bottom:1rem;
+}
+
+.item-desription{
+	span{
+		font-weight:600;	
+	}	
+}
+.item-desription1{
+	span{
+		font-weight:600;	
+		font-size:1.125rem;
+	}		
+}
+
+.dz-dropzone-box{
+		padding: 0;
+		border: 0;
+		display: flex;
+		align-items: start;
+		flex-flow: wrap;
+		&.dropzone{
+			min-height:auto;
+			background-color: var(--card);
+		}
+		.upload-btn{
+			i{
+				height:54px;
+				width:54px;
+				background:var(--primary);
+				border-radius:$radius;
+				line-height:56px;
+				color:$white;
+			}
+			@include respond('phone'){
+				span:nth-last-child(1){
+					font-size:14px;
+				}	
+				i{
+					height:40px;
+					width:40px;
+					line-height:40px;
+				}
+			}
+		}
+		.light.btn-primary:hover{
+			background:var(--rgba-primary-1);	
+		}
+		.btn-primary:focus{
+				
+		}
+		.light.btn-primary{
+			border:1px dashed var(--primary);
+			margin-right:4rem;
+			margin-bottom:1rem;
+			box-shadow:none;
+		}
+		a{
+			padding:1rem;
+		}
+	}
+	.dz-dropzone-box .dz-default{
+		display:none;
+	}
+	.dz-dropzone-box .dropzone-items{
+		display: flex;
+		flex-flow: wrap;
+		.file-icon{
+			i{
+				height:54px;
+				width:54px;
+				background:var(--rgba-primary-1);
+				border-radius:$radius;
+				line-height:56px;
+				text-align:center;
+				font-size:20px;
+				color:var(--primary);
+			}	
+		}
+		.dropzone-toolbar{
+			.dropzone-delete{
+				top: -6px;
+				right: -7px;
+				position:absolute;
+				height: 24px;
+				width: 24px;
+				text-align: center;
+				line-height: 24px;
+				color: white;
+				font-size: 12px;
+				border-radius: 50%;
+				background:var(--secondary);
+			}	
+		}
+	}
+	.dz-dropzone-box .dropzone-item{
+		background:transparent;
+		display: flex;
+		padding: 16px 21px;
+		border-radius: $radius;
+		border: 1px solid var(--primary);
+		min-width: 260px;
+		position: relative;
+		margin-right:1rem;
+		margin-bottom:1rem;
+	}
+	.dz-dropzone-box .dropzone-item .dropzone-toolbar{
+		cursor:pointer;
+		margin-left: 8px;
+	}
+	.dz-dropzone-box .dropzone-item .dropzone-filename{
+		font-size: 14px;
+	}
+	.dz-dropzone-box .dropzone-item .dropzone-filename strong{
+		font-size: 12px;
+		font-weight: 600;
+		opacity: 0.9;
+	}
+	
+.dataTablesCard {
+	thead{
+		tr{
+			.sorting{
+				&:first-child,
+				&:last-child{
+					background-image:none;
+				}
+			}
+		}
+	}
+}	
+.swal2-popup .swal2-styled:focus{
+	box-shadow:none;
+}
