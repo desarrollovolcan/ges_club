@@ -6,6 +6,7 @@
 	 $regiones = $locations['regiones'] ?? [];
 	 $paises = $locations['paises'] ?? [];
 	 $historial = $locations['historial'] ?? [];
+	 $usuarioActual = gesclub_current_username();
 	 $message = $_GET['msg'] ?? '';
 	 $paisesById = [];
 	 foreach ($paises as $pais) {
@@ -32,7 +33,7 @@
 	 					$region['estado'] = $estado;
 	 					$message = 'Region actualizada con exito.';
 	 					$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
-	 					gesclub_add_location_history($locations, 'region', 'actualizar', "Region {$codigo} - {$nombre} ({$nombrePais})");
+	 					gesclub_add_location_history($locations, 'region', 'actualizar', "Region {$codigo} - {$nombre} ({$nombrePais})", $usuarioActual);
 	 					break;
 	 				}
 	 			}
@@ -47,7 +48,7 @@
 	 			];
 	 			$message = 'Region guardada con exito.';
 	 			$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
-	 			gesclub_add_location_history($locations, 'region', 'crear', "Region {$codigo} - {$nombre} ({$nombrePais})");
+	 			gesclub_add_location_history($locations, 'region', 'crear', "Region {$codigo} - {$nombre} ({$nombrePais})", $usuarioActual);
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($regiones as &$region) {
@@ -56,7 +57,7 @@
 	 				$message = $region['estado'] === 'activo' ? 'Region habilitada con exito.' : 'Region deshabilitada con exito.';
 	 				$accion = $region['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
 	 				$nombrePais = $paisesById[$region['pais_id'] ?? 0]['nombre'] ?? '';
-	 				gesclub_add_location_history($locations, 'region', $accion, "Region {$region['codigo']} - {$region['nombre']} ({$nombrePais})");
+	 				gesclub_add_location_history($locations, 'region', $accion, "Region {$region['codigo']} - {$region['nombre']} ({$nombrePais})", $usuarioActual);
 	 				break;
 	 			}
 	 		}
@@ -67,7 +68,7 @@
 	 		$message = 'Region borrada con exito.';
 	 		if ($eliminado) {
 	 			$nombrePais = $paisesById[$eliminado['pais_id'] ?? 0]['nombre'] ?? '';
-	 			gesclub_add_location_history($locations, 'region', 'borrar', "Region {$eliminado['codigo']} - {$eliminado['nombre']} ({$nombrePais})");
+	 			gesclub_add_location_history($locations, 'region', 'borrar', "Region {$eliminado['codigo']} - {$eliminado['nombre']} ({$nombrePais})", $usuarioActual);
 	 		}
 	 	}
 
@@ -220,6 +221,7 @@
 									<tr>
 										<th>Fecha</th>
 										<th>Accion</th>
+										<th>Usuario</th>
 										<th>Detalle</th>
 									</tr>
 								</thead>
@@ -228,6 +230,7 @@
 										<tr>
 											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 										</tr>
 									<?php } ?>

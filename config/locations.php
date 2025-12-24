@@ -62,7 +62,7 @@ function gesclub_find_location(array $items, int $id): ?array
 	return null;
 }
 
-function gesclub_add_location_history(array &$locations, string $tipo, string $accion, string $detalle): void
+function gesclub_add_location_history(array &$locations, string $tipo, string $accion, string $detalle, string $usuario): void
 {
 	if (!isset($locations['historial']) || !is_array($locations['historial'])) {
 		$locations['historial'] = [];
@@ -72,6 +72,7 @@ function gesclub_add_location_history(array &$locations, string $tipo, string $a
 		'tipo' => $tipo,
 		'accion' => $accion,
 		'detalle' => $detalle,
+		'usuario' => $usuario,
 		'fecha' => date('c'),
 	];
 }

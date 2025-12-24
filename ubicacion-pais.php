@@ -5,6 +5,7 @@
 	 $locations = gesclub_load_locations();
 	 $paises = $locations['paises'] ?? [];
 	 $historial = $locations['historial'] ?? [];
+	 $usuarioActual = gesclub_current_username();
 	 $message = $_GET['msg'] ?? '';
 
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,7 +23,7 @@
 	 					$pais['nombre'] = $nombre;
 	 					$pais['estado'] = $estado;
 	 					$message = 'Pais actualizado con exito.';
-	 					gesclub_add_location_history($locations, 'pais', 'actualizar', "Pais {$codigo} - {$nombre}");
+	 					gesclub_add_location_history($locations, 'pais', 'actualizar', "Pais {$codigo} - {$nombre}", $usuarioActual);
 	 					break;
 	 				}
 	 			}
@@ -35,7 +36,7 @@
 	 				'estado' => $estado,
 	 			];
 	 			$message = 'Pais guardado con exito.';
-	 			gesclub_add_location_history($locations, 'pais', 'crear', "Pais {$codigo} - {$nombre}");
+	 			gesclub_add_location_history($locations, 'pais', 'crear', "Pais {$codigo} - {$nombre}", $usuarioActual);
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($paises as &$pais) {
@@ -43,7 +44,7 @@
 	 				$pais['estado'] = ($pais['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
 	 				$message = $pais['estado'] === 'activo' ? 'Pais habilitado con exito.' : 'Pais deshabilitado con exito.';
 	 				$accion = $pais['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
-	 				gesclub_add_location_history($locations, 'pais', $accion, "Pais {$pais['codigo']} - {$pais['nombre']}");
+	 				gesclub_add_location_history($locations, 'pais', $accion, "Pais {$pais['codigo']} - {$pais['nombre']}", $usuarioActual);
 	 				break;
 	 			}
 	 		}
@@ -53,7 +54,7 @@
 	 		$paises = array_values(array_filter($paises, fn($pais) => (int)($pais['id'] ?? 0) !== $id));
 	 		$message = 'Pais borrado con exito.';
 	 		if ($eliminado) {
-	 			gesclub_add_location_history($locations, 'pais', 'borrar', "Pais {$eliminado['codigo']} - {$eliminado['nombre']}");
+	 			gesclub_add_location_history($locations, 'pais', 'borrar', "Pais {$eliminado['codigo']} - {$eliminado['nombre']}", $usuarioActual);
 	 		}
 	 	}
 
@@ -186,6 +187,7 @@
 									<tr>
 										<th>Fecha</th>
 										<th>Accion</th>
+										<th>Usuario</th>
 										<th>Detalle</th>
 									</tr>
 								</thead>
@@ -194,6 +196,7 @@
 										<tr>
 											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
 										</tr>
 									<?php } ?>

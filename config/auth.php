@@ -103,6 +103,15 @@ function gesclub_is_authenticated(): bool
 	return !empty($_SESSION['auth_user']);
 }
 
+function gesclub_current_username(): string
+{
+	if (!empty($_SESSION['auth_user']['username'])) {
+		return (string)$_SESSION['auth_user']['username'];
+	}
+
+	return 'sistema';
+}
+
 function gesclub_is_admin(): bool
 {
 	return !empty($_SESSION['auth_user']['role']) && $_SESSION['auth_user']['role'] === 'super_root';
