@@ -121,21 +121,17 @@ function gesclub_save_locations(array $locations): bool
 
 function gesclub_sync_locations_table(PDO $db, string $table, array $rows, array $columns): void
 {
-	$setClauses = [];
-	foreach ($columns as $column) {
-		$setClauses[] = sprintf('%s = :%s', $column, $column);
-	}
-	$update = $db->prepare(sprintf(
-		'UPDATE %s SET %s WHERE id = :id',
-		$table,
-		implode(', ', $setClauses)
-	));
 	$insertColumns = array_merge(['id'], $columns);
-	$insert = $db->prepare(sprintf(
-		'INSERT INTO %s (%s) VALUES (%s)',
+	$updates = [];
+	foreach ($columns as $column) {
+		$updates[] = sprintf('%s = VALUES(%s)', $column, $column);
+	}
+	$upsert = $db->prepare(sprintf(
+		'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s',
 		$table,
 		implode(', ', $insertColumns),
-		':' . implode(', :', $insertColumns)
+		':' . implode(', :', $insertColumns),
+		implode(', ', $updates)
 	));
 
 	$ids = [];
@@ -150,10 +146,7 @@ function gesclub_sync_locations_table(PDO $db, string $table, array $rows, array
 			$default = $column === 'estado' ? 'activo' : '';
 			$params[':' . $column] = $row[$column] ?? $default;
 		}
-		$update->execute($params);
-		if ($update->rowCount() === 0) {
-			$insert->execute($params);
-		}
+		$upsert->execute($params);
 	}
 
 	if ($ids === []) {

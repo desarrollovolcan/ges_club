@@ -42,8 +42,10 @@ function gesclub_load_users(): array
 function gesclub_save_users(array $users): void
 {
 	$db = gesclub_db();
-	$update = $db->prepare('UPDATE users SET password_hash = :password_hash, status = :status, role = :role, created_at = :created_at WHERE username = :username');
-	$insert = $db->prepare('INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)');
+	$upsert = $db->prepare(
+		'INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)
+		ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), status = VALUES(status), role = VALUES(role), created_at = VALUES(created_at)'
+	);
 
 	foreach ($users as $user) {
 		$username = trim((string)($user['username'] ?? ''));
@@ -57,10 +59,7 @@ function gesclub_save_users(array $users): void
 			':role' => (string)($user['role'] ?? 'user'),
 			':created_at' => (string)($user['created_at'] ?? date('Y-m-d H:i:s')),
 		];
-		$update->execute($params);
-		if ($update->rowCount() === 0) {
-			$insert->execute($params);
-		}
+		$upsert->execute($params);
 	}
 }
 
