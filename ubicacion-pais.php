@@ -4,6 +4,7 @@
 
 	 $locations = gesclub_load_locations();
 	 $paises = $locations['paises'] ?? [];
+	 $historial = $locations['historial'] ?? [];
 	 $message = '';
 
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -21,6 +22,7 @@
 	 					$pais['nombre'] = $nombre;
 	 					$pais['estado'] = $estado;
 	 					$message = 'Pais actualizado.';
+	 					gesclub_add_location_history($locations, 'pais', 'actualizar', "Pais {$codigo} - {$nombre}");
 	 					break;
 	 				}
 	 			}
@@ -33,19 +35,26 @@
 	 				'estado' => $estado,
 	 			];
 	 			$message = 'Pais creado.';
+	 			gesclub_add_location_history($locations, 'pais', 'crear', "Pais {$codigo} - {$nombre}");
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($paises as &$pais) {
 	 			if ((int)($pais['id'] ?? 0) === $id) {
 	 				$pais['estado'] = ($pais['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
 	 				$message = 'Estado actualizado.';
+	 				$accion = $pais['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
+	 				gesclub_add_location_history($locations, 'pais', $accion, "Pais {$pais['codigo']} - {$pais['nombre']}");
 	 				break;
 	 			}
 	 		}
 	 		unset($pais);
 	 	} elseif ($action === 'delete' && $id > 0) {
+	 		$eliminado = gesclub_find_location($paises, $id);
 	 		$paises = array_values(array_filter($paises, fn($pais) => (int)($pais['id'] ?? 0) !== $id));
 	 		$message = 'Pais eliminado.';
+	 		if ($eliminado) {
+	 			gesclub_add_location_history($locations, 'pais', 'borrar', "Pais {$eliminado['codigo']} - {$eliminado['nombre']}");
+	 		}
 	 	}
 
 	 	$locations['paises'] = $paises;
@@ -54,6 +63,7 @@
 
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editPais = $editId > 0 ? gesclub_find_location($paises, $editId) : null;
+	 $historialPais = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'pais'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,7 +152,7 @@
 															<form method="post">
 																<input type="hidden" name="action" value="toggle">
 																<input type="hidden" name="id" value="<?php echo (int)($pais['id'] ?? 0); ?>">
-																<button type="submit" class="btn btn-secondary btn-sm">
+																<button type="submit" class="btn btn-sm <?php echo ($pais['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
 																	<?php echo ($pais['estado'] ?? 'activo') === 'activo' ? 'Deshabilitar' : 'Habilitar'; ?>
 																</button>
 															</form>
@@ -159,6 +169,31 @@
 									</table>
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Historial de cambios</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Fecha</th>
+										<th>Accion</th>
+										<th>Detalle</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($historialPais as $item) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>

@@ -14,6 +14,7 @@ function gesclub_load_locations(): array
 			'regiones' => [],
 			'comunas' => [],
 			'ciudades' => [],
+			'historial' => [],
 		];
 	}
 
@@ -25,6 +26,7 @@ function gesclub_load_locations(): array
 			'regiones' => [],
 			'comunas' => [],
 			'ciudades' => [],
+			'historial' => [],
 		];
 	}
 
@@ -58,4 +60,18 @@ function gesclub_find_location(array $items, int $id): ?array
 	}
 
 	return null;
+}
+
+function gesclub_add_location_history(array &$locations, string $tipo, string $accion, string $detalle): void
+{
+	if (!isset($locations['historial']) || !is_array($locations['historial'])) {
+		$locations['historial'] = [];
+	}
+
+	$locations['historial'][] = [
+		'tipo' => $tipo,
+		'accion' => $accion,
+		'detalle' => $detalle,
+		'fecha' => date('c'),
+	];
 }

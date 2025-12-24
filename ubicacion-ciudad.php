@@ -5,6 +5,7 @@
 	 $locations = gesclub_load_locations();
 	 $ciudades = $locations['ciudades'] ?? [];
 	 $comunas = $locations['comunas'] ?? [];
+	 $historial = $locations['historial'] ?? [];
 	 $message = '';
 	 $comunasById = [];
 	 foreach ($comunas as $comuna) {
@@ -28,6 +29,8 @@
 	 					$ciudad['nombre'] = $nombre;
 	 					$ciudad['estado'] = $estado;
 	 					$message = 'Ciudad actualizada.';
+	 					$nombreComuna = $comunasById[$comunaId]['nombre'] ?? '';
+	 					gesclub_add_location_history($locations, 'ciudad', 'actualizar', "Ciudad {$nombre} ({$nombreComuna})");
 	 					break;
 	 				}
 	 			}
@@ -40,19 +43,29 @@
 	 				'estado' => $estado,
 	 			];
 	 			$message = 'Ciudad creada.';
+	 			$nombreComuna = $comunasById[$comunaId]['nombre'] ?? '';
+	 			gesclub_add_location_history($locations, 'ciudad', 'crear', "Ciudad {$nombre} ({$nombreComuna})");
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($ciudades as &$ciudad) {
 	 			if ((int)($ciudad['id'] ?? 0) === $id) {
 	 				$ciudad['estado'] = ($ciudad['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
 	 				$message = 'Estado actualizado.';
+	 				$accion = $ciudad['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
+	 				$nombreComuna = $comunasById[$ciudad['comuna_id'] ?? 0]['nombre'] ?? '';
+	 				gesclub_add_location_history($locations, 'ciudad', $accion, "Ciudad {$ciudad['nombre']} ({$nombreComuna})");
 	 				break;
 	 			}
 	 		}
 	 		unset($ciudad);
 	 	} elseif ($action === 'delete' && $id > 0) {
+	 		$eliminado = gesclub_find_location($ciudades, $id);
 	 		$ciudades = array_values(array_filter($ciudades, fn($ciudad) => (int)($ciudad['id'] ?? 0) !== $id));
 	 		$message = 'Ciudad eliminada.';
+	 		if ($eliminado) {
+	 			$nombreComuna = $comunasById[$eliminado['comuna_id'] ?? 0]['nombre'] ?? '';
+	 			gesclub_add_location_history($locations, 'ciudad', 'borrar', "Ciudad {$eliminado['nombre']} ({$nombreComuna})");
+	 		}
 	 	}
 
 	 	$locations['ciudades'] = $ciudades;
@@ -61,6 +74,7 @@
 
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editCiudad = $editId > 0 ? gesclub_find_location($ciudades, $editId) : null;
+	 $historialCiudad = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'ciudad'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -156,7 +170,7 @@
 															<form method="post">
 																<input type="hidden" name="action" value="toggle">
 																<input type="hidden" name="id" value="<?php echo (int)($ciudad['id'] ?? 0); ?>">
-																<button type="submit" class="btn btn-secondary btn-sm">
+																<button type="submit" class="btn btn-sm <?php echo ($ciudad['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
 																	<?php echo ($ciudad['estado'] ?? 'activo') === 'activo' ? 'Deshabilitar' : 'Habilitar'; ?>
 																</button>
 															</form>
@@ -173,6 +187,31 @@
 									</table>
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Historial de cambios</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Fecha</th>
+										<th>Accion</th>
+										<th>Detalle</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($historialCiudad as $item) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>

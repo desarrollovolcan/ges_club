@@ -5,6 +5,7 @@
 	 $locations = gesclub_load_locations();
 	 $regiones = $locations['regiones'] ?? [];
 	 $paises = $locations['paises'] ?? [];
+	 $historial = $locations['historial'] ?? [];
 	 $message = '';
 	 $paisesById = [];
 	 foreach ($paises as $pais) {
@@ -30,6 +31,8 @@
 	 					$region['nombre'] = $nombre;
 	 					$region['estado'] = $estado;
 	 					$message = 'Region actualizada.';
+	 					$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
+	 					gesclub_add_location_history($locations, 'region', 'actualizar', "Region {$codigo} - {$nombre} ({$nombrePais})");
 	 					break;
 	 				}
 	 			}
@@ -43,19 +46,29 @@
 	 				'estado' => $estado,
 	 			];
 	 			$message = 'Region creada.';
+	 			$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
+	 			gesclub_add_location_history($locations, 'region', 'crear', "Region {$codigo} - {$nombre} ({$nombrePais})");
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($regiones as &$region) {
 	 			if ((int)($region['id'] ?? 0) === $id) {
 	 				$region['estado'] = ($region['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
 	 				$message = 'Estado actualizado.';
+	 				$accion = $region['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
+	 				$nombrePais = $paisesById[$region['pais_id'] ?? 0]['nombre'] ?? '';
+	 				gesclub_add_location_history($locations, 'region', $accion, "Region {$region['codigo']} - {$region['nombre']} ({$nombrePais})");
 	 				break;
 	 			}
 	 		}
 	 		unset($region);
 	 	} elseif ($action === 'delete' && $id > 0) {
+	 		$eliminado = gesclub_find_location($regiones, $id);
 	 		$regiones = array_values(array_filter($regiones, fn($region) => (int)($region['id'] ?? 0) !== $id));
 	 		$message = 'Region eliminada.';
+	 		if ($eliminado) {
+	 			$nombrePais = $paisesById[$eliminado['pais_id'] ?? 0]['nombre'] ?? '';
+	 			gesclub_add_location_history($locations, 'region', 'borrar', "Region {$eliminado['codigo']} - {$eliminado['nombre']} ({$nombrePais})");
+	 		}
 	 	}
 
 	 	$locations['regiones'] = $regiones;
@@ -64,6 +77,7 @@
 
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editRegion = $editId > 0 ? gesclub_find_location($regiones, $editId) : null;
+	 $historialRegion = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'region'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -165,7 +179,7 @@
 															<form method="post">
 																<input type="hidden" name="action" value="toggle">
 																<input type="hidden" name="id" value="<?php echo (int)($region['id'] ?? 0); ?>">
-																<button type="submit" class="btn btn-secondary btn-sm">
+																<button type="submit" class="btn btn-sm <?php echo ($region['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
 																	<?php echo ($region['estado'] ?? 'activo') === 'activo' ? 'Deshabilitar' : 'Habilitar'; ?>
 																</button>
 															</form>
@@ -182,6 +196,31 @@
 									</table>
 								</div>
 							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Historial de cambios</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Fecha</th>
+										<th>Accion</th>
+										<th>Detalle</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($historialRegion as $item) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
