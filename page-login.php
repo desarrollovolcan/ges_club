@@ -40,13 +40,13 @@
 								<h4 class="text-center mb-4">Sign in your account</h4>
 								<form action="index.php">
 									<div class="mb-3">
-										<label class="mb-1 form-label">Email</label>
-										<input type="email" class="form-control" value="hello@example.com">
+										<label class="mb-1 form-label">Usuario</label>
+										<input type="text" class="form-control" value="Admin_super">
 									</div>
 									<div class="mb-3">
 										<label class="mb-1 form-label">Password</label>
 										<div class="position-relative">
-											<input type="password" id="dz-password" class="form-control" value="Password">
+											<input type="password" id="dz-password" class="form-control" value="Gesclub2026">
 											<span class="show-pass eye">
 												<i class="fa fa-eye-slash"></i>
 												<i class="fa fa-eye"></i>
