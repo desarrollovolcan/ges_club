@@ -6,8 +6,8 @@ function gesclub_db_config(): array
 		'host' => getenv('GESCLUB_DB_HOST') ?: '127.0.0.1',
 		'port' => getenv('GESCLUB_DB_PORT') ?: '3306',
 		'name' => getenv('GESCLUB_DB_NAME') ?: 'ges_club',
-		'user' => getenv('GESCLUB_DB_USER') ?: 'ges_club',
-		'pass' => getenv('GESCLUB_DB_PASS') ?: 'ges_club',
+		'user' => getenv('GESCLUB_DB_USER') ?: 'root',
+		'pass' => getenv('GESCLUB_DB_PASS') ?: '',
 	];
 }
 
