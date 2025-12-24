@@ -1,5 +1,25 @@
-<?php 
+<?php
 	 require_once __DIR__ . '/config/dz.php';
+
+	 $loginError = '';
+	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+	 	$username = trim($_POST['username'] ?? '');
+	 	$password = trim($_POST['password'] ?? '');
+
+	 	$result = gesclub_verify_credentials($username, $password);
+	 	if (!empty($result['ok'])) {
+	 		$_SESSION['auth_user'] = $result['user'];
+	 		header('Location: index.php');
+	 		exit;
+	 	}
+
+	 	$loginError = $result['message'] ?? 'No se pudo iniciar sesión.';
+	 }
+
+	 if (gesclub_is_authenticated()) {
+	 	header('Location: index.php');
+	 	exit;
+	 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,39 +57,33 @@
 									<a href="index.php"><img src="assets/images/logo-full-white.png" class="light-login" alt=""></a>
 								</div>
 								
-								<h4 class="text-center mb-4">Sign in your account</h4>
-								<form action="index.php">
+								<h4 class="text-center mb-4">Iniciar sesión</h4>
+								<?php if (!empty($loginError)) { ?>
+									<div class="alert alert-danger" role="alert">
+										<?php echo $loginError; ?>
+									</div>
+								<?php } ?>
+								<form action="page-login.php" method="post">
 									<div class="mb-3">
-										<label class="mb-1 form-label">Email</label>
-										<input type="email" class="form-control" value="hello@example.com">
+										<label class="mb-1 form-label">Usuario</label>
+										<input type="text" name="username" class="form-control" required>
 									</div>
 									<div class="mb-3">
-										<label class="mb-1 form-label">Password</label>
+										<label class="mb-1 form-label">Contraseña</label>
 										<div class="position-relative">
-											<input type="password" id="dz-password" class="form-control" value="Password">
+											<input type="password" id="dz-password" name="password" class="form-control" required>
 											<span class="show-pass eye">
 												<i class="fa fa-eye-slash"></i>
 												<i class="fa fa-eye"></i>
 											</span>
 										</div>
 									</div>
-									<div class="form-row d-flex justify-content-between mt-4 mb-2">
-										<div class="mb-3">
-										   <div class="form-check custom-checkbox ms-1">
-												<input type="checkbox" class="form-check-input" id="basic_checkbox_1">
-												<label class="form-check-label" for="basic_checkbox_1">Remember my preference</label>
-											</div>
-										</div>
-										<div class="mb-3">
-											<a href="page-forgot-password.php">Forgot Password?</a>
-										</div>
-									</div>
 									<div class="text-center">
-										<button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
+										<button type="submit" class="btn btn-primary btn-block">Ingresar</button>
 									</div>
 								</form>
 								<div class="new-account mt-3">
-									<p>Don't have an account? <a class="text-primary" href="./page-register.php">Sign up</a></p>
+									<p>¿No tienes una cuenta? <a class="text-primary" href="page-register.php">Regístrate</a></p>
 								</div>
                             </div>
 						</div>
