@@ -325,14 +325,18 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 			}
 		}
 
-		$history = $db->prepare('INSERT INTO user_profile_history (user_id, accion, detalle, usuario, fecha) VALUES (:user_id, :accion, :detalle, :usuario, :fecha)');
-		$history->execute([
-			':user_id' => $userId,
-			':accion' => $payload['history_action'] ?? 'actualizar',
-			':detalle' => $payload['history_detail'] ?? 'Actualización de perfil',
-			':usuario' => $actor,
-			':fecha' => date('Y-m-d H:i:s'),
-		]);
+		try {
+			$history = $db->prepare('INSERT INTO user_profile_history (user_id, accion, detalle, usuario, fecha) VALUES (:user_id, :accion, :detalle, :usuario, :fecha)');
+			$history->execute([
+				':user_id' => $userId,
+				':accion' => $payload['history_action'] ?? 'actualizar',
+				':detalle' => $payload['history_detail'] ?? 'Actualización de perfil',
+				':usuario' => $actor,
+				':fecha' => date('Y-m-d H:i:s'),
+			]);
+		} catch (Throwable $historyError) {
+			// Se omite el historial si la tabla no existe o ocurre un error puntual.
+		}
 
 		$db->commit();
 		return ['ok' => true, 'id' => $userId];

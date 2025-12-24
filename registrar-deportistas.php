@@ -11,7 +11,6 @@
 	$messageType = $_GET['msg_type'] ?? 'success';
 
 	$deportistas = $db->query('SELECT * FROM deportistas ORDER BY id DESC')->fetchAll() ?: [];
-	$historial = $db->query('SELECT h.*, d.nombres, d.apellidos FROM historial_deportistas h JOIN deportistas d ON d.id = h.deportista_id ORDER BY h.id DESC')->fetchAll() ?: [];
 
 	$editId = (int)($_GET['edit'] ?? 0);
 	$editDeportista = null;
@@ -476,35 +475,6 @@
 							</div>
 						</div>
 
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Historial</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Deportista</th>
-												<th>Acción</th>
-												<th>Detalle</th>
-												<th>Usuario</th>
-												<th>Fecha</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($historial as $item) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars(($item['nombres'] ?? '') . ' ' . ($item['apellidos'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
 					</div>
 				</div>
 			</div>

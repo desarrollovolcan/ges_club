@@ -109,9 +109,16 @@
 					</div>
 				<?php } ?>
 
-				<div class="card mb-4">
+				<div class="card mb-4 shadow-sm">
+					<div class="card-header d-flex flex-wrap align-items-center justify-content-between">
+						<div>
+							<h4 class="mb-1"><?php echo $isEditing ? 'Actualiza el perfil' : 'Nuevo usuario'; ?></h4>
+							<p class="mb-0 text-muted">Completa los datos esenciales para crear o actualizar la cuenta.</p>
+						</div>
+						<span class="badge bg-primary"><?php echo $isEditing ? 'Edición' : 'Registro'; ?></span>
+					</div>
 					<div class="card-body">
-						<form method="post" enctype="multipart/form-data">
+						<form method="post" enctype="multipart/form-data" autocomplete="off">
 							<input type="hidden" name="id" value="<?php echo (int)($formData['id'] ?? ($editUser['id'] ?? 0)); ?>">
 							<div class="row">
 								<div class="col-lg-4 mb-3">

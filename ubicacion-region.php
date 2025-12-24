@@ -5,7 +5,6 @@
 	 $locations = gesclub_load_locations();
 	 $regiones = $locations['regiones'] ?? [];
 	 $paises = $locations['paises'] ?? [];
-	 $historial = $locations['historial'] ?? [];
 	 $usuarioActual = gesclub_current_username();
 	 $message = $_GET['msg'] ?? '';
 	 $messageType = $_GET['msg_type'] ?? 'success';
@@ -86,7 +85,6 @@
 	 $locations = gesclub_load_locations();
 	 $regiones = $locations['regiones'] ?? [];
 	 $paises = $locations['paises'] ?? [];
-	 $historial = $locations['historial'] ?? [];
 	 $paisesById = [];
 	 foreach ($paises as $pais) {
 	 	if (isset($pais['id'])) {
@@ -95,7 +93,6 @@
 	 }
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editRegion = $editId > 0 ? gesclub_find_location($regiones, $editId) : null;
-	 $historialRegion = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'region'));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -214,33 +211,6 @@
 									</table>
 								</div>
 							</div>
-						</div>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-body">
-						<h5 class="mb-3">Historial de cambios</h5>
-						<div class="table-responsive">
-							<table class="table">
-								<thead>
-									<tr>
-										<th>Fecha</th>
-										<th>Accion</th>
-										<th>Usuario</th>
-										<th>Detalle</th>
-									</tr>
-								</thead>
-								<tbody>
-									<?php foreach ($historialRegion as $item) { ?>
-										<tr>
-											<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-											<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-											<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-											<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-										</tr>
-									<?php } ?>
-								</tbody>
-							</table>
 						</div>
 					</div>
 				</div>

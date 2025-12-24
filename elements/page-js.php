@@ -34,3 +34,15 @@ DexignZone_Script($DexignZoneSettings['pagelevel'][$CurrentPage]['js']['bottom']
 }
 
  ?>
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		document.querySelectorAll('form').forEach(function (form) {
+			form.setAttribute('autocomplete', 'off');
+		});
+		document.querySelectorAll('input, textarea, select').forEach(function (field) {
+			if (!field.getAttribute('autocomplete')) {
+				field.setAttribute('autocomplete', 'off');
+			}
+		});
+	});
+</script>

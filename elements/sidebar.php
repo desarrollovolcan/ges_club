@@ -14,10 +14,19 @@
 	$canInventario = gesclub_can_any(['inventario', 'inventario-movimientos']);
 	$canReportes = gesclub_can_any(['reportes', 'reportes-deportivos', 'reportes-asistencia', 'reportes-financieros']);
 	$canUbicacion = gesclub_can_any(['ubicacion-pais', 'ubicacion-region', 'ubicacion-comuna']);
+	$canControlActividades = gesclub_is_authenticated();
 ?>
 <div class="deznav">
 			<div class="deznav-scroll">
 				<ul class="metismenu" id="menu">
+					<?php if ($canControlActividades) { ?>
+					<li>
+						<a href="control-actividades.php" aria-expanded="false">
+							<i class="fa fa-clipboard-list"></i>
+							<span class="nav-text">Control de actividades</span>
+						</a>
+					</li>
+					<?php } ?>
 					<?php if ($canUsuarios) { ?>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
