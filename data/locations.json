@@ -1,0 +1,54 @@
+{
+    "paises": [
+        {
+            "codigo": "CL",
+            "nombre": "Chile"
+        }
+    ],
+    "regiones": [
+        {
+            "codigo": "RM",
+            "nombre": "Región Metropolitana de Santiago"
+        },
+        {
+            "codigo": "V",
+            "nombre": "Región de Valparaíso"
+        },
+        {
+            "codigo": "VIII",
+            "nombre": "Región del Biobío"
+        }
+    ],
+    "comunas": [
+        {
+            "nombre": "Santiago",
+            "region": "Región Metropolitana de Santiago"
+        },
+        {
+            "nombre": "Providencia",
+            "region": "Región Metropolitana de Santiago"
+        },
+        {
+            "nombre": "Valparaíso",
+            "region": "Región de Valparaíso"
+        },
+        {
+            "nombre": "Concepción",
+            "region": "Región del Biobío"
+        }
+    ],
+    "ciudades": [
+        {
+            "nombre": "Santiago",
+            "region": "Región Metropolitana de Santiago"
+        },
+        {
+            "nombre": "Valparaíso",
+            "region": "Región de Valparaíso"
+        },
+        {
+            "nombre": "Concepción",
+            "region": "Región del Biobío"
+        }
+    ]
+}
