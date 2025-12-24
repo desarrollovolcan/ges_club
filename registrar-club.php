@@ -905,7 +905,7 @@
 					</div>
 
 					<div class="tab-pane fade" id="historial" role="tabpanel">
-						<div class="card">
+						<div class="card mb-4">
 							<div class="card-body">
 								<h5 class="mb-3">Historial de cambios</h5>
 								<?php if (!$selectedClubId) { ?>
