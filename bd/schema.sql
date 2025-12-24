@@ -21,6 +21,30 @@ CREATE TABLE IF NOT EXISTS user_roles (
   estado VARCHAR(20) NOT NULL DEFAULT 'activo'
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS permisos_modulo (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(150) NOT NULL,
+  descripcion VARCHAR(255) NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS role_permissions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  role_id INT NOT NULL,
+  permiso_id INT NOT NULL,
+  can_view TINYINT(1) NOT NULL DEFAULT 1,
+  can_create TINYINT(1) NOT NULL DEFAULT 0,
+  can_edit TINYINT(1) NOT NULL DEFAULT 0,
+  can_delete TINYINT(1) NOT NULL DEFAULT 0,
+  can_export TINYINT(1) NOT NULL DEFAULT 0,
+  UNIQUE KEY uk_role_permissions (role_id, permiso_id),
+  CONSTRAINT fk_role_permissions_role FOREIGN KEY (role_id) REFERENCES user_roles(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_role_permissions_permiso FOREIGN KEY (permiso_id) REFERENCES permisos_modulo(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS user_role_assignments (
   user_id INT NOT NULL,
   role_id INT NOT NULL,
@@ -626,6 +650,129 @@ CREATE TABLE IF NOT EXISTS mensajes (
   fecha DATETIME NOT NULL,
   estado ENUM('leido','no_leido') NOT NULL DEFAULT 'no_leido',
   CONSTRAINT fk_mensajes_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS calendario_eventos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  titulo VARCHAR(200) NOT NULL,
+  tipo VARCHAR(100) NOT NULL,
+  fecha_inicio DATETIME NOT NULL,
+  fecha_fin DATETIME NOT NULL,
+  sede VARCHAR(150) NULL,
+  cupos INT NULL,
+  estado ENUM('programado','confirmado','cancelado') NOT NULL DEFAULT 'programado',
+  CONSTRAINT fk_calendario_eventos_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS reservas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  sede_id INT NULL,
+  espacio VARCHAR(150) NOT NULL,
+  fecha DATE NOT NULL,
+  hora_inicio TIME NOT NULL,
+  hora_fin TIME NOT NULL,
+  cupos INT NULL,
+  estado ENUM('pendiente','confirmada','cancelada') NOT NULL DEFAULT 'pendiente',
+  CONSTRAINT fk_reservas_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_reservas_sede FOREIGN KEY (sede_id) REFERENCES club_sedes(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS contabilidad_gastos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  proveedor VARCHAR(150) NOT NULL,
+  descripcion VARCHAR(255) NOT NULL,
+  monto DECIMAL(12,2) NOT NULL,
+  fecha DATE NOT NULL,
+  centro_costo VARCHAR(120) NULL,
+  comprobante VARCHAR(150) NULL,
+  estado ENUM('pendiente','pagado') NOT NULL DEFAULT 'pendiente',
+  CONSTRAINT fk_contabilidad_gastos_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS contabilidad_rendiciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  solicitante VARCHAR(150) NOT NULL,
+  descripcion VARCHAR(255) NOT NULL,
+  monto DECIMAL(12,2) NOT NULL,
+  fecha DATE NOT NULL,
+  estado ENUM('pendiente','aprobada','rechazada') NOT NULL DEFAULT 'pendiente',
+  CONSTRAINT fk_contabilidad_rendiciones_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS documentos_internos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  tipo VARCHAR(120) NOT NULL,
+  titulo VARCHAR(200) NOT NULL,
+  archivo VARCHAR(255) NULL,
+  fecha DATE NOT NULL,
+  CONSTRAINT fk_documentos_internos_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS actas_reuniones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  tipo VARCHAR(120) NOT NULL,
+  fecha DATE NOT NULL,
+  resumen TEXT NULL,
+  archivo VARCHAR(255) NULL,
+  CONSTRAINT fk_actas_reuniones_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS solicitudes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  tipo VARCHAR(120) NOT NULL,
+  solicitante VARCHAR(150) NOT NULL,
+  detalle VARCHAR(255) NULL,
+  estado ENUM('recibida','en_proceso','cerrada') NOT NULL DEFAULT 'recibida',
+  fecha DATE NOT NULL,
+  CONSTRAINT fk_solicitudes_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventario_items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  nombre VARCHAR(150) NOT NULL,
+  categoria VARCHAR(120) NULL,
+  stock INT NOT NULL DEFAULT 0,
+  estado ENUM('activo','baja') NOT NULL DEFAULT 'activo',
+  CONSTRAINT fk_inventario_items_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inventario_movimientos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  item_id INT NOT NULL,
+  tipo ENUM('prestamo','devolucion','ajuste') NOT NULL,
+  cantidad INT NOT NULL,
+  fecha DATE NOT NULL,
+  responsable VARCHAR(150) NOT NULL,
+  observaciones VARCHAR(255) NULL,
+  CONSTRAINT fk_inventario_movimientos_item FOREIGN KEY (item_id) REFERENCES inventario_items(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB;

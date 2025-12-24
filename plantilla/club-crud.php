@@ -200,8 +200,8 @@
 				<?php } ?>
 
 				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
+					<div class="col-xl-4">
+						<div class="card mb-4">
 							<div class="card-body">
 								<h5 class="mb-3">Formulario</h5>
 								<form method="post">
@@ -248,7 +248,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xl-7">
+					<div class="col-xl-8">
 						<div class="card mb-4">
 							<div class="card-body">
 								<h5 class="mb-3">Registros</h5>
