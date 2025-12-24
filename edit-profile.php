@@ -9,9 +9,20 @@
 	$message = $_GET['msg'] ?? '';
 	$messageType = $_GET['msg_type'] ?? 'success';
 	$rolesDisponibles = gesclub_load_user_roles();
+	$editId = (int)($_GET['edit'] ?? 0);
+	$editUser = $editId > 0 ? gesclub_load_user_profile($editId) : null;
+	$isEditing = !empty($editUser);
+	$consentimientoValue = '';
+	if (!empty($editUser['consentimiento_fecha'])) {
+		$timestamp = strtotime((string)$editUser['consentimiento_fecha']);
+		if ($timestamp) {
+			$consentimientoValue = date('Y-m-d\\TH:i', $timestamp);
+		}
+	}
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$payload = $_POST;
+		$payload['id'] = (int)($_POST['id'] ?? 0);
 		$payload['account_status'] = $_POST['account_status'] ?? 'activo';
 
 		if (!empty($_FILES['foto']['name'])) {
@@ -24,20 +35,29 @@
 			if (move_uploaded_file($_FILES['foto']['tmp_name'], $destino)) {
 				$payload['foto'] = 'uploads/usuarios/' . basename($destino);
 			}
+		} elseif ($payload['id'] > 0 && $editUser) {
+			$payload['foto'] = $editUser['foto'] ?? null;
 		}
 
 		$roleIds = array_map('intval', $_POST['roles'] ?? []);
 		$result = gesclub_save_user_profile($payload, $roleIds, gesclub_current_username(), $_SERVER['REMOTE_ADDR'] ?? null);
 
 		if ($result['ok']) {
-			$message = 'Usuario registrado correctamente.';
+			$message = $payload['id'] > 0 ? 'Usuario actualizado correctamente.' : 'Usuario registrado correctamente.';
 			$messageType = 'success';
 		} else {
 			$message = $result['message'] ?? 'No se pudo registrar.';
 			$messageType = 'error';
 		}
 
-		header('Location: edit-profile.php?msg=' . urlencode($message) . '&msg_type=' . urlencode($messageType));
+		$redirectParams = [
+			'msg' => $message,
+			'msg_type' => $messageType,
+		];
+		if ($payload['id'] > 0) {
+			$redirectParams['edit'] = (int)$payload['id'];
+		}
+		header('Location: edit-profile.php?' . http_build_query($redirectParams));
 		exit;
 	}
 ?>
@@ -62,8 +82,10 @@
 			<div class="container-fluid">
 				<div class="d-flex align-items-center justify-content-between flex-wrap mb-4">
 					<div>
-						<h3 class="mb-1 font-w600 main-text">Registro de usuarios</h3>
-						<p class="mb-0 text-muted">Crea cuentas para directiva, administración y equipo técnico.</p>
+						<h3 class="mb-1 font-w600 main-text"><?php echo $isEditing ? 'Editar usuario' : 'Registro de usuarios'; ?></h3>
+						<p class="mb-0 text-muted">
+							<?php echo $isEditing ? 'Actualiza la información del usuario seleccionado.' : 'Crea cuentas para directiva, administración y equipo técnico.'; ?>
+						</p>
 					</div>
 				</div>
 
@@ -76,78 +98,79 @@
 				<div class="card mb-4">
 					<div class="card-body">
 						<form method="post" enctype="multipart/form-data">
+							<input type="hidden" name="id" value="<?php echo (int)($editUser['id'] ?? 0); ?>">
 							<div class="row">
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Usuario</label>
-									<input type="text" class="form-control" name="username" required>
+									<input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($editUser['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Email</label>
-									<input type="email" class="form-control" name="email" required>
+									<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editUser['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Contraseña</label>
-									<input type="password" class="form-control" name="password" required>
+									<input type="password" class="form-control" name="password" <?php echo $editUser ? '' : 'required'; ?>>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">RUN</label>
-									<input type="text" class="form-control" name="run_numero" required>
+									<input type="text" class="form-control" name="run_numero" value="<?php echo htmlspecialchars($editUser['run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-1 mb-3">
 									<label class="form-label">DV</label>
-									<input type="text" class="form-control" name="run_dv" required>
+									<input type="text" class="form-control" name="run_dv" value="<?php echo htmlspecialchars($editUser['run_dv'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Nombres</label>
-									<input type="text" class="form-control" name="nombres" required>
+									<input type="text" class="form-control" name="nombres" value="<?php echo htmlspecialchars($editUser['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Apellido paterno</label>
-									<input type="text" class="form-control" name="apellido_paterno" required>
+									<input type="text" class="form-control" name="apellido_paterno" value="<?php echo htmlspecialchars($editUser['apellido_paterno'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Apellido materno</label>
-									<input type="text" class="form-control" name="apellido_materno" required>
+									<input type="text" class="form-control" name="apellido_materno" value="<?php echo htmlspecialchars($editUser['apellido_materno'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Fecha nacimiento</label>
-									<input type="date" class="form-control" name="fecha_nacimiento" required>
+									<input type="date" class="form-control" name="fecha_nacimiento" value="<?php echo htmlspecialchars($editUser['fecha_nacimiento'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Sexo</label>
-									<input type="text" class="form-control" name="sexo" required>
+									<input type="text" class="form-control" name="sexo" value="<?php echo htmlspecialchars($editUser['sexo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Teléfono móvil</label>
-									<input type="text" class="form-control" name="telefono_movil" required>
+									<input type="text" class="form-control" name="telefono_movil" value="<?php echo htmlspecialchars($editUser['telefono_movil'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Nacionalidad</label>
-									<input type="text" class="form-control" name="nacionalidad" value="Chilena">
+									<input type="text" class="form-control" name="nacionalidad" value="<?php echo htmlspecialchars($editUser['nacionalidad'] ?? 'Chilena', ENT_QUOTES, 'UTF-8'); ?>">
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Dirección</label>
-									<input type="text" class="form-control" name="direccion_calle" required>
+									<input type="text" class="form-control" name="direccion_calle" value="<?php echo htmlspecialchars($editUser['direccion_calle'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-2 mb-3">
 									<label class="form-label">Número</label>
-									<input type="text" class="form-control" name="direccion_numero" required>
+									<input type="text" class="form-control" name="direccion_numero" value="<?php echo htmlspecialchars($editUser['direccion_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Comuna</label>
-									<input type="text" class="form-control" name="comuna" required>
+									<input type="text" class="form-control" name="comuna" value="<?php echo htmlspecialchars($editUser['comuna'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-3 mb-3">
 									<label class="form-label">Región</label>
-									<input type="text" class="form-control" name="region" required>
+									<input type="text" class="form-control" name="region" value="<?php echo htmlspecialchars($editUser['region'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Consentimiento fecha</label>
-									<input type="datetime-local" class="form-control" name="consentimiento_fecha" required>
+									<input type="datetime-local" class="form-control" name="consentimiento_fecha" value="<?php echo htmlspecialchars($consentimientoValue, ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Consentimiento medio</label>
-									<input type="text" class="form-control" name="consentimiento_medio" required>
+									<input type="text" class="form-control" name="consentimiento_medio" value="<?php echo htmlspecialchars($editUser['consentimiento_medio'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 								</div>
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Foto de perfil</label>
@@ -155,22 +178,23 @@
 								</div>
 								<div class="col-lg-6 mb-3">
 									<label class="form-label">Estado de cuenta</label>
+									<?php $accountStatus = $editUser['account_status'] ?? 'activo'; ?>
 									<select class="form-control" name="account_status">
-										<option value="activo">Activo</option>
-										<option value="inactivo">Inactivo</option>
-										<option value="bloqueado">Bloqueado</option>
+										<option value="activo" <?php echo $accountStatus === 'activo' ? 'selected' : ''; ?>>Activo</option>
+										<option value="inactivo" <?php echo $accountStatus === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
+										<option value="bloqueado" <?php echo $accountStatus === 'bloqueado' ? 'selected' : ''; ?>>Bloqueado</option>
 									</select>
 								</div>
 								<div class="col-lg-6 mb-3">
 									<label class="form-label">Roles</label>
 									<select class="form-control" name="roles[]" multiple>
 										<?php foreach ($rolesDisponibles as $rol) { ?>
-											<option value="<?php echo (int)$rol['id']; ?>"><?php echo htmlspecialchars($rol['nombre'], ENT_QUOTES, 'UTF-8'); ?></option>
+											<option value="<?php echo (int)$rol['id']; ?>" <?php echo $editUser && in_array((int)$rol['id'], $editUser['roles'] ?? [], true) ? 'selected' : ''; ?>><?php echo htmlspecialchars($rol['nombre'], ENT_QUOTES, 'UTF-8'); ?></option>
 										<?php } ?>
 									</select>
 								</div>
 							</div>
-							<button type="submit" class="btn btn-primary">Crear usuario</button>
+							<button type="submit" class="btn btn-primary"><?php echo $isEditing ? 'Guardar cambios' : 'Crear usuario'; ?></button>
 						</form>
 					</div>
 				</div>
