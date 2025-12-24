@@ -1,3 +1,10 @@
+<?php
+	require_once __DIR__ . '/../config/auth.php';
+	$db = gesclub_db();
+	$headerUser = $_SESSION['auth_user']['username'] ?? 'Usuario';
+	$headerRole = $_SESSION['auth_user']['role'] ?? 'Perfil';
+	$notifications = $db->query('SELECT tipo, mensaje, destino, fecha, estado FROM notificaciones ORDER BY fecha DESC LIMIT 5')->fetchAll() ?: [];
+?>
 <div class="header">
 	<div class="header-content">
 		<nav class="navbar navbar-expand">
@@ -7,15 +14,15 @@
 						<?php echo !empty($DexignZoneSettings['pagelevel'][$CurrentPage]['title']) ? $DexignZoneSettings['pagelevel'][$CurrentPage]['title'] : '' ; ?>
 					</div>
 					<div class="nav-item d-flex align-items-center">
-						<div class="input-group search-area">
-							<input type="text" class="form-control" placeholder="Search here...">
-							<span class="input-group-text">
-								<a href="javascript:void(0)"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
+						<form class="input-group search-area" action="busqueda.php" method="get">
+							<input type="text" class="form-control" name="q" placeholder="Buscar club, deportista o entrenador...">
+							<button class="input-group-text" type="submit">
+								<svg width="18" height="18" viewBox="0 0 18 18" fill="none"
 									xmlns="http://www.w3.org/2000/svg">
 									<path d="M8.11625 0.609436C3.98398 0.609436 0.617874 3.97554 0.617874 8.10782C0.617874 12.2401 3.98398 15.6127 8.11625 15.6127C9.88126 15.6127 11.5045 14.9942 12.7875 13.9672L15.9108 17.0889C16.0685 17.24 16.279 17.3234 16.4973 17.3211C16.7156 17.3189 16.9244 17.2313 17.0789 17.077C17.2334 16.9227 17.3213 16.7141 17.3239 16.4958C17.3264 16.2775 17.2434 16.0668 17.0925 15.909L13.9691 12.7856C14.997 11.5007 15.6162 9.87488 15.6162 8.10782C15.6162 3.97554 12.2485 0.609436 8.11625 0.609436ZM8.11625 2.27613C11.3478 2.27613 13.948 4.87629 13.948 8.10782C13.948 11.3393 11.3478 13.946 8.11625 13.946C4.88472 13.946 2.28454 11.3393 2.28454 8.10782C2.28454 4.87629 4.88472 2.27613 8.11625 2.27613Z" fill="#717579" />
-								</svg></a>
-							</span>
-						</div>
+								</svg>
+							</button>
+						</form>
 					</div>
 				</div>
 				<ul class="navbar-nav header-right">
@@ -53,63 +60,26 @@
 						<div class="dropdown-menu dropdown-menu-end pb-0">
 							<div class="card mb-0">
 								<div class="card-header p-3">
-									<h2 class="card-title--small mb-0">Related Apps</h2>
+									<h2 class="card-title--small mb-0">Accesos rápidos</h2>
 								</div>
 								<div class="card-body p-3">
 									<div class="row g-2">
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/angular.svg" alt="">
-												<div class="content mt-1">
-													<small>Angular</small>
-												</div>
-											</div>
+										<div class="col-xl-6">
+											<a class="btn btn-light w-100" href="registrar-club.php">Clubes</a>
 										</div>
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/figma.svg" alt="">
-												<div class="content mt-1">
-													<small>Figma</small>
-												</div>
-											</div>
+										<div class="col-xl-6">
+											<a class="btn btn-light w-100" href="registrar-deportistas.php">Deportistas</a>
 										</div>
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/dribbble.svg" alt="">
-												<div class="content mt-1">
-													<small>Dribbble</small>
-												</div>
-											</div>
+										<div class="col-xl-6">
+											<a class="btn btn-light w-100" href="finanzas-cobros.php">Cobros</a>
 										</div>
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/figma.svg" alt="">
-												<div class="content mt-1">
-													<small>Figma</small>
-												</div>
-											</div>
-										</div>
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/laravel-2.svg" alt="">
-												<div class="content mt-1">
-													<small>Laravel</small>
-												</div>
-											</div>
-										</div>
-										<div class="col-xl-4">
-											<div class="grid-bx">
-												<img src="assets/images/svg/react-2.svg" alt="">
-												<div class="content mt-1">
-													<small>React</small>
-												</div>
-											</div>
+										<div class="col-xl-6">
+											<a class="btn btn-light w-100" href="calendario-eventos.php">Calendario</a>
 										</div>
 									</div>
 								</div>
 								<div class="card-footer p-3">
-									<a class="all-notification" href="javascript:void(0);">See all Apps<i
-											class="ti-arrow-end"></i></a>
+									<a class="all-notification" href="index.php">Ir al panel<i class="ti-arrow-end"></i></a>
 								</div>
 							</div>
 						</div>
@@ -131,101 +101,37 @@
 						<div class="dropdown-menu notification-bx dropdown-menu-end pb-0">
 							<div class="card mb-0">
 								<div class="card-header py-3 px-4">
-									<h2 class="card-title--small mb-0">Notification</h2>
+									<h2 class="card-title--small mb-0">Notificaciones</h2>
 								</div>
 								<div class="card-body dz-scroll height370 px-4">
 									<div class="row">
-										<div class="col-xl-12">
-											<div class="notification-sub-bx mb-3">
-												<div>
-													<img src="assets/images/user.jpg" width="38"
-														class="rounded-circle me-2" alt="">
-												</div>
-												<div>
-													<h6 class="card-title--small mb-2">Yatin Xarma comment On
-														Your Post </h6>
-													<small class="dz-notipication-para">Lorem ipsum dolor sit
-														amet consectetur.</small>
-													<div
-														class="d-flex align-items-center justify-content-between mt-2">
-														<small
-															class="text-dark fs-11 font-w500 mb-2">Monady,2:30pm
-														</small>
-														<small class="text-dark fs-11 font-w500 mb-2">Sep
-															20,2024 </small>
-
+										<?php if (!$notifications) { ?>
+											<div class="col-xl-12">
+												<div class="text-muted">Sin notificaciones recientes.</div>
+											</div>
+										<?php } ?>
+										<?php foreach ($notifications as $notification) { ?>
+											<div class="col-xl-12">
+												<div class="notification-sub-bx mb-3">
+													<div>
+														<img src="assets/images/user.jpg" width="38"
+															class="rounded-circle me-2" alt="">
+													</div>
+													<div>
+														<h6 class="card-title--small mb-2"><?php echo htmlspecialchars($notification['tipo'] ?? 'Aviso', ENT_QUOTES, 'UTF-8'); ?></h6>
+														<small class="dz-notipication-para"><?php echo htmlspecialchars($notification['mensaje'] ?? '', ENT_QUOTES, 'UTF-8'); ?></small>
+														<div class="d-flex align-items-center justify-content-between mt-2">
+															<small class="text-dark fs-11 font-w500 mb-2"><?php echo htmlspecialchars($notification['destino'] ?? 'General', ENT_QUOTES, 'UTF-8'); ?></small>
+															<small class="text-dark fs-11 font-w500 mb-2"><?php echo htmlspecialchars($notification['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></small>
+														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-										<div class="col-xl-12">
-											<div class="notification-sub-bx mb-3">
-												<div>
-													<img src="assets/images/avatar/1.jpg" width="38"
-														class="rounded-circle me-2" alt="">
-												</div>
-												<div class="w-100">
-													<h6 class="card-title--small mb-2">Almash Follow You </h6>
-
-													<div
-														class="d-flex align-items-center justify-content-between mt-2">
-														<small class="text-dark font-w500 mb-2">Monady,2:30pm
-														</small>
-														<small class="text-dark font-w500 mb-2">Sep 20,2024
-														</small>
-
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="col-xl-12">
-											<div class="notification-sub-bx border-0">
-												<div>
-													<img src="assets/images/avatar/8.jpg" width="38"
-														class="rounded-circle me-2" alt="">
-												</div>
-												<div class="w-100">
-													<h6 class="card-title--small mb-2">Yatin Xarma Upload 2
-														Files </h6>
-													<div class="dz-notipication-para d-flex mb-2">
-														<div>
-															<img src="assets/images/notification.jpg" width="38"
-																class="me-2 border" alt="">
-														</div>
-														<div class="w-100">
-															<h6 class="card-title--small mb-0">
-																Kubayar.dexignzone.com</h6>
-															<small>16MB</small>
-														</div>
-													</div>
-													<div class="dz-notipication-para d-flex ">
-														<div>
-															<img src="assets/images/notification.jpg" width="38"
-																class="me-2 border" alt="">
-														</div>
-														<div class="w-100">
-															<h6 class="card-title--small mb-0">
-																Kubayar.dexignzone.com</h6>
-															<small>16MB</small>
-														</div>
-													</div>
-													<div
-														class="d-flex align-items-center justify-content-between mt-2">
-														<small class="text-dark font-w500 mb-0">Monady,2:30pm
-														</small>
-														<small class="text-dark font-w500 mb-0">Sep 20,2024
-														</small>
-
-													</div>
-
-												</div>
-											</div>
-										</div>
+										<?php } ?>
 									</div>
 								</div>
 								<div class="card-footer px-4 py-3">
-									<a href="javascript:void(0);" class="btn btn-primary btn-block btn-sm">Clear
-										All Notification</a>
+									<a href="comunicaciones-notificaciones.php" class="btn btn-primary btn-block btn-sm">Ver todas</a>
 								</div>
 							</div>
 						</div>
@@ -254,8 +160,8 @@
 						<a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown">
 							<img src="assets/images/user.jpg" width="20" alt="">
 							<div class="header-info ms-2 me-3">
-								<span class="fs-13 font-w500 mb-0">Yatin Xarma</span>
-								<small class="fs-12">Super Admin</small>
+								<span class="fs-13 font-w500 mb-0"><?php echo htmlspecialchars($headerUser, ENT_QUOTES, 'UTF-8'); ?></span>
+								<small class="fs-12"><?php echo htmlspecialchars($headerRole, ENT_QUOTES, 'UTF-8'); ?></small>
 							</div>
 							<div class="ms-auto me-1">
 								<svg width="12" height="12" viewBox="0 0 12 12" fill="none"
@@ -273,49 +179,32 @@
 									<div class="d-flex align-items-center">
 										<img src="assets/images/user.jpg" class="avatar me-2" alt="">
 										<div>
-											<h6 class="mb-0">Yatin Xarma</h6>
-											<small>Web Designer</small>
+											<h6 class="mb-0"><?php echo htmlspecialchars($headerUser, ENT_QUOTES, 'UTF-8'); ?></h6>
+											<small><?php echo htmlspecialchars($headerRole, ENT_QUOTES, 'UTF-8'); ?></small>
 										</div>
 
 									</div>
 									<div class="ms-auto">
-										<a href="edit-profile.php"><i
+										<a href="app-profile.php"><i
 												class="flaticon-editing text-primary fs-18"></i></a>
 									</div>
 								</div>
 								<div class="card-body px-0 py-2">
-									<a href="javascript:void(0);" class="dropdown-item ai-icon ">
+									<a href="index.php" class="dropdown-item ai-icon ">
 										<i class="flaticon-bar-chart fs-18"></i>
-
-										<span class="ms-2">Project Activity</span>
+										<span class="ms-2">Panel general</span>
 									</a>
-									<a href="javascript:void(0);" class="dropdown-item ai-icon ">
-										<i class="flaticon-shopping-cart fs-18"></i>
-										<span class="ms-2">Product Details</span>
-
+									<a href="app-profile.php" class="dropdown-item ai-icon ">
+										<i class="flaticon-user fs-18"></i>
+										<span class="ms-2">Mi perfil</span>
 									</a>
-
-									<a href="javascript:void(0);" class="dropdown-item ai-icon ">
-										<i class="flaticon-puzzle fs-18"></i>
-
-										<span class="ms-2">Account Setting </span>
+									<a href="configuracion-club.php" class="dropdown-item ai-icon ">
+										<i class="flaticon-settings fs-18"></i>
+										<span class="ms-2">Configuración</span>
 									</a>
-									<a href="javascript:void(0);" class="dropdown-item ai-icon ">
-										<i class="flaticon-hard-drive fs-18"></i>
-										<span class="ms-2">File Manager </span>
-									</a>
-									<a href="javascript:void(0);" class="dropdown-item ai-icon ">
-										<div class="d-flex align-items-center justify-content-between">
-											<div class="header-info">
-												<h6 class="mb-0 fs-14">Student Plan Active</h6>
-												<small class="fs-12">284 Days Left</small>
-											</div>
-											<div class="">
-												<span class="badge badge-primary light">Upgrade</span>
-											</div>
-										</div>
-
-
+									<a href="documentos-internos.php" class="dropdown-item ai-icon ">
+										<i class="flaticon-folder fs-18"></i>
+										<span class="ms-2">Documentos internos</span>
 									</a>
 								</div>
 								<div class="card-footer px-0 py-2">

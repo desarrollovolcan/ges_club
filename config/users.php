@@ -32,7 +32,7 @@ function gesclub_load_user_profiles(): array
 	$db = gesclub_db();
 	$stmt = $db->query(
 		'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
-			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno,
+			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto,
 			p.telefono_movil, p.comuna, p.region
 		FROM users u
 		LEFT JOIN user_profiles p ON p.user_id = u.id
@@ -46,7 +46,7 @@ function gesclub_load_user_profile(int $userId): ?array
 	$db = gesclub_db();
 	$stmt = $db->prepare(
 		'SELECT u.id, u.username, u.email, u.account_status, u.role, u.created_at,
-			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno,
+			p.run_numero, p.run_dv, p.nombres, p.apellido_paterno, p.apellido_materno, p.foto,
 			p.fecha_nacimiento, p.sexo, p.nacionalidad, p.telefono_movil, p.telefono_fijo,
 			p.direccion_calle, p.direccion_numero, p.comuna, p.region, p.numero_socio,
 			p.tipo_socio, p.disciplinas, p.categoria_rama, p.fecha_incorporacion,
@@ -98,6 +98,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 	$nombres = trim((string)($payload['nombres'] ?? ''));
 	$apellidoPaterno = trim((string)($payload['apellido_paterno'] ?? ''));
 	$apellidoMaterno = trim((string)($payload['apellido_materno'] ?? ''));
+	$foto = trim((string)($payload['foto'] ?? ''));
 	$fechaNacimiento = (string)($payload['fecha_nacimiento'] ?? '');
 	$sexo = trim((string)($payload['sexo'] ?? ''));
 	$nacionalidad = trim((string)($payload['nacionalidad'] ?? 'Chilena'));
@@ -166,7 +167,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 
 		$profileUpsert = $db->prepare(
 			'INSERT INTO user_profiles (
-				user_id, run_numero, run_dv, nombres, apellido_paterno, apellido_materno,
+				user_id, run_numero, run_dv, nombres, apellido_paterno, apellido_materno, foto,
 				fecha_nacimiento, sexo, nacionalidad, telefono_movil, telefono_fijo,
 				direccion_calle, direccion_numero, comuna, region, numero_socio, tipo_socio,
 				disciplinas, categoria_rama, fecha_incorporacion, consentimiento_fecha,
@@ -175,7 +176,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 				contacto_emergencia_parentesco, menor_run, apoderado_run, relacion_apoderado,
 				autorizacion_apoderado
 			) VALUES (
-				:user_id, :run_numero, :run_dv, :nombres, :apellido_paterno, :apellido_materno,
+				:user_id, :run_numero, :run_dv, :nombres, :apellido_paterno, :apellido_materno, :foto,
 				:fecha_nacimiento, :sexo, :nacionalidad, :telefono_movil, :telefono_fijo,
 				:direccion_calle, :direccion_numero, :comuna, :region, :numero_socio, :tipo_socio,
 				:disciplinas, :categoria_rama, :fecha_incorporacion, :consentimiento_fecha,
@@ -189,6 +190,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 				nombres = VALUES(nombres),
 				apellido_paterno = VALUES(apellido_paterno),
 				apellido_materno = VALUES(apellido_materno),
+				foto = VALUES(foto),
 				fecha_nacimiento = VALUES(fecha_nacimiento),
 				sexo = VALUES(sexo),
 				nacionalidad = VALUES(nacionalidad),
@@ -223,6 +225,7 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 			':nombres' => $nombres,
 			':apellido_paterno' => $apellidoPaterno,
 			':apellido_materno' => $apellidoMaterno,
+			':foto' => $foto !== '' ? $foto : null,
 			':fecha_nacimiento' => $fechaNacimiento,
 			':sexo' => $sexo,
 			':nacionalidad' => $nacionalidad,
