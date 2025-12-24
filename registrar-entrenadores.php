@@ -228,16 +228,14 @@
 					</div>
 				<?php } ?>
 
-				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Ficha del entrenador</h5>
-								<form method="post">
-									<input type="hidden" name="action" value="save">
-									<input type="hidden" name="id" value="<?php echo htmlspecialchars($editEntrenador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
-									<h6>Identificación</h6>
-									<div class="row">
+				<div class="card mb-4">
+					<div class="card-body">
+						<h5 class="mb-3">Ficha del entrenador</h5>
+						<form method="post">
+							<input type="hidden" name="action" value="save">
+							<input type="hidden" name="id" value="<?php echo htmlspecialchars($editEntrenador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+							<h6>Identificación</h6>
+							<div class="row">
 										<div class="col-lg-12 mb-3">
 											<label class="form-label">Club</label>
 											<select class="form-control" name="club_id" required>
@@ -271,8 +269,8 @@
 										</div>
 									</div>
 
-									<h6>Contacto</h6>
-									<div class="row">
+							<h6>Contacto</h6>
+							<div class="row">
 										<div class="col-lg-6 mb-3">
 											<label class="form-label">Email</label>
 											<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editEntrenador['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -291,8 +289,8 @@
 										</div>
 									</div>
 
-									<h6>Rol deportivo</h6>
-									<div class="row">
+							<h6>Rol deportivo</h6>
+							<div class="row">
 										<div class="col-lg-12 mb-3">
 											<label class="form-label">Disciplina</label>
 											<input type="text" class="form-control" name="disciplina" value="<?php echo htmlspecialchars($editEntrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -328,8 +326,8 @@
 										</div>
 									</div>
 
-									<h6>Credenciales</h6>
-									<div class="row">
+							<h6>Credenciales</h6>
+							<div class="row">
 										<div class="col-lg-12 mb-3">
 											<label class="form-label">Certificaciones y cursos</label>
 											<textarea class="form-control" name="certificaciones" rows="2"><?php echo htmlspecialchars($editEntrenador['certificaciones'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
@@ -340,68 +338,64 @@
 										</div>
 									</div>
 
-									<h6>Permisos</h6>
-									<div class="mb-3">
+							<h6>Permisos</h6>
+							<div class="mb-3">
 										<label class="form-label">Permisos de acceso</label>
 										<textarea class="form-control" name="permisos_acceso" rows="2"><?php echo htmlspecialchars($editEntrenador['permisos_acceso'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
 									</div>
 
-									<button type="submit" class="btn btn-primary">Guardar entrenador</button>
-								</form>
-							</div>
-						</div>
+							<button type="submit" class="btn btn-primary">Guardar entrenador</button>
+						</form>
 					</div>
-					<div class="col-xl-7">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Entrenadores registrados</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Nombre</th>
-												<th>RUN</th>
-												<th>Club</th>
-												<th>Disciplina</th>
-												<th>Tipo</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($entrenadores as $entrenador) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($entrenador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($entrenador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars(($entrenador['run_numero'] ?? '') . '-' . ($entrenador['run_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-entrenadores.php?edit=<?php echo (int)$entrenador['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="toggle">
-																<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
-																<button type="submit" class="btn btn-sm <?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
-																	<?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
-																</button>
-															</form>
-															<form method="post">
-																<input type="hidden" name="action" value="delete">
-																<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
+				</div>
 
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Entrenadores registrados</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>RUN</th>
+										<th>Club</th>
+										<th>Disciplina</th>
+										<th>Tipo</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($entrenadores as $entrenador) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($entrenador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($entrenador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars(($entrenador['run_numero'] ?? '') . '-' . ($entrenador['run_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td>
+												<div class="d-flex gap-2">
+													<a class="btn btn-warning btn-sm" href="registrar-entrenadores.php?edit=<?php echo (int)$entrenador['id']; ?>">Editar</a>
+													<form method="post">
+														<input type="hidden" name="action" value="toggle">
+														<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
+														<button type="submit" class="btn btn-sm <?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
+															<?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
+														</button>
+													</form>
+													<form method="post">
+														<input type="hidden" name="action" value="delete">
+														<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
+														<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+													</form>
+												</div>
+											</td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

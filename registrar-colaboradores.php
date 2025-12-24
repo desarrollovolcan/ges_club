@@ -215,14 +215,23 @@
 					</div>
 				<?php } ?>
 
-				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Ficha del colaborador</h5>
-								<form method="post">
-									<input type="hidden" name="action" value="save">
-									<input type="hidden" name="id" value="<?php echo htmlspecialchars($editColaborador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+				<div class="card mb-4">
+					<div class="card-body">
+						<h5 class="mb-3">Ficha del colaborador</h5>
+						<form method="post">
+							<input type="hidden" name="action" value="save">
+							<input type="hidden" name="id" value="<?php echo htmlspecialchars($editColaborador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+									<div class="mb-3">
+										<label class="form-label">Club</label>
+										<select class="form-control" name="club_id" required>
+											<option value="">Selecciona</option>
+											<?php foreach ($clubes as $club) { ?>
+												<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editColaborador['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
+													<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+												</option>
+											<?php } ?>
+										</select>
+									</div>
 									<div class="mb-3">
 										<label class="form-label">Club</label>
 										<select class="form-control" name="club_id" required>
@@ -316,60 +325,56 @@
 										</div>
 									</div>
 
-									<button type="submit" class="btn btn-primary">Guardar colaborador</button>
-								</form>
-							</div>
-						</div>
+							<button type="submit" class="btn btn-primary">Guardar colaborador</button>
+						</form>
 					</div>
-					<div class="col-xl-7">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Colaboradores registrados</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Nombre</th>
-												<th>Tipo</th>
-												<th>Club</th>
-												<th>Función</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($colaboradores as $colaborador) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($colaborador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($colaborador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($colaborador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($colaborador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($colaborador['funcion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($colaborador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-colaboradores.php?edit=<?php echo (int)$colaborador['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="toggle">
-																<input type="hidden" name="id" value="<?php echo (int)$colaborador['id']; ?>">
-																<button type="submit" class="btn btn-sm <?php echo ($colaborador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
-																	<?php echo ($colaborador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
-																</button>
-															</form>
-															<form method="post">
-																<input type="hidden" name="action" value="delete">
-																<input type="hidden" name="id" value="<?php echo (int)$colaborador['id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
+				</div>
 
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Colaboradores registrados</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>Tipo</th>
+										<th>Club</th>
+										<th>Función</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($colaboradores as $colaborador) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($colaborador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($colaborador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($colaborador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($colaborador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($colaborador['funcion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($colaborador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td>
+												<div class="d-flex gap-2">
+													<a class="btn btn-warning btn-sm" href="registrar-colaboradores.php?edit=<?php echo (int)$colaborador['id']; ?>">Editar</a>
+													<form method="post">
+														<input type="hidden" name="action" value="toggle">
+														<input type="hidden" name="id" value="<?php echo (int)$colaborador['id']; ?>">
+														<button type="submit" class="btn btn-sm <?php echo ($colaborador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
+															<?php echo ($colaborador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
+														</button>
+													</form>
+													<form method="post">
+														<input type="hidden" name="action" value="delete">
+														<input type="hidden" name="id" value="<?php echo (int)$colaborador['id']; ?>">
+														<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+													</form>
+												</div>
+											</td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
