@@ -43,6 +43,12 @@
 			$payload['foto'] = $editUser['foto'] ?? null;
 		}
 
+		if ($payload['id'] > 0 && $editUser) {
+			$payload['created_at'] = $editUser['created_at'] ?? null;
+			$payload['usuario_creador'] = $editUser['usuario_creador'] ?? gesclub_current_username();
+			$payload['created_ip'] = $editUser['created_ip'] ?? null;
+		}
+
 		$roleIds = array_map('intval', $_POST['roles'] ?? []);
 		$result = gesclub_save_user_profile($payload, $roleIds, gesclub_current_username(), $_SERVER['REMOTE_ADDR'] ?? null);
 
@@ -247,6 +253,73 @@
 								<div class="col-lg-4 mb-3">
 									<label class="form-label">Foto de perfil</label>
 									<input type="file" class="form-control" name="foto">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Teléfono fijo</label>
+									<input type="text" class="form-control" name="telefono_fijo" value="<?php echo htmlspecialchars($formData['telefono_fijo'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Estado civil</label>
+									<input type="text" class="form-control" name="estado_civil" value="<?php echo htmlspecialchars($formData['estado_civil'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Previsión salud</label>
+									<input type="text" class="form-control" name="prevision_salud" value="<?php echo htmlspecialchars($formData['prevision_salud'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Número de socio</label>
+									<input type="text" class="form-control" name="numero_socio" value="<?php echo htmlspecialchars($formData['numero_socio'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Tipo de socio</label>
+									<?php $tipoSocio = $formData['tipo_socio'] ?? ''; ?>
+									<select class="form-control" name="tipo_socio">
+										<option value="">Selecciona...</option>
+										<option value="activo" <?php echo $tipoSocio === 'activo' ? 'selected' : ''; ?>>Activo</option>
+										<option value="cadete" <?php echo $tipoSocio === 'cadete' ? 'selected' : ''; ?>>Cadete</option>
+										<option value="honorario" <?php echo $tipoSocio === 'honorario' ? 'selected' : ''; ?>>Honorario</option>
+										<option value="apoderado" <?php echo $tipoSocio === 'apoderado' ? 'selected' : ''; ?>>Apoderado</option>
+									</select>
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Disciplinas</label>
+									<input type="text" class="form-control" name="disciplinas" value="<?php echo htmlspecialchars($formData['disciplinas'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Categoría / rama</label>
+									<input type="text" class="form-control" name="categoria_rama" value="<?php echo htmlspecialchars($formData['categoria_rama'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Fecha incorporación</label>
+									<input type="date" class="form-control" name="fecha_incorporacion" value="<?php echo htmlspecialchars($formData['fecha_incorporacion'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Contacto emergencia (nombre)</label>
+									<input type="text" class="form-control" name="contacto_emergencia_nombre" value="<?php echo htmlspecialchars($formData['contacto_emergencia_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Contacto emergencia (teléfono)</label>
+									<input type="text" class="form-control" name="contacto_emergencia_telefono" value="<?php echo htmlspecialchars($formData['contacto_emergencia_telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Contacto emergencia (parentesco)</label>
+									<input type="text" class="form-control" name="contacto_emergencia_parentesco" value="<?php echo htmlspecialchars($formData['contacto_emergencia_parentesco'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">RUN menor</label>
+									<input type="text" class="form-control" name="menor_run" value="<?php echo htmlspecialchars($formData['menor_run'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">RUN apoderado</label>
+									<input type="text" class="form-control" name="apoderado_run" value="<?php echo htmlspecialchars($formData['apoderado_run'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-4 mb-3">
+									<label class="form-label">Relación apoderado</label>
+									<input type="text" class="form-control" name="relacion_apoderado" value="<?php echo htmlspecialchars($formData['relacion_apoderado'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+								</div>
+								<div class="col-lg-12 mb-3">
+									<label class="form-label">Autorización apoderado</label>
+									<textarea class="form-control" name="autorizacion_apoderado" rows="2"><?php echo htmlspecialchars($formData['autorizacion_apoderado'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
 								</div>
 								<div class="col-lg-6 mb-3">
 									<label class="form-label">Estado de cuenta</label>
