@@ -8,7 +8,7 @@ $CurrentPage = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
 
 require_once __DIR__ . '/auth.php';
 
-$publicPages = ['page-login'];
+$publicPages = ['page-login', 'page-register'];
 if (!in_array($CurrentPage, $publicPages, true)) {
 	gesclub_require_login();
 }

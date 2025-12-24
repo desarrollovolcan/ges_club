@@ -3,15 +3,17 @@
 
 	 $loginError = '';
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	 	$password = trim($_POST['super_root_password'] ?? '');
+	 	$username = trim($_POST['username'] ?? '');
+	 	$password = trim($_POST['password'] ?? '');
 
-	 	if (gesclub_verify_super_root_password($password)) {
-	 		$_SESSION['super_root_authenticated'] = true;
+	 	$result = gesclub_verify_credentials($username, $password);
+	 	if (!empty($result['ok'])) {
+	 		$_SESSION['auth_user'] = $result['user'];
 	 		header('Location: index.php');
 	 		exit;
 	 	}
 
-	 	$loginError = 'Contraseña incorrecta. Intenta de nuevo.';
+	 	$loginError = $result['message'] ?? 'No se pudo iniciar sesión.';
 	 }
 
 	 if (gesclub_is_authenticated()) {
@@ -55,7 +57,7 @@
 									<a href="index.php"><img src="assets/images/logo-full-white.png" class="light-login" alt=""></a>
 								</div>
 								
-								<h4 class="text-center mb-4">Acceso Super Root</h4>
+								<h4 class="text-center mb-4">Iniciar sesión</h4>
 								<?php if (!empty($loginError)) { ?>
 									<div class="alert alert-danger" role="alert">
 										<?php echo $loginError; ?>
@@ -63,9 +65,13 @@
 								<?php } ?>
 								<form action="page-login.php" method="post">
 									<div class="mb-3">
+										<label class="mb-1 form-label">Usuario</label>
+										<input type="text" name="username" class="form-control" required>
+									</div>
+									<div class="mb-3">
 										<label class="mb-1 form-label">Contraseña</label>
 										<div class="position-relative">
-											<input type="password" id="dz-password" name="super_root_password" class="form-control" required>
+											<input type="password" id="dz-password" name="password" class="form-control" required>
 											<span class="show-pass eye">
 												<i class="fa fa-eye-slash"></i>
 												<i class="fa fa-eye"></i>
@@ -76,6 +82,9 @@
 										<button type="submit" class="btn btn-primary btn-block">Ingresar</button>
 									</div>
 								</form>
+								<div class="new-account mt-3">
+									<p>¿No tienes una cuenta? <a class="text-primary" href="page-register.php">Regístrate</a></p>
+								</div>
                             </div>
 						</div>
 					</div>
