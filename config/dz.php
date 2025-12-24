@@ -1,6 +1,17 @@
-<?php 
+<?php
+
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
 
 $CurrentPage = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
+
+require_once __DIR__ . '/auth.php';
+
+$publicPages = ['page-login'];
+if (!in_array($CurrentPage, $publicPages, true)) {
+	gesclub_require_login();
+}
 
 $DexignZoneSettings = [
 	'site_level' => [
