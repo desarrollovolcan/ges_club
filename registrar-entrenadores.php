@@ -10,7 +10,8 @@
 	$message = $_GET['msg'] ?? '';
 	$messageType = $_GET['msg_type'] ?? 'success';
 
-	$entrenadores = $db->query('SELECT * FROM entrenadores ORDER BY id DESC')->fetchAll() ?: [];
+	$entrenadores = $db->query('SELECT e.*, c.nombre_oficial AS club_nombre FROM entrenadores e LEFT JOIN clubes c ON c.id = e.club_id ORDER BY e.id DESC')->fetchAll() ?: [];
+	$clubes = $db->query('SELECT id, nombre_oficial FROM clubes ORDER BY nombre_oficial')->fetchAll() ?: [];
 
 	$editId = (int)($_GET['edit'] ?? 0);
 	$editEntrenador = null;
@@ -25,6 +26,7 @@
 		if ($action === 'save') {
 			$id = (int)($_POST['id'] ?? 0);
 			$isUpdate = $id > 0;
+			$clubId = (int)($_POST['club_id'] ?? 0);
 			$runNumero = trim($_POST['run_numero'] ?? '');
 			$runDv = trim($_POST['run_dv'] ?? '');
 			$nombres = trim($_POST['nombres'] ?? '');
@@ -53,6 +55,11 @@
 				}
 			}
 
+			if ($messageType !== 'error' && $clubId <= 0) {
+				$message = 'Selecciona el club del entrenador.';
+				$messageType = 'error';
+			}
+
 			if ($messageType !== 'error' && !gesclub_validate_rut($runNumero, $runDv)) {
 				$message = 'El RUN del entrenador no es válido.';
 				$messageType = 'error';
@@ -66,7 +73,7 @@
 			if ($messageType !== 'error') {
 				if ($isUpdate) {
 					$stmt = $db->prepare(
-						'UPDATE entrenadores SET run_numero = :run_numero, run_dv = :run_dv, nombres = :nombres, apellidos = :apellidos,
+						'UPDATE entrenadores SET club_id = :club_id, run_numero = :run_numero, run_dv = :run_dv, nombres = :nombres, apellidos = :apellidos,
 						fecha_nacimiento = :fecha_nacimiento, email = :email, telefono = :telefono, direccion_region = :region,
 						direccion_comuna = :comuna, disciplina = :disciplina, categorias_asignadas = :categorias, equipos_asignados = :equipos,
 						tipo = :tipo, fecha_inicio = :fecha_inicio, estado = :estado, certificaciones = :certificaciones,
@@ -75,6 +82,7 @@
 					);
 					$stmt->execute([
 						':id' => $id,
+						':club_id' => $clubId,
 						':run_numero' => $runNumero,
 						':run_dv' => $runDv,
 						':nombres' => $nombres,
@@ -98,14 +106,15 @@
 					$message = 'Entrenador actualizado.';
 				} else {
 					$stmt = $db->prepare(
-						'INSERT INTO entrenadores (run_numero, run_dv, nombres, apellidos, fecha_nacimiento, email, telefono, direccion_region,
+						'INSERT INTO entrenadores (club_id, run_numero, run_dv, nombres, apellidos, fecha_nacimiento, email, telefono, direccion_region,
 						direccion_comuna, disciplina, categorias_asignadas, equipos_asignados, tipo, fecha_inicio, estado, certificaciones,
 						documentos_adjuntos, permisos_acceso, created_at)
-						VALUES (:run_numero, :run_dv, :nombres, :apellidos, :fecha_nacimiento, :email, :telefono, :region, :comuna,
+						VALUES (:club_id, :run_numero, :run_dv, :nombres, :apellidos, :fecha_nacimiento, :email, :telefono, :region, :comuna,
 						:disciplina, :categorias, :equipos, :tipo, :fecha_inicio, :estado, :certificaciones, :documentos_adjuntos,
 						:permisos_acceso, :created_at)'
 					);
 					$stmt->execute([
+						':club_id' => $clubId,
 						':run_numero' => $runNumero,
 						':run_dv' => $runDv,
 						':nombres' => $nombres,
@@ -219,19 +228,28 @@
 					</div>
 				<?php } ?>
 
-				<div class="row">
-					<div class="col-xl-5">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Ficha del entrenador</h5>
-								<form method="post">
-									<input type="hidden" name="action" value="save">
-									<input type="hidden" name="id" value="<?php echo htmlspecialchars($editEntrenador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
-									<h6>Identificación</h6>
-									<div class="row">
+				<div class="card mb-4">
+					<div class="card-body">
+						<h5 class="mb-3">Ficha del entrenador</h5>
+						<form method="post">
+							<input type="hidden" name="action" value="save">
+							<input type="hidden" name="id" value="<?php echo htmlspecialchars($editEntrenador['id'] ?? 0, ENT_QUOTES, 'UTF-8'); ?>">
+							<h6>Identificación</h6>
+							<div class="row">
+										<div class="col-lg-12 mb-3">
+											<label class="form-label">Club</label>
+											<select class="form-control" name="club_id" required>
+												<option value="">Selecciona</option>
+												<?php foreach ($clubes as $club) { ?>
+													<option value="<?php echo (int)$club['id']; ?>" <?php echo ((int)($editEntrenador['club_id'] ?? 0) === (int)$club['id']) ? 'selected' : ''; ?>>
+														<?php echo htmlspecialchars($club['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+													</option>
+												<?php } ?>
+											</select>
+										</div>
 										<div class="col-lg-8 mb-3">
 											<label class="form-label">RUN</label>
-											<input type="text" class="form-control" name="run_numero" value="<?php echo htmlspecialchars($editEntrenador['run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+											<input type="text" class="form-control" name="run_numero" inputmode="numeric" value="<?php echo htmlspecialchars($editEntrenador['run_numero'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 										</div>
 										<div class="col-lg-4 mb-3">
 											<label class="form-label">DV</label>
@@ -251,15 +269,15 @@
 										</div>
 									</div>
 
-									<h6>Contacto</h6>
-									<div class="row">
+							<h6>Contacto</h6>
+							<div class="row">
 										<div class="col-lg-6 mb-3">
 											<label class="form-label">Email</label>
 											<input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($editEntrenador['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 										</div>
 										<div class="col-lg-6 mb-3">
 											<label class="form-label">Teléfono</label>
-											<input type="text" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editEntrenador['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
+											<input type="tel" class="form-control" name="telefono" value="<?php echo htmlspecialchars($editEntrenador['telefono'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
 										</div>
 										<div class="col-lg-6 mb-3">
 											<label class="form-label">Región</label>
@@ -271,8 +289,8 @@
 										</div>
 									</div>
 
-									<h6>Rol deportivo</h6>
-									<div class="row">
+							<h6>Rol deportivo</h6>
+							<div class="row">
 										<div class="col-lg-12 mb-3">
 											<label class="form-label">Disciplina</label>
 											<input type="text" class="form-control" name="disciplina" value="<?php echo htmlspecialchars($editEntrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -308,8 +326,8 @@
 										</div>
 									</div>
 
-									<h6>Credenciales</h6>
-									<div class="row">
+							<h6>Credenciales</h6>
+							<div class="row">
 										<div class="col-lg-12 mb-3">
 											<label class="form-label">Certificaciones y cursos</label>
 											<textarea class="form-control" name="certificaciones" rows="2"><?php echo htmlspecialchars($editEntrenador['certificaciones'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
@@ -320,66 +338,64 @@
 										</div>
 									</div>
 
-									<h6>Permisos</h6>
-									<div class="mb-3">
+							<h6>Permisos</h6>
+							<div class="mb-3">
 										<label class="form-label">Permisos de acceso</label>
 										<textarea class="form-control" name="permisos_acceso" rows="2"><?php echo htmlspecialchars($editEntrenador['permisos_acceso'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
 									</div>
 
-									<button type="submit" class="btn btn-primary">Guardar entrenador</button>
-								</form>
-							</div>
-						</div>
+							<button type="submit" class="btn btn-primary">Guardar entrenador</button>
+						</form>
 					</div>
-					<div class="col-xl-7">
-						<div class="card">
-							<div class="card-body">
-								<h5 class="mb-3">Entrenadores registrados</h5>
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Nombre</th>
-												<th>RUN</th>
-												<th>Disciplina</th>
-												<th>Tipo</th>
-												<th>Estado</th>
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<?php foreach ($entrenadores as $entrenador) { ?>
-												<tr>
-													<td><?php echo htmlspecialchars($entrenador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($entrenador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars(($entrenador['run_numero'] ?? '') . '-' . ($entrenador['run_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td><?php echo htmlspecialchars($entrenador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
-													<td>
-														<div class="d-flex gap-2">
-															<a class="btn btn-warning btn-sm" href="registrar-entrenadores.php?edit=<?php echo (int)$entrenador['id']; ?>">Editar</a>
-															<form method="post">
-																<input type="hidden" name="action" value="toggle">
-																<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
-																<button type="submit" class="btn btn-sm <?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
-																	<?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
-																</button>
-															</form>
-															<form method="post">
-																<input type="hidden" name="action" value="delete">
-																<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
-																<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-															</form>
-														</div>
-													</td>
-												</tr>
-											<?php } ?>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</div>
+				</div>
 
+				<div class="card">
+					<div class="card-body">
+						<h5 class="mb-3">Entrenadores registrados</h5>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nombre</th>
+										<th>RUN</th>
+										<th>Club</th>
+										<th>Disciplina</th>
+										<th>Tipo</th>
+										<th>Estado</th>
+										<th>Acciones</th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php foreach ($entrenadores as $entrenador) { ?>
+										<tr>
+											<td><?php echo htmlspecialchars($entrenador['nombres'] ?? '', ENT_QUOTES, 'UTF-8'); ?> <?php echo htmlspecialchars($entrenador['apellidos'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars(($entrenador['run_numero'] ?? '') . '-' . ($entrenador['run_dv'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['club_nombre'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['disciplina'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['tipo'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td><?php echo htmlspecialchars($entrenador['estado'] ?? 'activo', ENT_QUOTES, 'UTF-8'); ?></td>
+											<td>
+												<div class="d-flex gap-2">
+													<a class="btn btn-warning btn-sm" href="registrar-entrenadores.php?edit=<?php echo (int)$entrenador['id']; ?>">Editar</a>
+													<form method="post">
+														<input type="hidden" name="action" value="toggle">
+														<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
+														<button type="submit" class="btn btn-sm <?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'btn-info' : 'btn-success'; ?>">
+															<?php echo ($entrenador['estado'] ?? 'activo') === 'activo' ? 'Desactivar' : 'Activar'; ?>
+														</button>
+													</form>
+													<form method="post">
+														<input type="hidden" name="action" value="delete">
+														<input type="hidden" name="id" value="<?php echo (int)$entrenador['id']; ?>">
+														<button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+													</form>
+												</div>
+											</td>
+										</tr>
+									<?php } ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
