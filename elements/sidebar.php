@@ -3,7 +3,7 @@
 				<ul class="metismenu" id="menu">
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-user"></i>
+							<i class="fa fa-user-cog"></i>
 							<span class="nav-text">Gestión de Usuarios y Roles</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -15,7 +15,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-home"></i>
+							<i class="fa fa-home"></i>
 							<span class="nav-text">Club</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -32,7 +32,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-people"></i>
+							<i class="fa fa-users"></i>
 							<span class="nav-text">Personas</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -47,7 +47,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-education"></i>
+							<i class="fa fa-dumbbell"></i>
 							<span class="nav-text">Entrenamientos</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -58,7 +58,7 @@
 					</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-clock"></i>
+							<i class="fa fa-trophy"></i>
 							<span class="nav-text">Competencias</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -80,7 +80,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-money"></i>
+							<i class="fa fa-money-bill-wave"></i>
 							<span class="nav-text">Cobros y pagos</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -104,7 +104,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-email"></i>
+							<i class="fa fa-comments"></i>
 							<span class="nav-text">Comunicaciones</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -137,7 +137,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-bar-chart"></i>
+							<i class="fa fa-chart-bar"></i>
 							<span class="nav-text">Reportes</span>
 						</a>
 						<ul aria-expanded="false" class="left">
@@ -150,7 +150,7 @@
 
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
-							<i class="flaticon-map"></i>
+							<i class="fa fa-map-marker-alt"></i>
 							<span class="nav-text">Ubicación</span>
 						</a>
 						<ul aria-expanded="false" class="left">
