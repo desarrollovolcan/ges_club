@@ -15,6 +15,7 @@
 	$listFields = $crudConfig['list'] ?? [];
 	$listQuery = $crudConfig['listQuery'] ?? null;
 	$clubAware = $crudConfig['clubAware'] ?? false;
+	$permission = $crudConfig['permission'] ?? null;
 
 	$message = $_GET['msg'] ?? '';
 	$messageType = $_GET['msg_type'] ?? 'success';
@@ -43,6 +44,10 @@
 		}
 	}
 
+	if ($permission) {
+		gesclub_require_permission($permission, 'view');
+	}
+
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'] ?? '';
 		$returnClubId = (int)($_POST['return_club_id'] ?? 0);
@@ -50,6 +55,9 @@
 		if ($action === 'save' && $table !== '') {
 			$id = (int)($_POST[$primaryKey] ?? 0);
 			$isUpdate = $id > 0;
+			if ($permission) {
+				gesclub_require_permission($permission, $isUpdate ? 'edit' : 'create');
+			}
 			$data = [];
 			$placeholders = [];
 			$updates = [];
@@ -102,6 +110,9 @@
 				}
 			}
 		} elseif ($action === 'delete' && $table !== '') {
+			if ($permission) {
+				gesclub_require_permission($permission, 'delete');
+			}
 			$id = (int)($_POST[$primaryKey] ?? 0);
 			if ($id > 0) {
 				$stmt = $db->prepare("DELETE FROM {$table} WHERE {$primaryKey} = :id");

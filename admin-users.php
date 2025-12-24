@@ -1,12 +1,9 @@
 <?php
 	 require_once __DIR__ . '/config/dz.php';
-	 require_once __DIR__ . '/config/auth.php';
+	 require_once __DIR__ . '/config/permissions.php';
 	 require_once __DIR__ . '/config/users.php';
 
-	 if (!gesclub_is_admin()) {
-	 	header('Location: index.php');
-	 	exit;
-	 }
+	 gesclub_require_permission('admin-users');
 
 	 $actionMessage = '';
 	 $actionType = 'success';
@@ -17,6 +14,7 @@
 	 	$userId = (int)($_POST['id'] ?? 0);
 
 	 	if ($action === 'delete' && $userId > 0) {
+			gesclub_require_permission('admin-users', 'delete');
 	 		if (gesclub_delete_user($userId, $usuarioActual)) {
 	 			$actionMessage = 'Usuario eliminado.';
 	 		} else {

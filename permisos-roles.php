@@ -2,6 +2,7 @@
 	$crudConfig = [
 		'title' => 'Asignación de permisos',
 		'description' => 'Relaciona roles con permisos y niveles de acceso.',
+		'permission' => 'permisos-roles',
 		'table' => 'role_permissions',
 		'fields' => [
 			['name' => 'role_id', 'label' => 'Rol', 'type' => 'select', 'required' => true, 'optionsQuery' => function($db, $selectedClubId) {
