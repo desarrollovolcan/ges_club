@@ -61,11 +61,20 @@
 			]],
 			['name' => 'created_at', 'label' => 'Creado', 'type' => 'date', 'auto' => 'insert', 'value' => function() { return date('Y-m-d'); }],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT e.id, e.nombre, e.dias_semana, e.hora_inicio, e.hora_fin, e.estado, d.nombre AS disciplina, c.nombre AS categoria, eq.nombre AS equipo FROM entrenamientos e LEFT JOIN club_disciplinas d ON d.id = e.disciplina_id LEFT JOIN club_categorias c ON c.id = e.categoria_id LEFT JOIN club_equipos eq ON eq.id = e.equipo_id WHERE e.club_id = :club_id ORDER BY e.id DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
 			['name' => 'nombre', 'label' => 'Entrenamiento'],
-			['name' => 'dias_semana', 'label' => 'Días'],
-			['name' => 'hora_inicio', 'label' => 'Inicio'],
-			['name' => 'hora_fin', 'label' => 'Término'],
+			['name' => 'disciplina', 'label' => 'Disciplina'],
+			['name' => 'categoria', 'label' => 'Categoría'],
+			['name' => 'equipo', 'label' => 'Equipo'],
 			['name' => 'estado', 'label' => 'Estado'],
 		],
 	];

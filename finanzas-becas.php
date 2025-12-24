@@ -24,7 +24,17 @@
 				['value' => 'finalizada', 'label' => 'Finalizada'],
 			]],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT b.id, b.porcentaje, b.fecha_inicio, b.fecha_fin, b.estado, CONCAT(d.nombres, " ", d.apellidos) AS deportista FROM becas b JOIN deportistas d ON d.id = b.deportista_id WHERE b.club_id = :club_id ORDER BY b.fecha_inicio DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
+			['name' => 'deportista', 'label' => 'Deportista'],
 			['name' => 'porcentaje', 'label' => 'Porcentaje'],
 			['name' => 'fecha_inicio', 'label' => 'Inicio'],
 			['name' => 'fecha_fin', 'label' => 'Término'],

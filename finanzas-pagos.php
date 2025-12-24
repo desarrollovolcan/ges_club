@@ -23,12 +23,13 @@
 			if ($selectedClubId <= 0) {
 				return [];
 			}
-			$sql = 'SELECT p.id, p.monto, p.metodo, p.fecha_pago FROM pagos p JOIN cobros c ON c.id = p.cobro_id WHERE c.club_id = :club_id ORDER BY p.fecha_pago DESC';
+			$sql = 'SELECT p.id, p.monto, p.metodo, p.fecha_pago, CONCAT(d.nombres, " ", d.apellidos) AS deportista FROM pagos p JOIN cobros c ON c.id = p.cobro_id JOIN deportistas d ON d.id = c.deportista_id WHERE c.club_id = :club_id ORDER BY p.fecha_pago DESC';
 			$stmt = $db->prepare($sql);
 			$stmt->execute([':club_id' => $selectedClubId]);
 			return $stmt->fetchAll() ?: [];
 		},
 		'list' => [
+			['name' => 'deportista', 'label' => 'Deportista'],
 			['name' => 'monto', 'label' => 'Monto'],
 			['name' => 'metodo', 'label' => 'Método'],
 			['name' => 'fecha_pago', 'label' => 'Fecha'],

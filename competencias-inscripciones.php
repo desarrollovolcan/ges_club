@@ -33,13 +33,14 @@
 			if ($selectedClubId <= 0) {
 				return [];
 			}
-			$sql = 'SELECT i.id, i.estado, i.costo, i.created_at, c.nombre AS competencia FROM competencia_inscripciones i JOIN competencias c ON c.id = i.competencia_id WHERE c.club_id = :club_id ORDER BY i.created_at DESC';
+			$sql = 'SELECT i.id, i.estado, i.costo, i.created_at, c.nombre AS competencia, CONCAT(d.nombres, " ", d.apellidos) AS deportista FROM competencia_inscripciones i JOIN competencias c ON c.id = i.competencia_id JOIN deportistas d ON d.id = i.deportista_id WHERE c.club_id = :club_id ORDER BY i.created_at DESC';
 			$stmt = $db->prepare($sql);
 			$stmt->execute([':club_id' => $selectedClubId]);
 			return $stmt->fetchAll() ?: [];
 		},
 		'list' => [
 			['name' => 'competencia', 'label' => 'Competencia'],
+			['name' => 'deportista', 'label' => 'Deportista'],
 			['name' => 'estado', 'label' => 'Estado'],
 			['name' => 'costo', 'label' => 'Costo'],
 		],

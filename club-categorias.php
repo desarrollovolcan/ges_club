@@ -28,8 +28,18 @@
 				['value' => 'inactivo', 'label' => 'Inactivo'],
 			]],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT c.id, c.nombre, c.edad_min, c.edad_max, c.genero, c.estado, d.nombre AS disciplina FROM club_categorias c LEFT JOIN club_disciplinas d ON d.id = c.disciplina_id WHERE c.club_id = :club_id ORDER BY c.id DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
 			['name' => 'nombre', 'label' => 'Categoría'],
+			['name' => 'disciplina', 'label' => 'Disciplina'],
 			['name' => 'edad_min', 'label' => 'Edad mín.'],
 			['name' => 'edad_max', 'label' => 'Edad máx.'],
 			['name' => 'genero', 'label' => 'Género'],

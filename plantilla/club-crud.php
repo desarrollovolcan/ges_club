@@ -227,9 +227,9 @@
 										<div class="mb-3">
 											<label class="form-label"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></label>
 											<?php if ($type === 'textarea') { ?>
-												<textarea class="form-control" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>><?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?></textarea>
+												<textarea class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>><?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?></textarea>
 											<?php } elseif ($type === 'select') { ?>
-												<select class="form-control" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
+												<select class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
 													<option value="">Selecciona</option>
 													<?php foreach ($options as $option) { ?>
 														<option value="<?php echo htmlspecialchars($option['value'], ENT_QUOTES, 'UTF-8'); ?>" <?php echo (string)$value === (string)$option['value'] ? 'selected' : ''; ?>>
@@ -238,12 +238,12 @@
 													<?php } ?>
 												</select>
 											<?php } else { ?>
-												<input type="<?php echo htmlspecialchars($type, ENT_QUOTES, 'UTF-8'); ?>" class="form-control" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
+												<input type="<?php echo htmlspecialchars($type, ENT_QUOTES, 'UTF-8'); ?>" class="form-control form-control-sm" name="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); ?>" <?php echo $isRequired ? 'required' : ''; ?>>
 											<?php } ?>
 										</div>
 									<?php } ?>
 
-									<button type="submit" class="btn btn-primary">Guardar</button>
+									<button type="submit" class="btn btn-primary btn-sm">Guardar</button>
 								</form>
 							</div>
 						</div>
@@ -256,7 +256,7 @@
 									<div class="text-muted">Selecciona un club para visualizar los registros.</div>
 								<?php } else { ?>
 									<div class="table-responsive">
-										<table class="table">
+										<table class="table table-sm">
 											<thead>
 												<tr>
 													<?php foreach ($listFields as $listField) { ?>

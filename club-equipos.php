@@ -37,11 +37,20 @@
 				['value' => 'inactivo', 'label' => 'Inactivo'],
 			]],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT e.id, e.nombre, e.estado, d.nombre AS disciplina, c.nombre AS categoria, t.nombre AS temporada FROM club_equipos e LEFT JOIN club_disciplinas d ON d.id = e.disciplina_id LEFT JOIN club_categorias c ON c.id = e.categoria_id LEFT JOIN club_temporadas t ON t.id = e.temporada_id WHERE e.club_id = :club_id ORDER BY e.id DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
 			['name' => 'nombre', 'label' => 'Equipo'],
-			['name' => 'disciplina_id', 'label' => 'Disciplina'],
-			['name' => 'categoria_id', 'label' => 'Categoría'],
-			['name' => 'temporada_id', 'label' => 'Temporada'],
+			['name' => 'disciplina', 'label' => 'Disciplina'],
+			['name' => 'categoria', 'label' => 'Categoría'],
+			['name' => 'temporada', 'label' => 'Temporada'],
 			['name' => 'estado', 'label' => 'Estado'],
 		],
 	];

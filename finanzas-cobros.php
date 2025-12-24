@@ -33,7 +33,18 @@
 			]],
 			['name' => 'referencia', 'label' => 'Referencia', 'type' => 'text'],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT c.id, c.monto, c.fecha_vencimiento, c.estado, CONCAT(d.nombres, " ", d.apellidos) AS deportista, p.nombre AS plan FROM cobros c JOIN deportistas d ON d.id = c.deportista_id LEFT JOIN planes_cuota p ON p.id = c.plan_id WHERE c.club_id = :club_id ORDER BY c.fecha_vencimiento DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
+			['name' => 'deportista', 'label' => 'Deportista'],
+			['name' => 'plan', 'label' => 'Plan'],
 			['name' => 'monto', 'label' => 'Monto'],
 			['name' => 'fecha_vencimiento', 'label' => 'Vencimiento'],
 			['name' => 'estado', 'label' => 'Estado'],

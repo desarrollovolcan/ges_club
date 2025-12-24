@@ -34,10 +34,20 @@
 				['value' => 'finalizada', 'label' => 'Finalizada'],
 			]],
 		],
+		'listQuery' => function($db, $selectedClubId) {
+			if ($selectedClubId <= 0) {
+				return [];
+			}
+			$sql = 'SELECT c.id, c.nombre, c.fecha_inicio, c.fecha_fin, c.estado, d.nombre AS disciplina, cat.nombre AS categoria FROM competencias c LEFT JOIN club_disciplinas d ON d.id = c.disciplina_id LEFT JOIN club_categorias cat ON cat.id = c.categoria_id WHERE c.club_id = :club_id ORDER BY c.fecha_inicio DESC';
+			$stmt = $db->prepare($sql);
+			$stmt->execute([':club_id' => $selectedClubId]);
+			return $stmt->fetchAll() ?: [];
+		},
 		'list' => [
 			['name' => 'nombre', 'label' => 'Competencia'],
+			['name' => 'disciplina', 'label' => 'Disciplina'],
+			['name' => 'categoria', 'label' => 'Categoría'],
 			['name' => 'fecha_inicio', 'label' => 'Inicio'],
-			['name' => 'fecha_fin', 'label' => 'Término'],
 			['name' => 'estado', 'label' => 'Estado'],
 		],
 	];
