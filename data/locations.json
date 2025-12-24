@@ -1,0 +1,79 @@
+{
+    "paises": [
+        {
+            "id": 1,
+            "codigo": "CL",
+            "nombre": "Chile",
+            "estado": "activo"
+        }
+    ],
+    "regiones": [
+        {
+            "id": 1,
+            "pais_id": 1,
+            "codigo": "RM",
+            "nombre": "Región Metropolitana de Santiago",
+            "estado": "activo"
+        },
+        {
+            "id": 2,
+            "pais_id": 1,
+            "codigo": "V",
+            "nombre": "Región de Valparaíso",
+            "estado": "activo"
+        },
+        {
+            "id": 3,
+            "pais_id": 1,
+            "codigo": "VIII",
+            "nombre": "Región del Biobío",
+            "estado": "activo"
+        }
+    ],
+    "comunas": [
+        {
+            "id": 1,
+            "region_id": 1,
+            "nombre": "Santiago",
+            "estado": "activo"
+        },
+        {
+            "id": 2,
+            "region_id": 1,
+            "nombre": "Providencia",
+            "estado": "activo"
+        },
+        {
+            "id": 3,
+            "region_id": 2,
+            "nombre": "Valparaíso",
+            "estado": "activo"
+        },
+        {
+            "id": 4,
+            "region_id": 3,
+            "nombre": "Concepción",
+            "estado": "activo"
+        }
+    ],
+    "ciudades": [
+        {
+            "id": 1,
+            "comuna_id": 1,
+            "nombre": "Santiago",
+            "estado": "activo"
+        },
+        {
+            "id": 2,
+            "comuna_id": 3,
+            "nombre": "Valparaíso",
+            "estado": "activo"
+        },
+        {
+            "id": 3,
+            "comuna_id": 4,
+            "nombre": "Concepción",
+            "estado": "activo"
+        }
+    ]
+}

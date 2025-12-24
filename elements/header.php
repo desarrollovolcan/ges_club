@@ -320,9 +320,9 @@
 								</div>
 								<div class="card-footer px-0 py-2">
 
-									<a href="page-login.php" class="dropdown-item ai-icon">
+									<a href="logout.php" class="dropdown-item ai-icon">
 										<i class="flaticon-logout-1 fs-18 text-danger"></i>
-										<span class="ms-2 text-danger">Logout </span>
+										<span class="ms-2 text-danger">Cerrar Sesion</span>
 									</a>
 								</div>
 							</div>
