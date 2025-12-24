@@ -42,13 +42,31 @@ function gesclub_save_locations(array $locations): bool
 			return false;
 		}
 	}
+	if (!is_writable($dir)) {
+		@chmod($dir, 0775);
+	}
+	if (file_exists($path) && !is_writable($path)) {
+		@chmod($path, 0664);
+	}
 
 	$payload = json_encode($locations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	if ($payload === false) {
 		return false;
 	}
 
-	return file_put_contents($path, $payload) !== false;
+	$tempPath = $path . '.tmp';
+	$written = file_put_contents($tempPath, $payload, LOCK_EX);
+	if ($written === false) {
+		return false;
+	}
+
+	if (!@rename($tempPath, $path)) {
+		$written = file_put_contents($path, $payload, LOCK_EX);
+		@unlink($tempPath);
+		return $written !== false;
+	}
+
+	return true;
 }
 
 function gesclub_next_location_id(array $items): int
