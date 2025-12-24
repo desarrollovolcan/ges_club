@@ -1,7 +1,6 @@
 <div class="deznav">
 			<div class="deznav-scroll">
 				<ul class="metismenu" id="menu">
-					<li class="menu-title border-top-0 pt-2">Administración General</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-user"></i>
@@ -9,13 +8,11 @@
 						</a>
 						<ul aria-expanded="false" class="left">
 							<li><a class="dz-active" href="admin-users.php"><i class="ti-id-badge me-2"></i>Administración Usuarios</a></li>
-							<li><a class="dz-active" href="perfiles-usuarios.php"><i class="ti-user me-2"></i>Perfiles de usuarios</a></li>
 							<li><a class="dz-active" href="permisos-modulos.php"><i class="ti-lock me-2"></i>Permisos por módulo</a></li>
 							<li><a class="dz-active" href="permisos-roles.php"><i class="ti-key me-2"></i>Permisos por rol</a></li>
 						</ul>
 					</li>
 
-					<li class="menu-title">Club y Organización</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-home"></i>
@@ -33,7 +30,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Personas</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-people"></i>
@@ -49,7 +45,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Gestión Deportiva</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-education"></i>
@@ -83,7 +78,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Finanzas</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-money"></i>
@@ -108,7 +102,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Comunicaciones</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-email"></i>
@@ -120,7 +113,6 @@
 							<li><a class="dz-active" href="comunicaciones-mensajes.php"><i class="ti-comments me-2"></i>Mensajería</a></li>
 						</ul>
 					</li>
-					<li class="menu-title">Documentos y Gestión</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="fa fa-folder-open"></i>
@@ -132,7 +124,6 @@
 							<li><a class="dz-active" href="solicitudes.php"><i class="ti-file me-2"></i>Solicitudes</a></li>
 						</ul>
 					</li>
-					<li class="menu-title">Inventario</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="fa fa-archive"></i>
@@ -144,7 +135,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Reportes y Auditoría</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-bar-chart"></i>
@@ -158,7 +148,6 @@
 						</ul>
 					</li>
 
-					<li class="menu-title">Ubicación</li>
 					<li>
 						<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 							<i class="flaticon-map"></i>
