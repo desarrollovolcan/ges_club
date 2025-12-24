@@ -6,8 +6,8 @@ namespace App\Core;
 
 class Controller
 {
-    protected function view(string $template, array $data = []): void
+    protected function view(string $template, array $data = [], ?string $layout = 'layouts/main'): void
     {
-        View::render($template, $data);
+        View::render($template, $data, $layout);
     }
 }

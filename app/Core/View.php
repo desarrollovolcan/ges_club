@@ -6,7 +6,7 @@ namespace App\Core;
 
 class View
 {
-    public static function render(string $template, array $data = []): void
+    public static function render(string $template, array $data = [], ?string $layout = 'layouts/main'): void
     {
         $viewPath = __DIR__ . '/../Views/' . $template . '.php';
 
@@ -16,6 +16,17 @@ class View
 
         extract($data, EXTR_SKIP);
 
-        require __DIR__ . '/../Views/layouts/main.php';
+        if ($layout === null) {
+            require $viewPath;
+            return;
+        }
+
+        $layoutPath = __DIR__ . '/../Views/' . $layout . '.php';
+
+        if (!file_exists($layoutPath)) {
+            throw new \RuntimeException("Layout no encontrado: {$layout}");
+        }
+
+        require $layoutPath;
     }
 }
