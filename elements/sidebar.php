@@ -10,6 +10,7 @@
 						<ul aria-expanded="false" class="left">
 							<li class="nav-text-icon-toggle">Control de Usuarios</li>
 							<li><a class="dz-active" href="admin-users.php">Administración Usuarios</a></li>
+							<li><a class="dz-active" href="perfiles-usuarios.php">Perfiles de usuarios</a></li>
 						</ul>
 					</li>
 					<li>

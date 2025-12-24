@@ -1,72 +1,177 @@
 <?php
 
-function gesclub_locations_path(): string
+require_once __DIR__ . '/db.php';
+
+function gesclub_default_locations(): array
 {
-	return __DIR__ . '/../data/locations.json';
+	$path = __DIR__ . '/../data/locations.json';
+	if (file_exists($path)) {
+		$contents = file_get_contents($path);
+		$data = json_decode($contents, true);
+		if (is_array($data)) {
+			return $data;
+		}
+	}
+
+	return [
+		'paises' => [],
+		'regiones' => [],
+		'comunas' => [],
+		'ciudades' => [],
+		'historial' => [],
+	];
 }
 
 function gesclub_load_locations(): array
 {
-	$path = gesclub_locations_path();
-	if (!file_exists($path)) {
-		return [
-			'paises' => [],
-			'regiones' => [],
-			'comunas' => [],
-			'ciudades' => [],
-			'historial' => [],
-		];
+	$db = gesclub_db();
+	$paises = $db->query('SELECT id, codigo, nombre, estado FROM paises ORDER BY id')->fetchAll();
+	$regiones = $db->query('SELECT id, pais_id, codigo, nombre, estado FROM regiones ORDER BY id')->fetchAll();
+	$comunas = $db->query('SELECT id, region_id, nombre, estado FROM comunas ORDER BY id')->fetchAll();
+	$ciudades = $db->query('SELECT id, comuna_id, nombre, estado FROM ciudades ORDER BY id')->fetchAll();
+	$historial = $db->query('SELECT tipo, accion, detalle, usuario, fecha FROM historial_ubicaciones ORDER BY id')->fetchAll();
+
+	if ($paises === [] && $regiones === [] && $comunas === [] && $ciudades === []) {
+		$defaults = gesclub_default_locations();
+		gesclub_seed_locations($db, $defaults);
+		return $defaults;
 	}
 
-	$contents = file_get_contents($path);
-	$data = json_decode($contents, true);
-	if (!is_array($data)) {
-		return [
-			'paises' => [],
-			'regiones' => [],
-			'comunas' => [],
-			'ciudades' => [],
-			'historial' => [],
-		];
-	}
+	return [
+		'paises' => $paises ?: [],
+		'regiones' => $regiones ?: [],
+		'comunas' => $comunas ?: [],
+		'ciudades' => $ciudades ?: [],
+		'historial' => $historial ?: [],
+	];
+}
 
-	return $data;
+function gesclub_seed_locations(PDO $db, array $defaults): void
+{
+	$db->beginTransaction();
+	$insertPais = $db->prepare('INSERT INTO paises (id, codigo, nombre, estado) VALUES (:id, :codigo, :nombre, :estado)');
+	foreach ($defaults['paises'] ?? [] as $pais) {
+		$insertPais->execute([
+			':id' => (int)($pais['id'] ?? 0),
+			':codigo' => (string)($pais['codigo'] ?? ''),
+			':nombre' => (string)($pais['nombre'] ?? ''),
+			':estado' => (string)($pais['estado'] ?? 'activo'),
+		]);
+	}
+	$insertRegion = $db->prepare('INSERT INTO regiones (id, pais_id, codigo, nombre, estado) VALUES (:id, :pais_id, :codigo, :nombre, :estado)');
+	foreach ($defaults['regiones'] ?? [] as $region) {
+		$insertRegion->execute([
+			':id' => (int)($region['id'] ?? 0),
+			':pais_id' => (int)($region['pais_id'] ?? 0),
+			':codigo' => (string)($region['codigo'] ?? ''),
+			':nombre' => (string)($region['nombre'] ?? ''),
+			':estado' => (string)($region['estado'] ?? 'activo'),
+		]);
+	}
+	$insertComuna = $db->prepare('INSERT INTO comunas (id, region_id, nombre, estado) VALUES (:id, :region_id, :nombre, :estado)');
+	foreach ($defaults['comunas'] ?? [] as $comuna) {
+		$insertComuna->execute([
+			':id' => (int)($comuna['id'] ?? 0),
+			':region_id' => (int)($comuna['region_id'] ?? 0),
+			':nombre' => (string)($comuna['nombre'] ?? ''),
+			':estado' => (string)($comuna['estado'] ?? 'activo'),
+		]);
+	}
+	$insertCiudad = $db->prepare('INSERT INTO ciudades (id, comuna_id, nombre, estado) VALUES (:id, :comuna_id, :nombre, :estado)');
+	foreach ($defaults['ciudades'] ?? [] as $ciudad) {
+		$insertCiudad->execute([
+			':id' => (int)($ciudad['id'] ?? 0),
+			':comuna_id' => (int)($ciudad['comuna_id'] ?? 0),
+			':nombre' => (string)($ciudad['nombre'] ?? ''),
+			':estado' => (string)($ciudad['estado'] ?? 'activo'),
+		]);
+	}
+	$insertHist = $db->prepare('INSERT INTO historial_ubicaciones (tipo, accion, detalle, usuario, fecha) VALUES (:tipo, :accion, :detalle, :usuario, :fecha)');
+	foreach ($defaults['historial'] ?? [] as $hist) {
+		$insertHist->execute([
+			':tipo' => (string)($hist['tipo'] ?? ''),
+			':accion' => (string)($hist['accion'] ?? ''),
+			':detalle' => (string)($hist['detalle'] ?? ''),
+			':usuario' => (string)($hist['usuario'] ?? ''),
+			':fecha' => (string)($hist['fecha'] ?? date('Y-m-d H:i:s')),
+		]);
+	}
+	$db->commit();
 }
 
 function gesclub_save_locations(array $locations): bool
 {
-	$path = gesclub_locations_path();
-	$dir = dirname($path);
-	if (!is_dir($dir)) {
-		if (!mkdir($dir, 0775, true) && !is_dir($dir)) {
-			return false;
+	$db = gesclub_db();
+	try {
+		$db->beginTransaction();
+		gesclub_sync_locations_table($db, 'paises', $locations['paises'] ?? [], ['codigo', 'nombre', 'estado']);
+		gesclub_sync_locations_table($db, 'regiones', $locations['regiones'] ?? [], ['pais_id', 'codigo', 'nombre', 'estado']);
+		gesclub_sync_locations_table($db, 'comunas', $locations['comunas'] ?? [], ['region_id', 'nombre', 'estado']);
+		gesclub_sync_locations_table($db, 'ciudades', $locations['ciudades'] ?? [], ['comuna_id', 'nombre', 'estado']);
+		gesclub_replace_location_history($db, $locations['historial'] ?? []);
+		$db->commit();
+		return true;
+	} catch (Throwable $e) {
+		if ($db->inTransaction()) {
+			$db->rollBack();
 		}
-	}
-	if (!is_writable($dir)) {
-		@chmod($dir, 0775);
-	}
-	if (file_exists($path) && !is_writable($path)) {
-		@chmod($path, 0664);
-	}
-
-	$payload = json_encode($locations, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-	if ($payload === false) {
 		return false;
 	}
+}
 
-	$tempPath = $path . '.tmp';
-	$written = file_put_contents($tempPath, $payload, LOCK_EX);
-	if ($written === false) {
-		return false;
+function gesclub_sync_locations_table(PDO $db, string $table, array $rows, array $columns): void
+{
+	$insertColumns = array_merge(['id'], $columns);
+	$updates = [];
+	foreach ($columns as $column) {
+		$updates[] = sprintf('%s = VALUES(%s)', $column, $column);
+	}
+	$upsert = $db->prepare(sprintf(
+		'INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s',
+		$table,
+		implode(', ', $insertColumns),
+		':' . implode(', :', $insertColumns),
+		implode(', ', $updates)
+	));
+
+	$ids = [];
+	foreach ($rows as $row) {
+		$id = (int)($row['id'] ?? 0);
+		if ($id <= 0) {
+			continue;
+		}
+		$ids[] = $id;
+		$params = [':id' => $id];
+		foreach ($columns as $column) {
+			$default = $column === 'estado' ? 'activo' : '';
+			$params[':' . $column] = $row[$column] ?? $default;
+		}
+		$upsert->execute($params);
 	}
 
-	if (!@rename($tempPath, $path)) {
-		$written = file_put_contents($path, $payload, LOCK_EX);
-		@unlink($tempPath);
-		return $written !== false;
+	if ($ids === []) {
+		$db->exec(sprintf('DELETE FROM %s', $table));
+		return;
 	}
 
-	return true;
+	$placeholders = implode(',', array_fill(0, count($ids), '?'));
+	$delete = $db->prepare(sprintf('DELETE FROM %s WHERE id NOT IN (%s)', $table, $placeholders));
+	$delete->execute($ids);
+}
+
+function gesclub_replace_location_history(PDO $db, array $history): void
+{
+	$db->exec('DELETE FROM historial_ubicaciones');
+	$insert = $db->prepare('INSERT INTO historial_ubicaciones (tipo, accion, detalle, usuario, fecha) VALUES (:tipo, :accion, :detalle, :usuario, :fecha)');
+	foreach ($history as $item) {
+		$insert->execute([
+			':tipo' => (string)($item['tipo'] ?? ''),
+			':accion' => (string)($item['accion'] ?? ''),
+			':detalle' => (string)($item['detalle'] ?? ''),
+			':usuario' => (string)($item['usuario'] ?? ''),
+			':fecha' => (string)($item['fecha'] ?? date('Y-m-d H:i:s')),
+		]);
+	}
 }
 
 function gesclub_next_location_id(array $items): int
@@ -104,6 +209,6 @@ function gesclub_add_location_history(array &$locations, string $tipo, string $a
 		'accion' => $accion,
 		'detalle' => $detalle,
 		'usuario' => $usuario,
-		'fecha' => date('c'),
+		'fecha' => date('Y-m-d H:i:s'),
 	];
 }
