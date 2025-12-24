@@ -6,7 +6,7 @@
 	 $regiones = $locations['regiones'] ?? [];
 	 $paises = $locations['paises'] ?? [];
 	 $historial = $locations['historial'] ?? [];
-	 $message = '';
+	 $message = $_GET['msg'] ?? '';
 	 $paisesById = [];
 	 foreach ($paises as $pais) {
 	 	if (isset($pais['id'])) {
@@ -30,7 +30,7 @@
 	 					$region['codigo'] = $codigo;
 	 					$region['nombre'] = $nombre;
 	 					$region['estado'] = $estado;
-	 					$message = 'Region actualizada.';
+	 					$message = 'Region actualizada con exito.';
 	 					$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
 	 					gesclub_add_location_history($locations, 'region', 'actualizar', "Region {$codigo} - {$nombre} ({$nombrePais})");
 	 					break;
@@ -45,7 +45,7 @@
 	 				'nombre' => $nombre,
 	 				'estado' => $estado,
 	 			];
-	 			$message = 'Region creada.';
+	 			$message = 'Region guardada con exito.';
 	 			$nombrePais = $paisesById[$paisId]['nombre'] ?? '';
 	 			gesclub_add_location_history($locations, 'region', 'crear', "Region {$codigo} - {$nombre} ({$nombrePais})");
 	 		}
@@ -53,7 +53,7 @@
 	 		foreach ($regiones as &$region) {
 	 			if ((int)($region['id'] ?? 0) === $id) {
 	 				$region['estado'] = ($region['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
-	 				$message = 'Estado actualizado.';
+	 				$message = $region['estado'] === 'activo' ? 'Region habilitada con exito.' : 'Region deshabilitada con exito.';
 	 				$accion = $region['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
 	 				$nombrePais = $paisesById[$region['pais_id'] ?? 0]['nombre'] ?? '';
 	 				gesclub_add_location_history($locations, 'region', $accion, "Region {$region['codigo']} - {$region['nombre']} ({$nombrePais})");
@@ -64,7 +64,7 @@
 	 	} elseif ($action === 'delete' && $id > 0) {
 	 		$eliminado = gesclub_find_location($regiones, $id);
 	 		$regiones = array_values(array_filter($regiones, fn($region) => (int)($region['id'] ?? 0) !== $id));
-	 		$message = 'Region eliminada.';
+	 		$message = 'Region borrada con exito.';
 	 		if ($eliminado) {
 	 			$nombrePais = $paisesById[$eliminado['pais_id'] ?? 0]['nombre'] ?? '';
 	 			gesclub_add_location_history($locations, 'region', 'borrar', "Region {$eliminado['codigo']} - {$eliminado['nombre']} ({$nombrePais})");
@@ -73,8 +73,20 @@
 
 	 	$locations['regiones'] = $regiones;
 	 	gesclub_save_locations($locations);
+	 	header('Location: ubicacion-region.php?msg=' . urlencode($message));
+	 	exit;
 	 }
 
+	 $locations = gesclub_load_locations();
+	 $regiones = $locations['regiones'] ?? [];
+	 $paises = $locations['paises'] ?? [];
+	 $historial = $locations['historial'] ?? [];
+	 $paisesById = [];
+	 foreach ($paises as $pais) {
+	 	if (isset($pais['id'])) {
+	 		$paisesById[$pais['id']] = $pais;
+	 	}
+	 }
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editRegion = $editId > 0 ? gesclub_find_location($regiones, $editId) : null;
 	 $historialRegion = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'region'));

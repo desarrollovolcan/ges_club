@@ -6,7 +6,7 @@
 	 $comunas = $locations['comunas'] ?? [];
 	 $regiones = $locations['regiones'] ?? [];
 	 $historial = $locations['historial'] ?? [];
-	 $message = '';
+	 $message = $_GET['msg'] ?? '';
 	 $regionesById = [];
 	 foreach ($regiones as $region) {
 	 	if (isset($region['id'])) {
@@ -28,7 +28,7 @@
 	 					$comuna['region_id'] = $regionId;
 	 					$comuna['nombre'] = $nombre;
 	 					$comuna['estado'] = $estado;
-	 					$message = 'Comuna actualizada.';
+	 					$message = 'Comuna actualizada con exito.';
 	 					$nombreRegion = $regionesById[$regionId]['nombre'] ?? '';
 	 					gesclub_add_location_history($locations, 'comuna', 'actualizar', "Comuna {$nombre} ({$nombreRegion})");
 	 					break;
@@ -42,7 +42,7 @@
 	 				'nombre' => $nombre,
 	 				'estado' => $estado,
 	 			];
-	 			$message = 'Comuna creada.';
+	 			$message = 'Comuna guardada con exito.';
 	 			$nombreRegion = $regionesById[$regionId]['nombre'] ?? '';
 	 			gesclub_add_location_history($locations, 'comuna', 'crear', "Comuna {$nombre} ({$nombreRegion})");
 	 		}
@@ -50,7 +50,7 @@
 	 		foreach ($comunas as &$comuna) {
 	 			if ((int)($comuna['id'] ?? 0) === $id) {
 	 				$comuna['estado'] = ($comuna['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
-	 				$message = 'Estado actualizado.';
+	 				$message = $comuna['estado'] === 'activo' ? 'Comuna habilitada con exito.' : 'Comuna deshabilitada con exito.';
 	 				$accion = $comuna['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
 	 				$nombreRegion = $regionesById[$comuna['region_id'] ?? 0]['nombre'] ?? '';
 	 				gesclub_add_location_history($locations, 'comuna', $accion, "Comuna {$comuna['nombre']} ({$nombreRegion})");
@@ -61,7 +61,7 @@
 	 	} elseif ($action === 'delete' && $id > 0) {
 	 		$eliminado = gesclub_find_location($comunas, $id);
 	 		$comunas = array_values(array_filter($comunas, fn($comuna) => (int)($comuna['id'] ?? 0) !== $id));
-	 		$message = 'Comuna eliminada.';
+	 		$message = 'Comuna borrada con exito.';
 	 		if ($eliminado) {
 	 			$nombreRegion = $regionesById[$eliminado['region_id'] ?? 0]['nombre'] ?? '';
 	 			gesclub_add_location_history($locations, 'comuna', 'borrar', "Comuna {$eliminado['nombre']} ({$nombreRegion})");
@@ -70,8 +70,20 @@
 
 	 	$locations['comunas'] = $comunas;
 	 	gesclub_save_locations($locations);
+	 	header('Location: ubicacion-comuna.php?msg=' . urlencode($message));
+	 	exit;
 	 }
 
+	 $locations = gesclub_load_locations();
+	 $comunas = $locations['comunas'] ?? [];
+	 $regiones = $locations['regiones'] ?? [];
+	 $historial = $locations['historial'] ?? [];
+	 $regionesById = [];
+	 foreach ($regiones as $region) {
+	 	if (isset($region['id'])) {
+	 		$regionesById[$region['id']] = $region;
+	 	}
+	 }
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editComuna = $editId > 0 ? gesclub_find_location($comunas, $editId) : null;
 	 $historialComuna = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'comuna'));

@@ -5,7 +5,7 @@
 	 $locations = gesclub_load_locations();
 	 $paises = $locations['paises'] ?? [];
 	 $historial = $locations['historial'] ?? [];
-	 $message = '';
+	 $message = $_GET['msg'] ?? '';
 
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	 	$action = $_POST['action'] ?? '';
@@ -21,7 +21,7 @@
 	 					$pais['codigo'] = $codigo;
 	 					$pais['nombre'] = $nombre;
 	 					$pais['estado'] = $estado;
-	 					$message = 'Pais actualizado.';
+	 					$message = 'Pais actualizado con exito.';
 	 					gesclub_add_location_history($locations, 'pais', 'actualizar', "Pais {$codigo} - {$nombre}");
 	 					break;
 	 				}
@@ -34,14 +34,14 @@
 	 				'nombre' => $nombre,
 	 				'estado' => $estado,
 	 			];
-	 			$message = 'Pais creado.';
+	 			$message = 'Pais guardado con exito.';
 	 			gesclub_add_location_history($locations, 'pais', 'crear', "Pais {$codigo} - {$nombre}");
 	 		}
 	 	} elseif ($action === 'toggle' && $id > 0) {
 	 		foreach ($paises as &$pais) {
 	 			if ((int)($pais['id'] ?? 0) === $id) {
 	 				$pais['estado'] = ($pais['estado'] ?? 'activo') === 'activo' ? 'deshabilitado' : 'activo';
-	 				$message = 'Estado actualizado.';
+	 				$message = $pais['estado'] === 'activo' ? 'Pais habilitado con exito.' : 'Pais deshabilitado con exito.';
 	 				$accion = $pais['estado'] === 'activo' ? 'habilitar' : 'deshabilitar';
 	 				gesclub_add_location_history($locations, 'pais', $accion, "Pais {$pais['codigo']} - {$pais['nombre']}");
 	 				break;
@@ -51,7 +51,7 @@
 	 	} elseif ($action === 'delete' && $id > 0) {
 	 		$eliminado = gesclub_find_location($paises, $id);
 	 		$paises = array_values(array_filter($paises, fn($pais) => (int)($pais['id'] ?? 0) !== $id));
-	 		$message = 'Pais eliminado.';
+	 		$message = 'Pais borrado con exito.';
 	 		if ($eliminado) {
 	 			gesclub_add_location_history($locations, 'pais', 'borrar', "Pais {$eliminado['codigo']} - {$eliminado['nombre']}");
 	 		}
@@ -59,8 +59,13 @@
 
 	 	$locations['paises'] = $paises;
 	 	gesclub_save_locations($locations);
+	 	header('Location: ubicacion-pais.php?msg=' . urlencode($message));
+	 	exit;
 	 }
 
+	 $locations = gesclub_load_locations();
+	 $paises = $locations['paises'] ?? [];
+	 $historial = $locations['historial'] ?? [];
 	 $editId = (int)($_GET['edit'] ?? 0);
 	 $editPais = $editId > 0 ? gesclub_find_location($paises, $editId) : null;
 	 $historialPais = array_values(array_filter($historial, fn($item) => ($item['tipo'] ?? '') === 'pais'));
