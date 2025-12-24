@@ -12,6 +12,9 @@ function gesclub_default_user_roles(): array
 		['id' => 5, 'nombre' => 'Apoderado', 'estado' => 'activo'],
 		['id' => 6, 'nombre' => 'Funcionario', 'estado' => 'activo'],
 		['id' => 7, 'nombre' => 'Invitado', 'estado' => 'activo'],
+		['id' => 8, 'nombre' => 'Admin General', 'estado' => 'activo'],
+		['id' => 9, 'nombre' => 'Admin Club', 'estado' => 'activo'],
+		['id' => 10, 'nombre' => 'Coordinador Deportivo', 'estado' => 'activo'],
 	];
 }
 
