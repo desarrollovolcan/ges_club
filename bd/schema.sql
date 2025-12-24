@@ -13,6 +13,12 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME NOT NULL
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS user_roles (
+  id INT NOT NULL PRIMARY KEY,
+  nombre VARCHAR(100) NOT NULL,
+  estado VARCHAR(20) NOT NULL DEFAULT 'activo'
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS paises (
   id INT NOT NULL PRIMARY KEY,
   codigo VARCHAR(10) NOT NULL,
@@ -68,6 +74,19 @@ ON DUPLICATE KEY UPDATE
   status = VALUES(status),
   role = VALUES(role),
   created_at = VALUES(created_at);
+
+INSERT INTO user_roles (id, nombre, estado)
+VALUES
+  (1, 'Super Root', 'activo'),
+  (2, 'Administrador', 'activo'),
+  (3, 'Organizador', 'activo'),
+  (4, 'Deportista', 'activo'),
+  (5, 'Entrenador', 'activo'),
+  (6, 'Apoderado', 'activo'),
+  (7, 'Invitado', 'activo')
+ON DUPLICATE KEY UPDATE
+  nombre = VALUES(nombre),
+  estado = VALUES(estado);
 
 INSERT INTO paises (id, codigo, nombre, estado)
 VALUES
