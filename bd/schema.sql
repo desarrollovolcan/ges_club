@@ -132,6 +132,191 @@ CREATE TABLE IF NOT EXISTS historial_ubicaciones (
   fecha DATETIME NOT NULL
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS clubes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_oficial VARCHAR(200) NOT NULL,
+  nombre_fantasia VARCHAR(200) NULL,
+  rut_numero VARCHAR(12) NULL,
+  rut_dv CHAR(1) NULL,
+  tipo_organizacion VARCHAR(120) NOT NULL,
+  direccion_region VARCHAR(120) NOT NULL,
+  direccion_comuna VARCHAR(120) NOT NULL,
+  direccion_calle VARCHAR(150) NOT NULL,
+  direccion_numero VARCHAR(30) NOT NULL,
+  email VARCHAR(150) NOT NULL,
+  telefono VARCHAR(40) NOT NULL,
+  fecha_fundacion DATE NOT NULL,
+  estado ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+  representante_run_numero VARCHAR(12) NOT NULL,
+  representante_run_dv CHAR(1) NOT NULL,
+  representante_nombre VARCHAR(200) NOT NULL,
+  representante_email VARCHAR(150) NOT NULL,
+  representante_telefono VARCHAR(40) NOT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS club_sedes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  nombre VARCHAR(200) NOT NULL,
+  direccion_region VARCHAR(120) NOT NULL,
+  direccion_comuna VARCHAR(120) NOT NULL,
+  direccion_calle VARCHAR(150) NOT NULL,
+  direccion_numero VARCHAR(30) NOT NULL,
+  tipo VARCHAR(120) NOT NULL,
+  horarios VARCHAR(200) NOT NULL,
+  capacidad INT NULL,
+  estado ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+  CONSTRAINT fk_club_sede_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS club_documentos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  tipo VARCHAR(80) NOT NULL,
+  nombre_archivo VARCHAR(255) NOT NULL,
+  ruta VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL,
+  CONSTRAINT fk_club_documento_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS historial_clubes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  club_id INT NOT NULL,
+  accion VARCHAR(30) NOT NULL,
+  detalle VARCHAR(255) NOT NULL,
+  usuario VARCHAR(100) NOT NULL,
+  fecha DATETIME NOT NULL,
+  CONSTRAINT fk_historial_clubes_club FOREIGN KEY (club_id) REFERENCES clubes(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS deportistas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  run_numero VARCHAR(12) NOT NULL,
+  run_dv CHAR(1) NOT NULL,
+  nombres VARCHAR(150) NOT NULL,
+  apellidos VARCHAR(150) NOT NULL,
+  fecha_nacimiento DATE NOT NULL,
+  sexo VARCHAR(30) NOT NULL,
+  nacionalidad VARCHAR(80) NOT NULL,
+  email VARCHAR(150) NOT NULL,
+  telefono VARCHAR(40) NOT NULL,
+  direccion_region VARCHAR(120) NOT NULL,
+  direccion_comuna VARCHAR(120) NOT NULL,
+  disciplinas VARCHAR(255) NOT NULL,
+  categoria VARCHAR(120) NOT NULL,
+  rama VARCHAR(120) NOT NULL,
+  equipo VARCHAR(120) NULL,
+  posicion VARCHAR(120) NULL,
+  nivel VARCHAR(120) NOT NULL,
+  fecha_ingreso DATE NOT NULL,
+  estado ENUM('activo','suspendido','retirado') NOT NULL DEFAULT 'activo',
+  contacto_emergencia_nombre VARCHAR(150) NOT NULL,
+  contacto_emergencia_telefono VARCHAR(40) NOT NULL,
+  alergias TEXT NULL,
+  prevision VARCHAR(50) NULL,
+  apoderado_run VARCHAR(12) NULL,
+  apoderado_nombre VARCHAR(150) NULL,
+  apoderado_contacto VARCHAR(80) NULL,
+  apoderado_parentesco VARCHAR(80) NULL,
+  consentimiento_datos TINYINT(1) NOT NULL DEFAULT 0,
+  autorizacion_entrenamientos TINYINT(1) NOT NULL DEFAULT 0,
+  documentos_adjuntos TEXT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS historial_deportistas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  deportista_id INT NOT NULL,
+  accion VARCHAR(30) NOT NULL,
+  detalle VARCHAR(255) NOT NULL,
+  usuario VARCHAR(100) NOT NULL,
+  fecha DATETIME NOT NULL,
+  CONSTRAINT fk_historial_deportistas_deportista FOREIGN KEY (deportista_id) REFERENCES deportistas(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS entrenadores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  run_numero VARCHAR(12) NOT NULL,
+  run_dv CHAR(1) NOT NULL,
+  nombres VARCHAR(150) NOT NULL,
+  apellidos VARCHAR(150) NOT NULL,
+  fecha_nacimiento DATE NOT NULL,
+  email VARCHAR(150) NOT NULL,
+  telefono VARCHAR(40) NOT NULL,
+  direccion_region VARCHAR(120) NOT NULL,
+  direccion_comuna VARCHAR(120) NOT NULL,
+  disciplina VARCHAR(120) NOT NULL,
+  categorias_asignadas VARCHAR(255) NOT NULL,
+  equipos_asignados VARCHAR(255) NULL,
+  tipo VARCHAR(50) NOT NULL,
+  fecha_inicio DATE NOT NULL,
+  estado ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+  certificaciones TEXT NULL,
+  documentos_adjuntos TEXT NULL,
+  permisos_acceso TEXT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS historial_entrenadores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  entrenador_id INT NOT NULL,
+  accion VARCHAR(30) NOT NULL,
+  detalle VARCHAR(255) NOT NULL,
+  usuario VARCHAR(100) NOT NULL,
+  fecha DATETIME NOT NULL,
+  CONSTRAINT fk_historial_entrenadores_entrenador FOREIGN KEY (entrenador_id) REFERENCES entrenadores(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS colaboradores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tipo VARCHAR(120) NOT NULL,
+  run_numero VARCHAR(12) NOT NULL,
+  run_dv CHAR(1) NOT NULL,
+  nombres VARCHAR(150) NOT NULL,
+  apellidos VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL,
+  telefono VARCHAR(40) NOT NULL,
+  direccion_region VARCHAR(120) NOT NULL,
+  direccion_comuna VARCHAR(120) NOT NULL,
+  funcion VARCHAR(150) NOT NULL,
+  area VARCHAR(120) NULL,
+  fecha_inicio DATE NOT NULL,
+  jornada VARCHAR(120) NULL,
+  estado ENUM('activo','inactivo') NOT NULL DEFAULT 'activo',
+  permisos TEXT NULL,
+  created_at DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS historial_colaboradores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  colaborador_id INT NOT NULL,
+  accion VARCHAR(30) NOT NULL,
+  detalle VARCHAR(255) NOT NULL,
+  usuario VARCHAR(100) NOT NULL,
+  fecha DATETIME NOT NULL,
+  CONSTRAINT fk_historial_colaboradores_colaborador FOREIGN KEY (colaborador_id) REFERENCES colaboradores(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS configuracion_catalogos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tipo VARCHAR(50) NOT NULL,
+  nombre VARCHAR(150) NOT NULL,
+  estado ENUM('activo','inactivo') NOT NULL DEFAULT 'activo'
+) ENGINE=InnoDB;
+
 INSERT INTO users (username, email, password_hash, account_status, role, created_at)
 VALUES
   ('Admin_super', 'admin@gesclub.local', '$2y$12$wov.KHBfzVbLOdOGOaku6.n/e04M.d4255eFbjZTo1ZPekSQyGT2a', 'activo', 'super_root', '2025-12-24 04:40:00')
@@ -150,7 +335,10 @@ VALUES
   (4, 'Entrenador', 'activo'),
   (5, 'Apoderado', 'activo'),
   (6, 'Funcionario', 'activo'),
-  (7, 'Invitado', 'activo')
+  (7, 'Invitado', 'activo'),
+  (8, 'Admin General', 'activo'),
+  (9, 'Admin Club', 'activo'),
+  (10, 'Coordinador Deportivo', 'activo')
 ON DUPLICATE KEY UPDATE
   nombre = VALUES(nombre),
   estado = VALUES(estado);
