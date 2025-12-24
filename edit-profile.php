@@ -1,9 +1,9 @@
 <?php
 	require_once __DIR__ . '/config/dz.php';
-	require_once __DIR__ . '/config/auth.php';
+	require_once __DIR__ . '/config/permissions.php';
 	require_once __DIR__ . '/config/users.php';
 
-	gesclub_require_roles(['Admin General']);
+	gesclub_require_permission('edit-profile');
 
 	$db = gesclub_db();
 	$message = $_GET['msg'] ?? '';
@@ -28,6 +28,11 @@
 		$payload = $_POST;
 		$payload['id'] = (int)($_POST['id'] ?? 0);
 		$payload['account_status'] = $_POST['account_status'] ?? 'activo';
+		if ($payload['id'] > 0) {
+			gesclub_require_permission('edit-profile', 'edit');
+		} else {
+			gesclub_require_permission('edit-profile', 'create');
+		}
 
 		if (!empty($_FILES['foto']['name'])) {
 			$uploadDir = __DIR__ . '/uploads/usuarios';
@@ -191,11 +196,18 @@
 								</div>
 								<div class="col-lg-6 mb-3">
 									<label class="form-label">Roles</label>
-									<select class="form-control" name="roles[]" multiple>
+									<div class="row">
 										<?php foreach ($rolesDisponibles as $rol) { ?>
-											<option value="<?php echo (int)$rol['id']; ?>" <?php echo $editUser && in_array((int)$rol['id'], $editUser['roles'] ?? [], true) ? 'selected' : ''; ?>><?php echo htmlspecialchars($rol['nombre'], ENT_QUOTES, 'UTF-8'); ?></option>
+											<div class="col-md-6">
+												<div class="form-check">
+													<input class="form-check-input" type="checkbox" name="roles[]" id="rol-<?php echo (int)$rol['id']; ?>" value="<?php echo (int)$rol['id']; ?>" <?php echo $editUser && in_array((int)$rol['id'], $editUser['roles'] ?? [], true) ? 'checked' : ''; ?>>
+													<label class="form-check-label" for="rol-<?php echo (int)$rol['id']; ?>">
+														<?php echo htmlspecialchars($rol['nombre'], ENT_QUOTES, 'UTF-8'); ?>
+													</label>
+												</div>
+											</div>
 										<?php } ?>
-									</select>
+									</div>
 								</div>
 							</div>
 							<button type="submit" class="btn btn-primary"><?php echo $isEditing ? 'Guardar cambios' : 'Crear usuario'; ?></button>
