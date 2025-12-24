@@ -167,6 +167,28 @@ function gesclub_save_user_profile(array $payload, array $roleIds, string $actor
 		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
 	}
 
+	$duplicateStmt = $db->prepare('SELECT id FROM users WHERE username = :username AND id <> :id LIMIT 1');
+	$duplicateStmt->execute([
+		':username' => $username,
+		':id' => $userId,
+	]);
+	if ($duplicateStmt->fetchColumn()) {
+		$errors['username'] = 'El usuario ya existe.';
+	}
+	if ($email !== '') {
+		$duplicateEmailStmt = $db->prepare('SELECT id FROM users WHERE email = :email AND id <> :id LIMIT 1');
+		$duplicateEmailStmt->execute([
+			':email' => $email,
+			':id' => $userId,
+		]);
+		if ($duplicateEmailStmt->fetchColumn()) {
+			$errors['email'] = 'El correo ya está registrado.';
+		}
+	}
+	if ($errors !== []) {
+		return ['ok' => false, 'message' => 'Revisa los campos resaltados.', 'errors' => $errors];
+	}
+
 	try {
 		$db->beginTransaction();
 
