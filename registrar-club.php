@@ -48,7 +48,6 @@
 
 	$sedes = [];
 	$documentos = [];
-	$historial = [];
 	if ($selectedClubId > 0) {
 		$stmtSedes = $db->prepare('SELECT s.*, c.nombre_oficial FROM club_sedes s JOIN clubes c ON c.id = s.club_id WHERE s.club_id = :club_id ORDER BY s.id DESC');
 		$stmtSedes->execute([':club_id' => $selectedClubId]);
@@ -58,9 +57,6 @@
 		$stmtDocs->execute([':club_id' => $selectedClubId]);
 		$documentos = $stmtDocs->fetchAll() ?: [];
 
-		$stmtHist = $db->prepare('SELECT h.*, c.nombre_oficial FROM historial_clubes h JOIN clubes c ON c.id = h.club_id WHERE h.club_id = :club_id ORDER BY h.id DESC');
-		$stmtHist->execute([':club_id' => $selectedClubId]);
-		$historial = $stmtHist->fetchAll() ?: [];
 	}
 
 	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -489,7 +485,7 @@
 									<?php if ($selectedClub) { ?>
 										<div class="badge badge-primary">Club seleccionado: <?php echo htmlspecialchars($selectedClub['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></div>
 									<?php } else { ?>
-										<div class="text-muted">Selecciona un club para habilitar sedes, documentos e historial.</div>
+										<div class="text-muted">Selecciona un club para habilitar sedes y documentos.</div>
 									<?php } ?>
 								</div>
 							</div>
@@ -506,9 +502,6 @@
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" data-bs-toggle="tab" href="#documentos" role="tab">Documentos</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" data-bs-toggle="tab" href="#historial" role="tab">Historial</a>
 					</li>
 				</ul>
 
@@ -904,41 +897,6 @@
 						</div>
 					</div>
 
-					<div class="tab-pane fade" id="historial" role="tabpanel">
-						<div class="card mb-4">
-							<div class="card-body">
-								<h5 class="mb-3">Historial de cambios</h5>
-								<?php if (!$selectedClubId) { ?>
-									<div class="text-muted">Selecciona un club para ver su historial.</div>
-								<?php } else { ?>
-									<div class="table-responsive">
-										<table class="table">
-											<thead>
-												<tr>
-													<th>Club</th>
-													<th>Acción</th>
-													<th>Detalle</th>
-													<th>Usuario</th>
-													<th>Fecha</th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php foreach ($historial as $item) { ?>
-													<tr>
-														<td><?php echo htmlspecialchars($item['nombre_oficial'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-														<td><?php echo htmlspecialchars($item['accion'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-														<td><?php echo htmlspecialchars($item['detalle'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-														<td><?php echo htmlspecialchars($item['usuario'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-														<td><?php echo htmlspecialchars($item['fecha'] ?? '', ENT_QUOTES, 'UTF-8'); ?></td>
-													</tr>
-												<?php } ?>
-											</tbody>
-										</table>
-									</div>
-								<?php } ?>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
