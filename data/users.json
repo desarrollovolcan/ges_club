@@ -1,0 +1,9 @@
+[
+    {
+        "username": "Admin_super",
+        "password_hash": "$2y$12$wov.KHBfzVbLOdOGOaku6.n/e04M.d4255eFbjZTo1ZPekSQyGT2a",
+        "status": "approved",
+        "role": "super_root",
+        "created_at": "2025-12-24T04:40:00+00:00"
+    }
+]
