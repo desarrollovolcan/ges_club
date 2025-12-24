@@ -7,10 +7,10 @@ function gesclub_default_user_roles(): array
 	return [
 		['id' => 1, 'nombre' => 'Super Root', 'estado' => 'activo'],
 		['id' => 2, 'nombre' => 'Administrador', 'estado' => 'activo'],
-		['id' => 3, 'nombre' => 'Organizador', 'estado' => 'activo'],
-		['id' => 4, 'nombre' => 'Deportista', 'estado' => 'activo'],
-		['id' => 5, 'nombre' => 'Entrenador', 'estado' => 'activo'],
-		['id' => 6, 'nombre' => 'Apoderado', 'estado' => 'activo'],
+		['id' => 3, 'nombre' => 'Socio', 'estado' => 'activo'],
+		['id' => 4, 'nombre' => 'Entrenador', 'estado' => 'activo'],
+		['id' => 5, 'nombre' => 'Apoderado', 'estado' => 'activo'],
+		['id' => 6, 'nombre' => 'Funcionario', 'estado' => 'activo'],
 		['id' => 7, 'nombre' => 'Invitado', 'estado' => 'activo'],
 	];
 }

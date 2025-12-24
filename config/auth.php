@@ -1,14 +1,16 @@
 <?php
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/users.php';
 
 function gesclub_default_users(): array
 {
 	return [
 		[
 			'username' => 'Admin_super',
+			'email' => 'admin@gesclub.local',
 			'password_hash' => password_hash('Gesclub2026', PASSWORD_DEFAULT),
-			'status' => 'approved',
+			'account_status' => 'activo',
 			'role' => 'super_root',
 			'created_at' => date('Y-m-d H:i:s'),
 		],
@@ -18,21 +20,22 @@ function gesclub_default_users(): array
 function gesclub_load_users(): array
 {
 	$db = gesclub_db();
-	$stmt = $db->query('SELECT username, password_hash, status, role, created_at FROM users ORDER BY id');
+	$stmt = $db->query('SELECT id, username, email, password_hash, account_status, role, created_at FROM users ORDER BY id');
 	$users = $stmt->fetchAll();
 
 	if ($users === [] || $users === false) {
 		$defaults = gesclub_default_users();
-		$insert = $db->prepare('INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)');
-		foreach ($defaults as $user) {
-			$insert->execute([
-				':username' => $user['username'],
-				':password_hash' => $user['password_hash'],
-				':status' => $user['status'],
-				':role' => $user['role'],
-				':created_at' => $user['created_at'],
-			]);
-		}
+	$insert = $db->prepare('INSERT INTO users (username, email, password_hash, account_status, role, created_at) VALUES (:username, :email, :password_hash, :account_status, :role, :created_at)');
+	foreach ($defaults as $user) {
+		$insert->execute([
+			':username' => $user['username'],
+			':email' => $user['email'] ?? null,
+			':password_hash' => $user['password_hash'],
+			':account_status' => $user['account_status'],
+			':role' => $user['role'],
+			':created_at' => $user['created_at'],
+		]);
+	}
 		return $defaults;
 	}
 
@@ -43,8 +46,8 @@ function gesclub_save_users(array $users): void
 {
 	$db = gesclub_db();
 	$upsert = $db->prepare(
-		'INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)
-		ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash), status = VALUES(status), role = VALUES(role), created_at = VALUES(created_at)'
+		'INSERT INTO users (username, email, password_hash, account_status, role, created_at) VALUES (:username, :email, :password_hash, :account_status, :role, :created_at)
+		ON DUPLICATE KEY UPDATE email = VALUES(email), password_hash = VALUES(password_hash), account_status = VALUES(account_status), role = VALUES(role), created_at = VALUES(created_at)'
 	);
 
 	foreach ($users as $user) {
@@ -54,8 +57,9 @@ function gesclub_save_users(array $users): void
 		}
 		$params = [
 			':username' => $username,
+			':email' => $user['email'] ?? null,
 			':password_hash' => (string)($user['password_hash'] ?? ''),
-			':status' => (string)($user['status'] ?? 'pending'),
+			':account_status' => (string)($user['account_status'] ?? 'activo'),
 			':role' => (string)($user['role'] ?? 'user'),
 			':created_at' => (string)($user['created_at'] ?? date('Y-m-d H:i:s')),
 		];
@@ -66,7 +70,7 @@ function gesclub_save_users(array $users): void
 function gesclub_find_user(string $username): ?array
 {
 	$db = gesclub_db();
-	$stmt = $db->prepare('SELECT username, password_hash, status, role, created_at FROM users WHERE LOWER(username) = LOWER(:username) LIMIT 1');
+	$stmt = $db->prepare('SELECT id, username, email, password_hash, account_status, role, created_at FROM users WHERE LOWER(username) = LOWER(:username) LIMIT 1');
 	$stmt->execute([':username' => trim($username)]);
 	$user = $stmt->fetch();
 	if (!$user) {
@@ -88,11 +92,11 @@ function gesclub_register_user(string $username, string $password): array
 	}
 
 	$db = gesclub_db();
-	$stmt = $db->prepare('INSERT INTO users (username, password_hash, status, role, created_at) VALUES (:username, :password_hash, :status, :role, :created_at)');
+	$stmt = $db->prepare('INSERT INTO users (username, password_hash, account_status, role, created_at) VALUES (:username, :password_hash, :account_status, :role, :created_at)');
 	$stmt->execute([
 		':username' => $username,
 		':password_hash' => password_hash($password, PASSWORD_DEFAULT),
-		':status' => 'pending',
+		':account_status' => 'inactivo',
 		':role' => 'user',
 		':created_at' => date('Y-m-d H:i:s'),
 	]);
@@ -111,8 +115,8 @@ function gesclub_verify_credentials(string $username, string $password): array
 		return ['ok' => false, 'message' => 'Usuario o contraseña inválidos.'];
 	}
 
-	if (($user['status'] ?? 'pending') !== 'approved') {
-		return ['ok' => false, 'message' => 'Tu usuario está pendiente de aprobación.'];
+	if (($user['account_status'] ?? 'inactivo') !== 'activo') {
+		return ['ok' => false, 'message' => 'Tu usuario no está activo.'];
 	}
 
 	return ['ok' => true, 'user' => $user];
@@ -134,7 +138,13 @@ function gesclub_current_username(): string
 
 function gesclub_is_admin(): bool
 {
-	return !empty($_SESSION['auth_user']['role']) && $_SESSION['auth_user']['role'] === 'super_root';
+	if (!empty($_SESSION['auth_user']['role']) && $_SESSION['auth_user']['role'] === 'super_root') {
+		return true;
+	}
+	if (!empty($_SESSION['auth_user']['id'])) {
+		return gesclub_user_has_role((int)$_SESSION['auth_user']['id'], 'Administrador');
+	}
+	return false;
 }
 
 function gesclub_require_login(): void
