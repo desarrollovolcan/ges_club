@@ -15,20 +15,6 @@
 	 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	 	$action = trim($_POST['action'] ?? '');
 	 	$userId = (int)($_POST['id'] ?? 0);
-		$existingUser = $userId > 0 ? gesclub_load_user_profile($userId) : null;
-
-		if ($action === 'save') {
-			if (!empty($_FILES['foto']['name'])) {
-				$uploadDir = __DIR__ . '/uploads/usuarios';
-				if (!is_dir($uploadDir)) {
-					mkdir($uploadDir, 0775, true);
-				}
-				$basename = basename($_FILES['foto']['name']);
-				$destino = $uploadDir . '/' . time() . '-' . $basename;
-				if (move_uploaded_file($_FILES['foto']['tmp_name'], $destino)) {
-					$_POST['foto'] = 'uploads/usuarios/' . basename($destino);
-				}
-			}
 
 	 	if ($action === 'delete' && $userId > 0) {
 	 		if (gesclub_delete_user($userId, $usuarioActual)) {

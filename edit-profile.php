@@ -12,6 +12,10 @@
 	$editId = (int)($_GET['edit'] ?? 0);
 	$editUser = $editId > 0 ? gesclub_load_user_profile($editId) : null;
 	$isEditing = !empty($editUser);
+	if ($editId > 0 && !$editUser && $message === '') {
+		$message = 'No se encontró el usuario solicitado.';
+		$messageType = 'error';
+	}
 	$consentimientoValue = '';
 	if (!empty($editUser['consentimiento_fecha'])) {
 		$timestamp = strtotime((string)$editUser['consentimiento_fecha']);
