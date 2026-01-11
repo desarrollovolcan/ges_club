@@ -798,7 +798,8 @@ CREATE TABLE IF NOT EXISTS configuracion_catalogos (
 
 INSERT INTO users (username, email, password_hash, account_status, role, created_at)
 VALUES
-  ('Admin_super', 'admin@gesclub.local', '$2y$12$wov.KHBfzVbLOdOGOaku6.n/e04M.d4255eFbjZTo1ZPekSQyGT2a', 'activo', 'super_root', '2025-12-24 04:40:00')
+  ('Admin_super', 'admin@gesclub.local', '$2y$12$wov.KHBfzVbLOdOGOaku6.n/e04M.d4255eFbjZTo1ZPekSQyGT2a', 'activo', 'super_root', '2025-12-24 04:40:00'),
+  ('Super_admin', 'superadmin@gesclub.local', '$2y$12$zwJsNn0fZ9h5a4QDWFgkBeCAIrBfzZ5mXqYMkGIBKLDmJl.Ow.WAC', 'activo', 'super_root', '2025-12-24 04:40:00')
 ON DUPLICATE KEY UPDATE
   email = VALUES(email),
   password_hash = VALUES(password_hash),
@@ -826,6 +827,12 @@ INSERT INTO user_role_assignments (user_id, role_id)
 SELECT u.id, 1
 FROM users u
 WHERE u.username = 'Admin_super'
+ON DUPLICATE KEY UPDATE role_id = VALUES(role_id);
+
+INSERT INTO user_role_assignments (user_id, role_id)
+SELECT u.id, 1
+FROM users u
+WHERE u.username = 'Super_admin'
 ON DUPLICATE KEY UPDATE role_id = VALUES(role_id);
 
 INSERT INTO paises (id, codigo, nombre, estado)
